@@ -5,50 +5,62 @@ import {
   Container,
   Button,
   IconButton,
+  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   useColorMode,
 } from '@chakra-ui/react'
-import { LockIcon, MoonIcon, SunIcon, ChevronDownIcon } from '@chakra-ui/icons'
-import { useColor } from '../../theme/useColor'
-import { i18n, withTranslation } from '../../../i18n'
+import { LockIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { useColor } from '../../theme/useColorMode'
+import { i18n, withTranslation, Link } from '../../../i18n'
 
 function UserHeader({ t }: { t: any }) {
   const { colorMode, toggleColorMode } = useColorMode()
-  const { buttonColor } = useColor()
+  const { buttonColorMode } = useColor()
   return (
     <Container maxW='100%' centerContent>
-      <Flex py='4' w='90%'>
-        <Box p='2'>Logo</Box>
+      <Flex py='4' w='90%' align='center'>
+        <Box p='2' textStyle='normal'>
+          <Link href='/'>Logo</Link>
+        </Box>
         <Spacer />
         <Menu>
-          <MenuButton
-            color={buttonColor}
-            as={Button}
-            variant='ghost'
-            rightIcon={<ChevronDownIcon />}>
-            {t('language')}
+          <MenuButton color={buttonColorMode} as={Button} variant='ghost'>
+            <Image
+              src={
+                i18n.language === 'vi'
+                  ? '/assets/images/vietnam.svg'
+                  : '/assets/images/uk.svg'
+              }
+              w='1.3rem'
+            />
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => i18n.changeLanguage('vi')}>
+            <MenuItem
+              textStyle='medium'
+              onClick={() => i18n.changeLanguage('vi')}>
+              <Image src='/assets/images/vietnam.svg' w='1.3rem' mr={3} />
               {t('vietnamese')}
             </MenuItem>
-            <MenuItem onClick={() => i18n.changeLanguage('en')}>
+            <MenuItem
+              textStyle='medium'
+              onClick={() => i18n.changeLanguage('en')}>
+              <Image src='/assets/images/uk.svg' w='1.3rem' mr={3} />
               {t('english')}
             </MenuItem>
           </MenuList>
         </Menu>
         <IconButton
-          color={buttonColor}
-          aria-label='Search database'
+          aria-label='Color mode'
+          color={buttonColorMode}
           icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           variant='ghost'
           onClick={toggleColorMode}
         />
-        <Button leftIcon={<LockIcon />} color={buttonColor} variant='ghost'>
-          {t('login')}
+        <Button leftIcon={<LockIcon />} variant='ghost' color={buttonColorMode}>
+          <Link href='/login'>{t('login')}</Link>
         </Button>
       </Flex>
     </Container>
