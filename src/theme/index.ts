@@ -1,11 +1,18 @@
 import { extendTheme, theme as defaultTheme } from '@chakra-ui/react'
+import { mode } from '@chakra-ui/theme-tools'
 import Button from './components/button'
 import textStyles from './foundations/text-style'
 
 const theme = extendTheme({
   ...defaultTheme,
-  fonts: {
-    body: "'Quicksand', sans-serif",
+  styles: {
+    global: (props) => ({
+      body: {
+        color: mode('#2d3748', '#ffffffeb')(props),
+        fontFamily: "'Quicksand', sans-serif",
+        backgroundColor: mode('#fafafa', 'gray.800')(props),
+      },
+    }),
   },
   colors: {
     main: '#06122d',

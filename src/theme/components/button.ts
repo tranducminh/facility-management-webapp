@@ -1,5 +1,5 @@
 export default {
   defaultProps: {
-    size: 'sm',
+    size: 'md',
   },
 }

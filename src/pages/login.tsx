@@ -14,10 +14,11 @@ import {
   Checkbox,
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import UserLayout from '../layouts/user-layout'
+import { TFunction } from 'next-i18next'
+import UserLayout from '../layouts/UserLayout'
 import { withTranslation } from '../../i18n'
 
-function Login({ t }: { t: any }) {
+function Login({ t }: { readonly t: TFunction }) {
   const [show, setShow] = useState(false)
   const handleClick = () => setShow(!show)
   return (
@@ -53,7 +54,7 @@ function Login({ t }: { t: any }) {
               </InputRightElement>
             </InputGroup>
           </FormControl>
-          <Checkbox size='md' colorScheme='teal' defaultIsChecked mt={5}>
+          <Checkbox size='md' colorScheme='teal' defaultChecked mt={5}>
             <Text fontSize='sm' fontWeight='medium'>
               Remember me
             </Text>
