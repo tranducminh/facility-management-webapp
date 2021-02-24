@@ -5,17 +5,19 @@ import {
   GridItem,
   Text,
   LinkBox,
-  useColorModeValue,
+  Icon,
 } from '@chakra-ui/react'
-import { EmailIcon } from '@chakra-ui/icons'
 import Head from 'next/head'
+import { SiGoogleclassroom } from 'react-icons/si'
+import { BsTools } from 'react-icons/bs'
+import { GoGitPullRequest } from 'react-icons/go'
 import UserHeader from '../components/layouts/UserHeader'
 import { Link } from '../../i18n'
+import { useColor } from '../theme/useColorMode'
 
 /* eslint-disable react/destructuring-assignment */
 export default function UserDashboard(props: any) {
-  const textNavColor = useColorModeValue('teal.700', 'teal.200')
-  const bgNavColor = useColorModeValue('#e6fffa', '#308c7a4d')
+  const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
   return (
     <Box>
       <Head>
@@ -31,23 +33,23 @@ export default function UserDashboard(props: any) {
               // minH='100vh'
               borderRightWidth='1px'
               borderRightColor='gray.100'>
-              <Link href='/login'>
+              <Link href='/buildings'>
                 <LinkBox
                   py={2}
                   px={6}
                   mb={4}
                   cursor='pointer'
-                  color={textNavColor}
-                  backgroundColor={bgNavColor}
+                  color={props.isRoom ? hoverTextColor : ''}
+                  backgroundColor={props.isRoom ? selectBgColor : ''}
                   borderRadius='0.5em'
                   _hover={{
-                    color: textNavColor,
-                    backgroundColor: bgNavColor,
+                    color: hoverTextColor,
+                    backgroundColor: hoverBgColor,
                     borderRadius: '0.5em',
                   }}>
                   <Grid templateColumns='repeat(5, 1fr)' gap={4}>
                     <GridItem colSpan={1}>
-                      <EmailIcon fontSize='1.2em' />
+                      <Icon as={SiGoogleclassroom} fontSize='1.2em' />
                     </GridItem>
                     <GridItem colSpan={4}>
                       <Text textStyle='bold-md'>Room</Text>
@@ -55,21 +57,23 @@ export default function UserDashboard(props: any) {
                   </Grid>
                 </LinkBox>
               </Link>
-              <Link href='/login'>
+              <Link href='/facilities'>
                 <LinkBox
                   py={2}
                   px={6}
                   mb={4}
                   cursor='pointer'
                   borderRadius='0.5em'
+                  color={props.isFacility ? hoverTextColor : ''}
+                  backgroundColor={props.isFacility ? selectBgColor : ''}
                   _hover={{
-                    color: textNavColor,
-                    backgroundColor: bgNavColor,
+                    color: hoverTextColor,
+                    backgroundColor: hoverBgColor,
                     borderRadius: '0.5em',
                   }}>
                   <Grid templateColumns='repeat(5, 1fr)' gap={4}>
                     <GridItem colSpan={1}>
-                      <EmailIcon fontSize='1.2em' />
+                      <Icon as={BsTools} fontSize='1.2em' />
                     </GridItem>
                     <GridItem colSpan={4}>
                       <Text fontWeight='bold'>Facility</Text>
@@ -77,21 +81,23 @@ export default function UserDashboard(props: any) {
                   </Grid>
                 </LinkBox>
               </Link>
-              <Link href='/login'>
+              <Link href='/requests'>
                 <LinkBox
                   py={2}
                   px={6}
                   mb={4}
                   cursor='pointer'
                   borderRadius='0.5em'
+                  color={props.isRequest ? hoverTextColor : ''}
+                  backgroundColor={props.isRequest ? selectBgColor : ''}
                   _hover={{
-                    color: textNavColor,
-                    backgroundColor: bgNavColor,
+                    color: hoverTextColor,
+                    backgroundColor: hoverBgColor,
                     borderRadius: '0.5em',
                   }}>
                   <Grid templateColumns='repeat(5, 1fr)' gap={4}>
                     <GridItem colSpan={1}>
-                      <EmailIcon fontSize='1.2em' />
+                      <Icon as={GoGitPullRequest} fontSize='1.2em' />
                     </GridItem>
                     <GridItem colSpan={4}>
                       <Text fontWeight='bold'>My request</Text>

@@ -18,7 +18,7 @@ function Home({ t }: { readonly t: TFunction }) {
           <Box fontSize='xx-large' fontWeight='medium'>
             {t('webName')}
           </Box>
-          <Link href='/dashboard'>
+          <Link href='/buildings'>
             <Button
               variant='solid'
               fontWeight='bold'

@@ -12,4 +12,8 @@ export default {
     fontSize: 'md',
     fontWeight: 'bold',
   },
+  'bold-xl': {
+    fontSize: 'xl',
+    fontWeight: 'bold',
+  },
 }

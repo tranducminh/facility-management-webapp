@@ -11,6 +11,7 @@ const theme = extendTheme({
         color: mode('#2d3748', '#ffffffeb')(props),
         fontFamily: "'Quicksand', sans-serif",
         backgroundColor: mode('#fafafa', 'gray.800')(props),
+        fontSize: 'sm',
       },
     }),
   },
