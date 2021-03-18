@@ -8,9 +8,9 @@ import {
   GridItem,
 } from '@chakra-ui/react'
 import Head from 'next/head'
-import UserDashboard from '../../../../layouts/UserDashboard'
-import { useColor } from '../../../../theme/useColorMode'
-import { Link } from '../../../../../i18n'
+import UserDashboard from '../../../../../layouts/UserDashboard'
+import { useColor } from '../../../../../theme/useColorMode'
+import { Link } from '../../../../../../i18n'
 
 export default function RoomDetail() {
   const { hoverTextColor, hoverBgColor } = useColor()
@@ -26,21 +26,21 @@ export default function RoomDetail() {
       <Flex mb={5} alignItems='center'>
         <Breadcrumb>
           <BreadcrumbItem>
-            <Link href='/buildings'>
+            <Link href='/user/buildings'>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Buildings</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/buildings/building-a1'>
+            <Link href='/user/buildings/building-a1'>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>A1</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/buildings/building-a1/room-123'>
+            <Link href='/user/buildings/building-a1/room-123'>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Room 123</Text>
               </BreadcrumbLink>
@@ -86,7 +86,7 @@ export default function RoomDetail() {
           </Text>
         </GridItem>
         {[...Array(30)].map((value, index) => (
-          <Link href='/buildings/building-a1/room-123/21-11-1999'>
+          <Link href='/user/buildings/building-a1/room-123/21-11-1999'>
             <GridItem colSpan={1}>
               <Flex
                 borderBottomWidth='2px'

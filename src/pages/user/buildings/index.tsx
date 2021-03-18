@@ -1,66 +1,58 @@
+import Head from 'next/head'
 import {
+  Text,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  Icon,
   Flex,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  Text,
   Spacer,
-  InputGroup,
-  InputLeftElement,
-  Input,
+  Tooltip,
   Grid,
   GridItem,
-  Tooltip,
-  Icon,
 } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
-import Head from 'next/head'
-import { SiGoogleclassroom } from 'react-icons/si'
+import { BsBuilding } from 'react-icons/bs'
 import UserDashboard from '../../../layouts/UserDashboard'
-import { Link } from '../../../../i18n'
+import { withTranslation, Link } from '../../../../i18n'
 import { useColor } from '../../../theme/useColorMode'
 
-export default function BuildingDetail() {
+function Building() {
   const { hoverTextColor, hoverBgColor } = useColor()
-
   return (
     <UserDashboard isRoom>
       <Head>
         <title>
-          Building A1 - Ho Chi Minh National Academy of Politics - Facility
+          Buildings - Ho Chi Minh National Academy of Politics - Facility
           management system
         </title>
       </Head>
 
       <Flex mb={5} alignItems='center'>
         <Breadcrumb>
-          <BreadcrumbItem>
-            <Link href='/buildings'>
+          <Link href='/user/buildings'>
+            <BreadcrumbItem>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Buildings</Text>
               </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link href='/buildings/building-a1'>
-              <BreadcrumbLink>
-                <Text textStyle='bold-md'>A1</Text>
-              </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
+            </BreadcrumbItem>
+          </Link>
         </Breadcrumb>
         <Spacer />
         <InputGroup maxW='30%'>
           <InputLeftElement pointerEvents='none'>
             <Search2Icon color='gray.300' />
           </InputLeftElement>
-          <Input type='text' placeholder='Search room' />
+          <Input type='text' placeholder='Search room or building' />
         </InputGroup>
       </Flex>
 
       <Grid templateColumns='repeat(5, 1fr)' gap={4}>
         {[...Array(20)].map((value, index) => (
-          <Link href='/buildings/building-a1/room-123'>
+          <Link href='/user/buildings/building-a1'>
             <GridItem colSpan={1}>
               <Tooltip hasArrow label="Hey, I'm here!" aria-label='A tooltip'>
                 <Flex
@@ -75,9 +67,9 @@ export default function BuildingDetail() {
                     backgroundColor: hoverBgColor,
                     borderColor: hoverBgColor,
                   }}>
-                  <Icon as={SiGoogleclassroom} fontSize='5xl' />
+                  <Icon as={BsBuilding} fontSize='5xl' />
                   <Text textAlign='center' textStyle='bold-md'>
-                    Room {index + 1}
+                    Building A{index + 1}
                   </Text>
                 </Flex>
               </Tooltip>
@@ -88,3 +80,9 @@ export default function BuildingDetail() {
     </UserDashboard>
   )
 }
+
+Building.getInitialProps = async () => ({
+  namespacesRequired: ['user-index'],
+})
+
+export default withTranslation('user-index')(Building)

@@ -3,7 +3,7 @@ import { Link } from '../../i18n'
 
 export default function Logo() {
   return (
-    <Link href='/'>
+    <Link href='/user'>
       <Flex align='center' cursor='pointer'>
         <Text
           fontSize='5xl'

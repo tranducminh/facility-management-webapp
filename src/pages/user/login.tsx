@@ -15,8 +15,8 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { TFunction } from 'next-i18next'
-import UserLayout from '../layouts/UserLayout'
-import { withTranslation } from '../../i18n'
+import UserLayout from '../../layouts/UserLayout'
+import { withTranslation } from '../../../i18n'
 
 function Login({ t }: { readonly t: TFunction }) {
   const [show, setShow] = useState(false)

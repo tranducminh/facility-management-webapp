@@ -10,7 +10,7 @@ const theme = extendTheme({
       body: {
         color: mode('#2d3748', '#ffffffeb')(props),
         fontFamily: "'Quicksand', sans-serif",
-        backgroundColor: mode('#fafafa', 'gray.800')(props),
+        backgroundColor: mode('#ffffff', 'gray.800')(props),
         fontSize: 'sm',
       },
     }),

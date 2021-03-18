@@ -20,7 +20,7 @@ import { BellIcon, UnlockIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { TFunction } from 'next-i18next'
 import { useColor } from '../../theme/useColorMode'
 import { i18n, withTranslation, Link } from '../../../i18n'
-import Logo from '../Logo'
+import Logo from '../../components/Logo'
 
 function UserHeader({ t }: { readonly t: TFunction }) {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -68,8 +68,8 @@ function UserHeader({ t }: { readonly t: TFunction }) {
             colorMode === 'light' ? (
               <MoonIcon fontSize='1.2em' />
             ) : (
-                <SunIcon fontSize='1.2em' />
-              )
+              <SunIcon fontSize='1.2em' />
+            )
           }
           variant='ghost'
           onClick={toggleColorMode}
@@ -82,7 +82,7 @@ function UserHeader({ t }: { readonly t: TFunction }) {
           variant='ghost'
         />
         <Button leftIcon={<UnlockIcon fontSize='14px' />} variant='ghost' color={buttonColorMode}>
-          <Link href='/login'><Text textStyle='bold-md'>{t('login')}</Text></Link>
+          <Link href='/user/login'><Text textStyle='bold-md'>{t('login')}</Text></Link>
         </Button>
       </Flex>
     </Container>

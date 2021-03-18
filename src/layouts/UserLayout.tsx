@@ -1,6 +1,6 @@
 import { Box, Container } from '@chakra-ui/react'
 import Head from 'next/head'
-import UserHeader from '../components/layouts/UserHeader'
+import UserHeader from './components/UserHeader'
 
 /* eslint-disable react/destructuring-assignment */
 export default function UserLayout(props: any) {

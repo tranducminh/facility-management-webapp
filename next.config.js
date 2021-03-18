@@ -8,4 +8,18 @@ module.exports = {
   publicRuntimeConfig: {
     localeSubpaths,
   },
+  async redirects() {
+    return [
+      {
+        source: '/../components/',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/../../components/:slug',
+        destination: '/',
+        permanent: true,
+      },
+    ]
+  },
 }

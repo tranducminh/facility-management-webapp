@@ -1,8 +1,8 @@
 import { Image, Flex, Spacer, Box, Button } from '@chakra-ui/react'
 import Head from 'next/head'
 import { TFunction } from 'next-i18next'
-import { withTranslation, Link } from '../../i18n'
-import UserLayout from '../layouts/UserLayout'
+import { withTranslation, Link } from '../../../i18n'
+import UserLayout from '../../layouts/UserLayout'
 
 function Home({ t }: { readonly t: TFunction }) {
   return (
@@ -18,7 +18,7 @@ function Home({ t }: { readonly t: TFunction }) {
           <Box fontSize='xx-large' fontWeight='medium'>
             {t('webName')}
           </Box>
-          <Link href='/buildings'>
+          <Link href='/user/buildings'>
             <Button
               variant='solid'
               fontWeight='bold'

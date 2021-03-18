@@ -3,6 +3,7 @@ import App, { AppProps, AppContext } from 'next/app'
 import { ChakraProvider, CSSReset } from '@chakra-ui/react'
 import theme from '../theme'
 import { appWithTranslation } from '../../i18n'
+import '../styles/pagination.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (

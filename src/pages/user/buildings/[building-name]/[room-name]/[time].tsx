@@ -18,13 +18,15 @@ import {
   Input,
   useDisclosure,
   Textarea,
+  Box,
 } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 import Head from 'next/head'
-import UserDashboard from '../../../../layouts/UserDashboard'
-import { Link } from '../../../../../i18n'
+import UserDashboard from '../../../../../layouts/UserDashboard'
+import { Link } from '../../../../../../i18n'
+import Timeline from '../../../../../components/Timeline'
 
-export default function Schedule() {
+export default function RoomSchedule() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -39,21 +41,21 @@ export default function Schedule() {
       <Flex mb={5} alignItems='center'>
         <Breadcrumb>
           <BreadcrumbItem>
-            <Link href='/buildings'>
+            <Link href='/user/buildings'>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Buildings</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/buildings/building-a1'>
+            <Link href='/user/buildings/building-a1'>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>A1</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/buildings/building-a1/room-123'>
+            <Link href='/user/buildings/building-a1/room-123'>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Room 123</Text>
               </BreadcrumbLink>
@@ -75,6 +77,9 @@ export default function Schedule() {
           <Text textStyle='bold-md'>New request</Text>
         </Button>
       </Flex>
+      <Box>
+        <Timeline />
+      </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

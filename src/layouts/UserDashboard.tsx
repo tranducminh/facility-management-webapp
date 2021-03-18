@@ -11,7 +11,7 @@ import Head from 'next/head'
 import { SiGoogleclassroom } from 'react-icons/si'
 import { BsTools } from 'react-icons/bs'
 import { GoGitPullRequest } from 'react-icons/go'
-import UserHeader from '../components/layouts/UserHeader'
+import UserHeader from './components/UserHeader'
 import { Link } from '../../i18n'
 import { useColor } from '../theme/useColorMode'
 
@@ -33,7 +33,7 @@ export default function UserDashboard(props: any) {
               // minH='100vh'
               borderRightWidth='1px'
               borderRightColor='gray.100'>
-              <Link href='/buildings'>
+              <Link href='/user/buildings'>
                 <LinkBox
                   py={2}
                   px={6}
@@ -57,7 +57,7 @@ export default function UserDashboard(props: any) {
                   </Grid>
                 </LinkBox>
               </Link>
-              <Link href='/facilities'>
+              <Link href='/user/facilities'>
                 <LinkBox
                   py={2}
                   px={6}
@@ -81,7 +81,7 @@ export default function UserDashboard(props: any) {
                   </Grid>
                 </LinkBox>
               </Link>
-              <Link href='/requests'>
+              <Link href='/user/requests'>
                 <LinkBox
                   py={2}
                   px={6}
