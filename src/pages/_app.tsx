@@ -4,6 +4,9 @@ import { ChakraProvider, CSSReset } from '@chakra-ui/react'
 import theme from '../theme'
 import { appWithTranslation } from '../../i18n'
 import '../styles/pagination.css'
+import 'react-dates/initialize'
+import 'react-dates/lib/css/_datepicker.css'
+import '../styles/date-picker-custom.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (

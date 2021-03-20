@@ -20,9 +20,9 @@ import { BellIcon, UnlockIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { TFunction } from 'next-i18next'
 import { useColor } from '../../theme/useColorMode'
 import { i18n, withTranslation, Link } from '../../../i18n'
-import Logo from '../../components/Logo'
+import ManagerLogo from '../../components/ManagerLogo'
 
-function UserHeader({ t }: { readonly t: TFunction }) {
+function ManagerHeader({ t }: { readonly t: TFunction }) {
   const { colorMode, toggleColorMode } = useColorMode()
   const { buttonColorMode } = useColor()
   const borderColor = useColorModeValue('gray.100', 'gray.900')
@@ -30,7 +30,7 @@ function UserHeader({ t }: { readonly t: TFunction }) {
     <Container maxW='100%' centerContent borderBottomWidth='1px' borderBottomColor={borderColor}>
       <Flex w='85%' align='center'>
         <Box>
-          <Logo />
+          <ManagerLogo />
         </Box>
         <Spacer />
         <Menu>
@@ -87,8 +87,8 @@ function UserHeader({ t }: { readonly t: TFunction }) {
   )
 }
 
-UserHeader.getInitialProps = async () => ({
+ManagerHeader.getInitialProps = async () => ({
   namespacesRequired: ['header'],
 })
 
-export default withTranslation('header')(UserHeader)
+export default withTranslation('header')(ManagerHeader)

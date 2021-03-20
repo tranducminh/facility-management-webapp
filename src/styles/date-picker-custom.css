@@ -1,0 +1,36 @@
+.SingleDatePickerInput {
+  border: none !important;
+}
+
+.DateRangePickerInput__showClearDates {
+  padding-right: 0px !important;
+  width: 100% !important;
+}
+
+.DateRangePickerInput {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.DateRangePicker {
+  width: 100% !important;
+}
+
+.DateInput_input {
+  background-color: #1a202c !important;
+  color: #fff !important;
+  font-family: "'Quicksand', sans-serif";
+  padding: 0 !important;
+  padding-left: 10px !important;
+}
+
+.DateInput_input:hover {
+  cursor: pointer;
+}
+
+.nav-item-sticky-active {
+  padding: 1.8125rem;
+  border-bottom: 0.25rem solid #f65e39;
+  font-weight: 900;
+}

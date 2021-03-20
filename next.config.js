@@ -20,6 +20,11 @@ module.exports = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/manager',
+        destination: '/manager/rooms',
+        permanent: true,
+      },
     ]
   },
 }
