@@ -5,32 +5,24 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   Text,
-  Spacer,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  FormControl,
-  FormLabel,
-  Input,
-  useDisclosure,
-  Textarea,
   Box,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react'
-import { ArrowRightIcon } from '@chakra-ui/icons'
 import Head from 'next/head'
 import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 import ManagerDashboard from '../../../../layouts/ManagerDashboard'
 import { Link } from '../../../../../i18n'
 import Timeline from '../../../../components/Timeline'
+import FacilityItem from '../components/FacilityItem'
 
 export default function RoomSchedule() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment()
   )
@@ -54,73 +46,54 @@ export default function RoomSchedule() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            {/* <Link> */}
-            <BreadcrumbLink display='flex'>
-              <Text textStyle='bold-md'>Room 123 ~</Text>
-              <SingleDatePicker
-                date={selectedDate}
-                onDateChange={(date) => handleDateChange(date)}
-                focused={focused}
-                onFocusChange={({ focused }) => setFocused(focused)}
-                displayFormat='DD/MM/yyyy'
-                enableOutsideDays
-                isOutsideRange={() => false}
-                // minDate={moment()}
-                id='your_unique_id'
-              />
-            </BreadcrumbLink>
-            {/* </Link> */}
+            <Link href='/manager/rooms'>
+              <BreadcrumbLink display='flex'>
+                <Text textStyle='bold-md'>Room 123</Text>
+              </BreadcrumbLink>
+            </Link>
           </BreadcrumbItem>
         </Breadcrumb>
-        <Spacer />
-        <Button
-          rightIcon={<ArrowRightIcon fontSize='xs' />}
-          colorScheme='teal'
-          variant='ghost'
-          size='md'
-          onClick={onOpen}>
-          <Text textStyle='bold-md'>New request</Text>
-        </Button>
       </Flex>
       <Box>
-        <Timeline />
+        <Tabs size='md' variant='enclosed' colorScheme='teal'>
+          <TabList>
+            <Tab textStyle='bold-md'>
+              <Flex>
+                <Text textStyle='bold-md'>Schedule ~</Text>
+                <SingleDatePicker
+                  date={selectedDate}
+                  onDateChange={(date) => handleDateChange(date)}
+                  focused={focused}
+                  onFocusChange={({ focused }: { focused: boolean }) => {
+                    setFocused(focused)
+                  }}
+                  displayFormat='DD/MM/yyyy'
+                  enableOutsideDays
+                  isOutsideRange={() => false}
+                  id='room-date'
+                />
+              </Flex>
+            </Tab>
+            <Tab textStyle='bold-md'>Facilities</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <Timeline />
+            </TabPanel>
+            <TabPanel>
+              <Grid templateColumns='repeat(3, 1fr)' gap={4}>
+                {[...Array(30)].map((value, index) => (
+                  <Link href='/user/facilities/table'>
+                    <GridItem colSpan={1}>
+                      <FacilityItem />
+                    </GridItem>
+                  </Link>
+                ))}
+              </Grid>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Box>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>21-11-1999</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Time start</FormLabel>
-              <Input
-                colorScheme='teal'
-                type='time'
-                min='08:00'
-                placeholder='First name'
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Time end</FormLabel>
-              <Input type='time' placeholder='First name' />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Reason</FormLabel>
-              <Textarea placeholder='Reason' />
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3}>
-              Save
-            </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </ManagerDashboard>
   )
 }

@@ -11,10 +11,6 @@ import {
   Box,
   HStack,
   Text,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -22,6 +18,10 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  Flex,
   Grid,
   GridItem,
   useDisclosure,
@@ -33,8 +33,14 @@ import {
 } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 
-export default function RejectRequest() {
+export default function ExpiredRequest() {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenContact,
+    onOpen: onOpenContact,
+    onClose: onCloseContact,
+  } = useDisclosure()
+
   return (
     <div>
       <Flex justifyContent='flex-end' mb={5}>
@@ -53,6 +59,7 @@ export default function RejectRequest() {
             </Th>
             <Th>Facility</Th>
             <Th>Time</Th>
+            <Th textAlign='center'>Quantity</Th>
             <Th>Status</Th>
             <Th isNumeric>Actions</Th>
           </Tr>
@@ -63,10 +70,11 @@ export default function RejectRequest() {
               <Td>211196</Td>
               <Td>Room A01</Td>
               <Td>21/11/2021 8:00 - 15:00</Td>
+              <Td textAlign='center'>{index + 1}</Td>
               <Td>
                 <HStack spacing={4}>
                   <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Rejected
+                    Expired
                   </Tag>
                 </HStack>
               </Td>
@@ -85,6 +93,7 @@ export default function RejectRequest() {
             </Th>
             <Th>Facility</Th>
             <Th>Time</Th>
+            <Th>Quantity</Th>
             <Th>Status</Th>
             <Th isNumeric>Actions</Th>
           </Tr>
@@ -163,7 +172,7 @@ export default function RejectRequest() {
               <GridItem colStart={6} colEnd={12}>
                 <HStack spacing={4}>
                   <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Rejected
+                    Expired
                   </Tag>
                 </HStack>
               </GridItem>
@@ -175,7 +184,61 @@ export default function RejectRequest() {
               Close
             </Button>
             <Button colorScheme='teal' mr={3} onClick={onClose}>
-              Approve
+              Done
+            </Button>
+            <Button colorScheme='blue' mr={3} onClick={onOpenContact}>
+              Contact
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenContact} size='lg' onClose={onCloseContact}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Contact detail</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Grid templateColumns='repeat(12, 1fr)' gap={15}>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>ID</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>#211199</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Name</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>Nguyễn Thị Hương Trà</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Role</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>Student</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Email</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>huongtrauet@gmail.com</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Phone number</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>0972403331</Text>
+              </GridItem>
+            </Grid>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='gray' mr={3} onClick={onCloseContact}>
+              Close
+            </Button>
+            <Button colorScheme='blue' mr={3} onClick={onCloseContact}>
+              Send mail to remind
             </Button>
           </ModalFooter>
         </ModalContent>

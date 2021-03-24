@@ -18,9 +18,19 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  Flex,
+  Grid,
+  GridItem,
   useDisclosure,
 } from '@chakra-ui/react'
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Search2Icon,
+} from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 
 export default function ApproveRequest() {
@@ -28,6 +38,14 @@ export default function ApproveRequest() {
 
   return (
     <div>
+      <Flex justifyContent='flex-end' mb={5}>
+        <InputGroup maxW='30%'>
+          <InputLeftElement pointerEvents='none'>
+            <Search2Icon color='gray.300' />
+          </InputLeftElement>
+          <Input type='text' placeholder='Search request id' />
+        </InputGroup>
+      </Flex>
       <Table variant='simple'>
         <Thead>
           <Tr>
@@ -54,8 +72,8 @@ export default function ApproveRequest() {
                     size='sm'
                     key='status'
                     variant='solid'
-                    colorScheme={index % 2 === 0 ? 'teal' : 'yellow'}>
-                    {index % 2 === 0 ? 'Approved' : 'Pending'}
+                    colorScheme='teal'>
+                    Approved
                   </Tag>
                 </HStack>
               </Td>
@@ -98,18 +116,76 @@ export default function ApproveRequest() {
         />
       </Box>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>#211196</ModalHeader>
           <ModalCloseButton />
-          <ModalBody />
+          <ModalBody>
+            <Grid templateColumns='repeat(12, 1fr)' gap={15}>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Requester ID</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>#211199</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Requester name</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>Nguyễn Thị Hương Trà</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Role</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>Student</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Facility</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>Room A01</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Time start</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>21/11/2021 8:00</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Time end</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>21/11/2021 15:00</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Reason</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <Text>thich thi muon phong thoi co duoc khoong</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={6}>
+                <Text textStyle='bold-md'>Status</Text>
+              </GridItem>
+              <GridItem colStart={6} colEnd={12}>
+                <HStack spacing={4}>
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='teal'>
+                    Approved
+                  </Tag>
+                </HStack>
+              </GridItem>
+            </Grid>
+          </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
+            <Button colorScheme='gray' mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

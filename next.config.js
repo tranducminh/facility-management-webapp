@@ -11,13 +11,13 @@ module.exports = {
   async redirects() {
     return [
       {
-        source: '/../components/',
-        destination: '/',
+        source: '/user/:slug/components/:slug',
+        destination: '/user',
         permanent: true,
       },
       {
-        source: '/../../components/:slug',
-        destination: '/',
+        source: '/manager/:slug/components/:slug',
+        destination: '/manager',
         permanent: true,
       },
       {

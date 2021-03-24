@@ -11,10 +11,6 @@ import {
   Box,
   HStack,
   Text,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -22,22 +18,46 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  Flex,
   Grid,
   GridItem,
   useDisclosure,
 } from '@chakra-ui/react'
+import { useState } from 'react'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Search2Icon,
 } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
+import { SingleDatePicker } from 'react-dates'
+import moment from 'moment'
 
-export default function RejectRequest() {
+export default function RequestByDate() {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
+    moment()
+  )
+  const [focused, setFocused] = useState<boolean>(false)
+
   return (
     <div>
-      <Flex justifyContent='flex-end' mb={5}>
+      <Flex justifyContent='space-between' alignItems='center' mb={5}>
+        <SingleDatePicker
+          date={selectedDate}
+          onDateChange={(date) => handleDateChange(date)}
+          focused={focused}
+          onFocusChange={({ focused }: { focused: boolean }) => {
+            setFocused(focused)
+          }}
+          displayFormat='DD/MM/yyyy'
+          enableOutsideDays
+          isOutsideRange={() => false}
+          id='room-date'
+        />
         <InputGroup maxW='30%'>
           <InputLeftElement pointerEvents='none'>
             <Search2Icon color='gray.300' />
@@ -53,6 +73,7 @@ export default function RejectRequest() {
             </Th>
             <Th>Facility</Th>
             <Th>Time</Th>
+            <Th textAlign='center'>Quantity</Th>
             <Th>Status</Th>
             <Th isNumeric>Actions</Th>
           </Tr>
@@ -63,10 +84,15 @@ export default function RejectRequest() {
               <Td>211196</Td>
               <Td>Room A01</Td>
               <Td>21/11/2021 8:00 - 15:00</Td>
+              <Td textAlign='center'>{index + 1}</Td>
               <Td>
                 <HStack spacing={4}>
-                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Rejected
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='teal'>
+                    Approved
                   </Tag>
                 </HStack>
               </Td>
@@ -85,6 +111,7 @@ export default function RejectRequest() {
             </Th>
             <Th>Facility</Th>
             <Th>Time</Th>
+            <Th>Quantity</Th>
             <Th>Status</Th>
             <Th isNumeric>Actions</Th>
           </Tr>
@@ -162,8 +189,12 @@ export default function RejectRequest() {
               </GridItem>
               <GridItem colStart={6} colEnd={12}>
                 <HStack spacing={4}>
-                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Rejected
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='teal'>
+                    Approved
                   </Tag>
                 </HStack>
               </GridItem>
@@ -175,7 +206,7 @@ export default function RejectRequest() {
               Close
             </Button>
             <Button colorScheme='teal' mr={3} onClick={onClose}>
-              Approve
+              Done
             </Button>
           </ModalFooter>
         </ModalContent>

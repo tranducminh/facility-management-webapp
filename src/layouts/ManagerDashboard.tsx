@@ -36,7 +36,7 @@ export default function ManagerDashboard(props: any) {
               <Link href='/manager/rooms'>
                 <LinkBox
                   py={2}
-                  px={6}
+                  px={4}
                   mb={4}
                   cursor='pointer'
                   color={props.isRoom ? hoverTextColor : ''}
@@ -57,34 +57,10 @@ export default function ManagerDashboard(props: any) {
                   </Grid>
                 </LinkBox>
               </Link>
-              <Link href='/manager/facilities'>
-                <LinkBox
-                  py={2}
-                  px={6}
-                  mb={4}
-                  cursor='pointer'
-                  borderRadius='0.5em'
-                  color={props.isFacility ? hoverTextColor : ''}
-                  backgroundColor={props.isFacility ? selectBgColor : ''}
-                  _hover={{
-                    color: hoverTextColor,
-                    backgroundColor: hoverBgColor,
-                    borderRadius: '0.5em',
-                  }}>
-                  <Grid templateColumns='repeat(5, 1fr)' gap={4}>
-                    <GridItem colSpan={1}>
-                      <Icon as={BsTools} fontSize='1.2em' />
-                    </GridItem>
-                    <GridItem colSpan={4}>
-                      <Text fontWeight='bold'>Facility</Text>
-                    </GridItem>
-                  </Grid>
-                </LinkBox>
-              </Link>
               <Link href='/manager/requests'>
                 <LinkBox
                   py={2}
-                  px={6}
+                  px={4}
                   mb={4}
                   cursor='pointer'
                   borderRadius='0.5em'
@@ -100,7 +76,31 @@ export default function ManagerDashboard(props: any) {
                       <Icon as={GoGitPullRequest} fontSize='1.2em' />
                     </GridItem>
                     <GridItem colSpan={4}>
-                      <Text fontWeight='bold'>My request</Text>
+                      <Text fontWeight='bold'>Requests</Text>
+                    </GridItem>
+                  </Grid>
+                </LinkBox>
+              </Link>
+              <Link href='/manager/pending-facilities'>
+                <LinkBox
+                  py={2}
+                  px={4}
+                  mb={4}
+                  cursor='pointer'
+                  borderRadius='0.5em'
+                  color={props.isPendingFacility ? hoverTextColor : ''}
+                  backgroundColor={props.isPendingFacility ? selectBgColor : ''}
+                  _hover={{
+                    color: hoverTextColor,
+                    backgroundColor: hoverBgColor,
+                    borderRadius: '0.5em',
+                  }}>
+                  <Grid templateColumns='repeat(5, 1fr)' gap={4}>
+                    <GridItem colSpan={1}>
+                      <Icon as={GoGitPullRequest} fontSize='1.2em' />
+                    </GridItem>
+                    <GridItem colSpan={4}>
+                      <Text fontWeight='bold'>Pending facilities</Text>
                     </GridItem>
                   </Grid>
                 </LinkBox>

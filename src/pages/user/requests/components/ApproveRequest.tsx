@@ -18,6 +18,8 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Grid,
+  GridItem,
   useDisclosure,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
@@ -101,15 +103,61 @@ export default function ApproveRequest() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>#211196</ModalHeader>
           <ModalCloseButton />
-          <ModalBody />
+          <ModalBody>
+            <Grid templateColumns='repeat(10, 1fr)' gap={15}>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>ID</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>#211196</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Facility</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>Room A01</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Time start</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>21/11/2021 8:00</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Time end</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>21/11/2021 15:00</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Reason</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>thich thi muon phong thoi co duoc khoong</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Status</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <HStack spacing={4}>
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='teal'>
+                    Approved
+                  </Tag>
+                </HStack>
+              </GridItem>
+            </Grid>
+          </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
+            <Button colorScheme='gray' mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

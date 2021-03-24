@@ -11,11 +11,22 @@ import {
   Box,
   HStack,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Grid,
+  GridItem,
+  useDisclosure,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 
 export default function RejectRequest() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <div>
       <Table variant='simple'>
@@ -48,7 +59,7 @@ export default function RejectRequest() {
                 </HStack>
               </Td>
               <Td isNumeric>
-                <Button colorScheme='teal' variant='ghost'>
+                <Button colorScheme='teal' variant='ghost' onClick={onOpen}>
                   Show
                 </Button>
               </Td>
@@ -84,6 +95,70 @@ export default function RejectRequest() {
           activeClassName='active'
         />
       </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>#211196</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Grid templateColumns='repeat(10, 1fr)' gap={15}>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>ID</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>#211196</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Facility</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>Room A01</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Time start</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>21/11/2021 8:00</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Time end</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>21/11/2021 15:00</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Reason</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>thich thi muon phong thoi co duoc khoong</Text>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Status</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <HStack spacing={4}>
+                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                    Rejected
+                  </Tag>
+                </HStack>
+              </GridItem>
+              <GridItem colStart={2} colEnd={5}>
+                <Text textStyle='bold-md'>Reject reason</Text>
+              </GridItem>
+              <GridItem colStart={5} colEnd={10}>
+                <Text>Khong thich cho muon day</Text>
+              </GridItem>
+            </Grid>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='gray' mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
