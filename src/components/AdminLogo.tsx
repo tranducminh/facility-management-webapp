@@ -1,9 +1,9 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { Link } from '../../i18n'
 
-export default function Logo() {
+export default function AdminLogo() {
   return (
-    <Link href='/employee'>
+    <Link href='/admin'>
       <Flex align='center' cursor='pointer'>
         <Text
           fontSize='5xl'
@@ -16,7 +16,10 @@ export default function Logo() {
           acility
         </Text>
         <Text fontSize='3xl' fontWeight='black'>
-          system
+          system |
+        </Text>
+        <Text fontSize='3xl' fontWeight='black' color='#319795'>
+          | Admin
         </Text>
       </Flex>
     </Link>

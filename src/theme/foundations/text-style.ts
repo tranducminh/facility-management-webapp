@@ -1,11 +1,15 @@
 export default {
   normal: {
-    fontSize: '15px',
-    size: '15px',
+    fontSize: 'sm',
+    size: 'sm',
     fontWeight: 'medium',
   },
+  'bold-xs': {
+    fontSize: 'xs',
+    fontWeight: 'bold',
+  },
   'bold-sm': {
-    fontSize: '15px',
+    fontSize: 'sm',
     fontWeight: 'bold',
   },
   'bold-md': {
@@ -14,6 +18,14 @@ export default {
   },
   'bold-xl': {
     fontSize: 'xl',
+    fontWeight: 'bold',
+  },
+  'bold-2xl': {
+    fontSize: '2xl',
+    fontWeight: 'bold',
+  },
+  'bold-3xl': {
+    fontSize: '3xl',
     fontWeight: 'bold',
   },
 }

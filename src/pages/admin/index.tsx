@@ -1,6 +1,6 @@
-import { Button } from '@chakra-ui/react'
+import AdminDashboard from '../../layouts/AdminDashboard'
 
 const index = () => {
-  return <Button colorScheme='teal'>Button</Button>
+  return <AdminDashboard />
 }
 export default index

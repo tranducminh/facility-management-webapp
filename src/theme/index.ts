@@ -1,6 +1,7 @@
 import { extendTheme, theme as defaultTheme } from '@chakra-ui/react'
 import { mode } from '@chakra-ui/theme-tools'
 import Button from './components/button'
+import Popover from './components/popover'
 import textStyles from './foundations/text-style'
 
 const theme = extendTheme({
@@ -12,6 +13,7 @@ const theme = extendTheme({
         fontFamily: "'Quicksand', sans-serif",
         backgroundColor: mode('#ffffff', 'gray.800')(props),
         fontSize: 'sm',
+        fontWeight: 'medium',
       },
     }),
   },
@@ -24,6 +26,7 @@ const theme = extendTheme({
   textStyles,
   components: {
     Button,
+    Popover,
   },
 })
 

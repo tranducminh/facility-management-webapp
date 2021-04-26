@@ -77,7 +77,7 @@ const TimelineContent = () => (
         lineHeight='tight'
         isTruncated
         fontSize='md'>
-        Sinh nhật bạn yêu
+        Hoạt động ngoại khóa
       </Box>
     </Box>
   </Box>
