@@ -61,9 +61,19 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             textTransform='uppercase'>
             #{facility.id}
           </Box>
-          <Badge borderRadius='full' colorScheme='teal'>
-            {facility.facilityType?.name}
-          </Badge>
+          {facility.facilityType?.name === 'printer' ? (
+            <Badge borderRadius='full' colorScheme='teal'>
+              Máy in
+            </Badge>
+          ) : facility.facilityType?.name === 'computer' ? (
+            <Badge borderRadius='full' colorScheme='teal'>
+              Máy tính
+            </Badge>
+          ) : facility.facilityType?.name === 'fax' ? (
+            <Badge borderRadius='full' colorScheme='teal'>
+              Máy fax
+            </Badge>
+          ) : null}
         </Box>
 
         <Box lineHeight='tight'>

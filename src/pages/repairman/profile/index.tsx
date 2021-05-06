@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Flex,
   Breadcrumb,
@@ -22,12 +22,48 @@ import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import { Link } from '../../../../i18n'
+import axios from '../../../utils/axios'
+import { REPAIRMAN } from '../../../types'
 
 export default function RepairmanDetail() {
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment()
   )
+  const [repairman, setRepairman] = useState<REPAIRMAN>({})
+  const [isCheckComputer, setIsCheckComputer] = useState<boolean>(false)
+  const [computerDescription, setComputerDescription] = useState<string>('')
+  const [isCheckPrinter, setIsCheckPrinter] = useState<boolean>(false)
+  const [printerDescription, setPrinterDescription] = useState<string>('')
+  const [isCheckFax, setIsCheckFax] = useState<boolean>(false)
+  const [faxDescription, setFaxDescription] = useState<string>('')
+
+  useEffect(() => {
+    axios.get('/repairman/me').then((response) => {
+      setRepairman(response.data.repairman)
+      response.data.repairman.specializes?.forEach((specialize) => {
+        switch (specialize.facilityType?.name) {
+          case 'computer':
+            setIsCheckComputer(true)
+            setComputerDescription(specialize.description || '')
+            break
+          case 'printer':
+            setIsCheckPrinter(true)
+            setPrinterDescription(specialize.description || '')
+            break
+          case 'fax':
+            debugger
+            setIsCheckFax(true)
+            setFaxDescription(specialize.description || '')
+            break
+
+          default:
+            break
+        }
+      })
+    })
+  }, [])
+
   return (
     <RepairmanDashboard isProfile>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -35,7 +71,7 @@ export default function RepairmanDetail() {
           <BreadcrumbItem>
             <Link href='/repairman/profile'>
               <BreadcrumbLink>
-                <Text textStyle='bold-md'>Profile</Text>
+                <Text textStyle='bold-md'>Thông tin cá nhân</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
@@ -44,19 +80,19 @@ export default function RepairmanDetail() {
       <Grid templateColumns='repeat(5, 1fr)' gap={4}>
         <GridItem colSpan={3}>
           <FormControl id='identity'>
-            <FormLabel>Identity</FormLabel>
-            <Input type='text' value='#211196' disabled />
+            <FormLabel>Mã nhân viên</FormLabel>
+            <Input type='text' value={repairman.identity} disabled />
           </FormControl>
           <FormControl id='name' mt='5'>
-            <FormLabel>Name</FormLabel>
-            <Input type='text' value='Tran Duc Minh' disabled />
+            <FormLabel>Tên</FormLabel>
+            <Input type='text' value={repairman.name} disabled />
           </FormControl>
           <FormControl id='unit' mt='5'>
-            <FormLabel>Unit</FormLabel>
-            <Input type='text' value='' disabled />
+            <FormLabel>Đơn vị</FormLabel>
+            <Input type='text' value={repairman.unit} disabled />
           </FormControl>
           <FormControl id='date_of_birth' mt='5'>
-            <FormLabel>Date of birth</FormLabel>
+            <FormLabel>Ngày sinh</FormLabel>
             <SingleDatePicker
               date={selectedDate}
               onDateChange={(date) => handleDateChange(date)}
@@ -73,35 +109,35 @@ export default function RepairmanDetail() {
           </FormControl>
           <FormControl id='email' mt='5'>
             <FormLabel>Email</FormLabel>
-            <Input type='email' value='ducminh@gmail.com' />
+            <Input type='email' value={repairman.email} />
           </FormControl>
           <FormControl id='phone' mt='5'>
-            <FormLabel>Phone</FormLabel>
-            <Input type='text' value='0968168302' />
+            <FormLabel>Số điện thoại</FormLabel>
+            <Input type='text' value={repairman.phone} />
           </FormControl>
           <FormControl id='phone' mt='5'>
-            <FormLabel>Specialize</FormLabel>
+            <FormLabel>Chuyên môn</FormLabel>
             <Box pl='5'>
-              <Checkbox defaultIsChecked colorScheme='teal'>
-                <Text textStyle='bold-sm'>Computer</Text>
+              <Checkbox isChecked={isCheckComputer} colorScheme='teal'>
+                <Text textStyle='bold-sm' value={computerDescription}>
+                  Máy tính
+                </Text>
               </Checkbox>
               <Textarea mt='1' placeholder='Here is a sample placeholder' />
             </Box>
             <Box pl='5' mt='4'>
-              <Checkbox defaultIsChecked colorScheme='teal'>
-                <Text textStyle='bold-sm'>Printer</Text>
+              <Checkbox isChecked={isCheckPrinter} colorScheme='teal'>
+                <Text textStyle='bold-sm' value={printerDescription}>
+                  Máy in
+                </Text>
               </Checkbox>
               <Textarea mt='1' placeholder='Here is a sample placeholder' />
             </Box>
             <Box pl='5' mt='4'>
-              <Checkbox defaultIsChecked colorScheme='teal'>
-                <Text textStyle='bold-sm'>Fax</Text>
-              </Checkbox>
-              <Textarea mt='1' placeholder='Here is a sample placeholder' />
-            </Box>
-            <Box pl='5' mt='4'>
-              <Checkbox defaultIsChecked colorScheme='teal'>
-                <Text textStyle='bold-sm'>Router</Text>
+              <Checkbox isChecked={isCheckFax} colorScheme='teal'>
+                <Text textStyle='bold-sm' value={faxDescription}>
+                  Máy fax
+                </Text>
               </Checkbox>
               <Textarea mt='1' placeholder='Here is a sample placeholder' />
             </Box>

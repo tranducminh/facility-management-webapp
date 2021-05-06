@@ -1,15 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-nested-ternary */
-import {
-  Box,
-  Text,
-  Grid,
-  GridItem,
-  Divider,
-  Flex,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Box, Text, Grid, GridItem, Divider, Flex } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 import { useEffect, useState } from 'react'
 import {
@@ -19,7 +11,6 @@ import {
   REPLACEMENT,
   REQUEST,
 } from '../../../../types'
-import axios from '../../../../utils/axios'
 
 export default function TaskDetail({
   history = {},

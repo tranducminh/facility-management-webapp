@@ -38,7 +38,6 @@ export default function RepairmanDetail({
 
   useEffect(() => {
     repairman.specializes?.forEach((specialize) => {
-      debugger
       switch (specialize.facilityType?.name) {
         case 'computer':
           setIsCheckComputer(true)
@@ -68,19 +67,19 @@ export default function RepairmanDetail({
     <Grid templateColumns='repeat(5, 1fr)' gap={4}>
       <GridItem colSpan={3}>
         <FormControl id='identity'>
-          <FormLabel>Identity</FormLabel>
+          <FormLabel>Mã nhân viên</FormLabel>
           <Input type='text' value={repairman.identity} />
         </FormControl>
         <FormControl id='name' mt='5'>
-          <FormLabel>Name</FormLabel>
+          <FormLabel>Tên</FormLabel>
           <Input type='text' value={repairman.name} />
         </FormControl>
         <FormControl id='unit' mt='5'>
-          <FormLabel>Unit</FormLabel>
+          <FormLabel>Đơn vị</FormLabel>
           <Input type='text' value={repairman.unit} />
         </FormControl>
         <FormControl id='date_of_birth' mt='5'>
-          <FormLabel>Date of birth</FormLabel>
+          <FormLabel>Ngày sinh</FormLabel>
           <SingleDatePicker
             date={selectedDate}
             onDateChange={(date) => handleDateChange(date)}
@@ -100,47 +99,39 @@ export default function RepairmanDetail({
           <Input type='email' value='ducminh@gmail.com' />
         </FormControl>
         <FormControl id='phone' mt='5'>
-          <FormLabel>Phone</FormLabel>
+          <FormLabel>Số điện thoại</FormLabel>
           <Input type='text' value={repairman.phone} />
         </FormControl>
         <FormControl id='phone' mt='5'>
-          <FormLabel>Specialize</FormLabel>
+          <FormLabel>Chuyên môn</FormLabel>
           <Box pl='5'>
             <Checkbox isChecked={isCheckComputer} colorScheme='teal'>
               <Text textStyle='bold-sm' value={computerDescription}>
-                Computer
+                Máy tính
               </Text>
             </Checkbox>
-            <Textarea mt='1' placeholder='Here is a sample placeholder' />
+            <Textarea mt='1' placeholder='Mô tả' />
           </Box>
           <Box pl='5' mt='4'>
             <Checkbox isChecked={isCheckPrinter} colorScheme='teal'>
               <Text textStyle='bold-sm' value={printerDescription}>
-                Printer
+                Máy in
               </Text>
             </Checkbox>
-            <Textarea mt='1' placeholder='Here is a sample placeholder' />
+            <Textarea mt='1' placeholder='Mô tả' />
           </Box>
           <Box pl='5' mt='4'>
             <Checkbox isChecked={isCheckFax} colorScheme='teal'>
               <Text textStyle='bold-sm' value={faxDescription}>
-                Fax
+                Máy fax
               </Text>
             </Checkbox>
-            <Textarea mt='1' placeholder='Here is a sample placeholder' />
-          </Box>
-          <Box pl='5' mt='4'>
-            <Checkbox isChecked={isCheckNode} colorScheme='teal'>
-              <Text textStyle='bold-sm' value={nodeDescription}>
-                Node
-              </Text>
-            </Checkbox>
-            <Textarea mt='1' placeholder='Here is a sample placeholder' />
+            <Textarea mt='1' placeholder='Mổ tả' />
           </Box>
         </FormControl>
 
         <Button colorScheme='teal' size='sm' my='5' float='right'>
-          Save changes
+          Cập nhật thông tin
         </Button>
       </GridItem>
       <GridItem colSpan={2}>
@@ -158,7 +149,7 @@ export default function RepairmanDetail({
             variant='outline'
             leftIcon={<EditIcon />}
             colorScheme='teal'>
-            Edit
+            Chỉnh sửa
           </Button>
         </Center>
       </GridItem>

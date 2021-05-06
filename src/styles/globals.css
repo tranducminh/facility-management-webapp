@@ -18,3 +18,19 @@ a {
 .scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: #bebebe;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d6d6d6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #838383;
+}

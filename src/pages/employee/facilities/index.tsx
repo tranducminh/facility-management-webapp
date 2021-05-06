@@ -58,7 +58,7 @@ export default function Facility() {
           <InputLeftElement pointerEvents='none'>
             <Search2Icon color='gray.300' />
           </InputLeftElement>
-          <Input type='text' placeholder='Search facility' />
+          <Input type='text' placeholder='Tìm kiếm thiết bị' />
         </InputGroup>
       </Flex>
 

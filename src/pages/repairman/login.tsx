@@ -17,10 +17,9 @@ import { useState, useEffect } from 'react'
 import { TFunction } from 'next-i18next'
 import { useRouter } from 'next/router'
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux'
-import EmployeeLayout from '../../layouts/EmployeeLayout'
+import RepairmanLayout from '../../layouts/EmployeeLayout'
 import { withTranslation } from '../../../i18n'
-import axios from '../../utils/axios'
-import { loginEmployee } from '../../redux/actions/auth.action'
+import { loginRepairman } from '../../redux/actions/auth.action'
 
 function Login({ t }: { readonly t: TFunction }) {
   const dispatch = useDispatch()
@@ -33,17 +32,17 @@ function Login({ t }: { readonly t: TFunction }) {
   const handleClick = () => setShow(!show)
 
   const onHandleLogin = () => {
-    dispatch(loginEmployee({ identity, password }))
+    dispatch(loginRepairman({ identity, password }))
   }
 
   useEffect(() => {
     if (auth.isAuth) {
-      router.push('/employee/facilities')
+      router.push('/repairman/tasks')
     }
   }, [auth])
 
   return (
-    <EmployeeLayout>
+    <RepairmanLayout>
       <Head>
         <title>{t('title')}</title>
       </Head>
@@ -51,11 +50,8 @@ function Login({ t }: { readonly t: TFunction }) {
         <Image src='/assets/images/login_img_1.svg' maxW='30%' />
         <Spacer />
         <Box maxW='30%'>
-          <Text fontSize='3xl' fontWeight='bold'>
-            Chào mừng đến với
-          </Text>
           <Text fontSize='3xl' fontWeight='bold' mb={10}>
-            Hệ thống quản lý cơ sở vật chất
+            Chào mừng đến với hệ thống quản lý cơ sở vật chất
           </Text>
           <FormControl id='email' isRequired mt={5}>
             <FormLabel fontSize='sm'>Mã nhân viên</FormLabel>
@@ -79,7 +75,7 @@ function Login({ t }: { readonly t: TFunction }) {
               />
               <InputRightElement width='4.5rem'>
                 <Button h='1.75rem' size='xs' onClick={handleClick}>
-                  {show ? 'Ẩn' : 'Hiển thị'}
+                  {show ? 'Hide' : 'Show'}
                 </Button>
               </InputRightElement>
             </InputGroup>
@@ -103,7 +99,7 @@ function Login({ t }: { readonly t: TFunction }) {
         <Spacer />
         <Image src='/assets/images/login_img_2.svg' maxW='30%' />
       </Flex>
-    </EmployeeLayout>
+    </RepairmanLayout>
   )
 }
 

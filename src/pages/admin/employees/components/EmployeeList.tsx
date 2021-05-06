@@ -92,8 +92,6 @@ export default function EmployeeComponent() {
     axios
       .post('/employees', {
         identity,
-        password: identity,
-        passwordConfirmation: identity,
         name,
         unit,
         // eslint-disable-next-line radix
@@ -115,7 +113,7 @@ export default function EmployeeComponent() {
           <InputLeftElement pointerEvents='none'>
             <Search2Icon color='gray.300' />
           </InputLeftElement>
-          <Input type='text' placeholder='Search user id' />
+          <Input type='text' placeholder='Nhập mã nhân viên' />
         </InputGroup>
         <Button
           rightIcon={<ArrowRightIcon fontSize='xs' />}
@@ -175,7 +173,7 @@ export default function EmployeeComponent() {
               <Td isNumeric>
                 <Link href={`/admin/employees/${employee.identity}`}>
                   <Button colorScheme='teal' variant='ghost' size='sm'>
-                    Show
+                    Chi tiết
                   </Button>
                 </Link>
               </Td>
@@ -214,52 +212,52 @@ export default function EmployeeComponent() {
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>New employee</ModalHeader>
+          <ModalHeader>Tạo cán bộ mối</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired>
-              <FormLabel>Identity</FormLabel>
+              <FormLabel>Mã nhân viên</FormLabel>
               <Input
                 colorScheme='teal'
-                placeholder='Identity'
+                placeholder='Mã nhân viên'
                 onChange={(event) => setIdentity(event.target.value)}
               />
             </FormControl>
             <FormControl mt='3' isRequired>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Tên</FormLabel>
               <Input
                 colorScheme='teal'
-                placeholder='Name'
+                placeholder='Tên'
                 onChange={(event) => setName(event.target.value)}
               />
             </FormControl>
             <FormControl mt='3' isRequired>
-              <FormLabel>Unit</FormLabel>
+              <FormLabel>Đơn vị</FormLabel>
               <Input
                 colorScheme='teal'
-                placeholder='Unit'
+                placeholder='Đơn vị'
                 onChange={(event) => setUnit(event.target.value)}
               />
             </FormControl>
             <Grid templateColumns='repeat(2, 1fr)' gap={6}>
               <FormControl mt='3' isRequired>
-                <FormLabel>Building</FormLabel>
+                <FormLabel>Tòa nhà</FormLabel>
                 <Select
-                  placeholder='Select option'
+                  placeholder='Chọn tòa nhà'
                   onChange={(event) => {
                     setNewEmployeeBuilding(event.target.value)
                   }}>
                   {buildings.map((item: BUILDING, index: number) => (
                     <option key={index} value={item.name}>
-                      Building {item.name}
+                      Tòa nhà {item.name}
                     </option>
                   ))}
                 </Select>
               </FormControl>
               <FormControl mt='3' isRequired>
-                <FormLabel>Floor</FormLabel>
+                <FormLabel>Tầng</FormLabel>
                 <Select
-                  placeholder='Select option'
+                  placeholder='Chọn tầng'
                   onChange={(event) => {
                     setNewEmployeeFloor(event.target.value)
                   }}>
@@ -268,16 +266,16 @@ export default function EmployeeComponent() {
                     : currentBuilding.floors.map(
                       (item: FLOOR, index: number) => (
                         <option key={index} value={item.name}>
-                          Floor {item.name}
+                          Tầng {item.name}
                         </option>
                       )
                     )}
                 </Select>
               </FormControl>
               <FormControl mt='3' isRequired>
-                <FormLabel>Room</FormLabel>
+                <FormLabel>Phòng</FormLabel>
                 <Select
-                  placeholder='Select option'
+                  placeholder='Chọn phòng'
                   onChange={(event) => {
                     setNewEmployeeRoom(event.target.value)
                   }}>
@@ -285,7 +283,7 @@ export default function EmployeeComponent() {
                     ? null
                     : currentFloor.rooms.map((item: ROOM, index: number) => (
                       <option key={index} value={item.id}>
-                        Room {item.name}
+                        Phòng {item.name}
                       </option>
                     ))}
                 </Select>
@@ -294,10 +292,10 @@ export default function EmployeeComponent() {
           </ModalBody>
           <ModalFooter>
             <Button size='sm' onClick={onCloseUser} mr={3}>
-              Cancel
+              Hủy
             </Button>
             <Button size='sm' colorScheme='teal' onClick={createNewEmployee}>
-              Save
+              Tạo mới
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -127,7 +127,7 @@ export default function PendingRequestList({
           <Tr>
             <Th>ID</Th>
             <Th>Thiết bị</Th>
-            <Th>Cán bộ yêu cầu</Th>
+            {/* <Th>Cán bộ yêu cầu</Th> */}
             <Th>Vấn đề</Th>
             <Th>Trạng thái</Th>
             <Th isNumeric>Hành động</Th>
@@ -138,19 +138,23 @@ export default function PendingRequestList({
             <Tr key={index}>
               <Td>{request.id}</Td>
               <Td>
-                <Text minW='7rem' noOfLines={1} isTruncated>
-                  {request.facility?.name}
-                </Text>
+                <Box maxW='12rem' isTruncated>
+                  <Text noOfLines={1}>{request.facility?.name}</Text>
+                </Box>
               </Td>
+              {/* <Td>
+                <Box maxW='8rem' isTruncated>
+                  <Text noOfLines={1} isTruncated>
+                    {request.employee?.name}
+                  </Text>
+                </Box>
+              </Td> */}
               <Td>
-                <Text minW='7rem' noOfLines={1} isTruncated>
-                  {request.employee?.name}
-                </Text>
-              </Td>
-              <Td>
-                <Text noOfLines={1} isTruncated>
-                  {request.problem}
-                </Text>
+                <Box maxW='12rem' isTruncated>
+                  <Text noOfLines={1} isTruncated>
+                    {request.problem}
+                  </Text>
+                </Box>
               </Td>
               <Td>
                 <HStack spacing={4}>
@@ -178,12 +182,13 @@ export default function PendingRequestList({
         <Tfoot>
           <Th>ID</Th>
           <Th>Thiết bị</Th>
+          {/* <Th>Cán bộ yêu cầu</Th> */}
           <Th>Vấn đề</Th>
           <Th>Trạng thái</Th>
           <Th isNumeric>Hành động</Th>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
+      {/* <Box w='50%' mt={5} float='right'>
         <ReactPaginate
           previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
           nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
@@ -199,7 +204,7 @@ export default function PendingRequestList({
           // subContainerClassName='pages pagination'
           activeClassName='active'
         />
-      </Box>
+      </Box> */}
 
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />

@@ -73,19 +73,19 @@ export default function RoomItem({
             <GridItem colSpan={10}>
               <Flex alignItems='center'>
                 <Text textStyle='bold-sm' mr='2'>
-                  Requests:
+                  Yêu cầu:
                 </Text>
                 <Text mt='0.5' mr='1' textStyle='bold-sm'>
                   20
                 </Text>
                 <Tag colorScheme='red' size='sm' mr='5'>
-                  New
+                  Mới
                 </Tag>
                 <Text mt='0.5' mr='1' textStyle='bold-sm'>
                   10
                 </Text>
                 <Tag colorScheme='yellow' size='sm'>
-                  Processing
+                  Đang xử lý
                 </Tag>
               </Flex>
             </GridItem>
@@ -95,7 +95,7 @@ export default function RoomItem({
             <GridItem colSpan={5}>
               <Flex alignItems='center'>
                 <Text textStyle='bold-sm' mr='2'>
-                  Computer:
+                  Máy tính:
                 </Text>
                 <Text mt='0.5' mr='2' textStyle='bold-sm'>
                   20
@@ -106,7 +106,7 @@ export default function RoomItem({
             <GridItem colSpan={5}>
               <Flex alignItems='center'>
                 <Text textStyle='bold-sm' mr='2'>
-                  Printer:
+                  Máy in:
                 </Text>
                 <Text mt='0.5' mr='2' textStyle='bold-sm'>
                   5
@@ -117,7 +117,7 @@ export default function RoomItem({
             <GridItem colSpan={5}>
               <Flex alignItems='center'>
                 <Text textStyle='bold-sm' mr='2'>
-                  Ipad:
+                  Máy fax:
                 </Text>
                 <Text mt='0.5' mr='2' textStyle='bold-sm'>
                   5
@@ -128,7 +128,7 @@ export default function RoomItem({
             <GridItem colSpan={5}>
               <Flex alignItems='center'>
                 <Text textStyle='bold-sm' mr='2'>
-                  Router:
+                  Nút mạng:
                 </Text>
                 <Text mt='0.5' mr='2' textStyle='bold-sm'>
                   5
@@ -146,7 +146,7 @@ export default function RoomItem({
           pb={4}>
           <Link href='/admin/buildings/building-a1/room-101'>
             <Button size='xs' colorScheme='green'>
-              Details
+              Chi tiết
             </Button>
           </Link>
         </PopoverFooter>

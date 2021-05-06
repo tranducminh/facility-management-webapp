@@ -1,15 +1,15 @@
 import { Box, Container } from '@chakra-ui/react'
 import Head from 'next/head'
-import EmployeeHeader from './components/EmployeeHeader'
+import RepairmanHeader from './components/RepairmanHeader'
 
 /* eslint-disable react/destructuring-assignment */
-export default function EmployeeLayout(props: any) {
+export default function RepairmanLayout(props: any) {
   return (
     <Box>
       <Head>
         <link rel='icon' href='/assets/images/logo-light.png' />
       </Head>
-      <EmployeeHeader />
+      <RepairmanHeader />
       <Container maxW='100%' centerContent py={5}>
         <Box w='85%'>{props.children}</Box>
       </Container>

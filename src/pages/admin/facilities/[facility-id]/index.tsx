@@ -73,18 +73,18 @@ export default function FacilityDetail() {
       </Flex>
       <Box pl='5' pb='5'>
         <Box>
-          <Text textStyle='bold-md'>Owner information</Text>
+          <Text textStyle='bold-md'>Thông tin cán bộ bàn giao</Text>
           <Grid templateColumns='repeat(2, 1fr)' gap={9} pl='5' pt='5'>
             <GridItem colSpan={1}>
               <Grid templateColumns='repeat(3, 1fr)' gap={4}>
                 <GridItem colSpan={1}>
-                  <Text textStyle='bold-sm'>Name:</Text>
+                  <Text textStyle='bold-sm'>Tên:</Text>
                 </GridItem>
                 <GridItem colSpan={2}>
                   <Text>{employee?.name}</Text>
                 </GridItem>
                 <GridItem colSpan={1}>
-                  <Text textStyle='bold-sm'>Phone:</Text>
+                  <Text textStyle='bold-sm'>Số điện thoại:</Text>
                 </GridItem>
                 <GridItem colSpan={2}>
                   <Text>{employee?.phone}</Text>
@@ -100,13 +100,13 @@ export default function FacilityDetail() {
             <GridItem colSpan={1}>
               <Grid templateColumns='repeat(3, 1fr)' gap={4}>
                 <GridItem colSpan={1}>
-                  <Text textStyle='bold-sm'>Building:</Text>
+                  <Text textStyle='bold-sm'>Tòa nhà:</Text>
                 </GridItem>
                 <GridItem colSpan={2}>
                   <Text>{building?.name}</Text>
                 </GridItem>
                 <GridItem colSpan={1}>
-                  <Text textStyle='bold-sm'>Room:</Text>
+                  <Text textStyle='bold-sm'>Phòng:</Text>
                 </GridItem>
                 <GridItem colSpan={2}>
                   <Text>{room?.name}</Text>
@@ -119,7 +119,7 @@ export default function FacilityDetail() {
 
         {/* Facility information */}
         <Box>
-          <Text textStyle='bold-md'>Facility information</Text>
+          <Text textStyle='bold-md'>Thông tin thiết bị</Text>
           {facility?.facilityType?.name === 'computer' ? (
             <Grid templateColumns='repeat(2, 1fr)' gap={9} pl='5' pt='5'>
               <GridItem colSpan={1}>
@@ -137,31 +137,31 @@ export default function FacilityDetail() {
                     <Text>{facility.configuration?.mainboard}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Hard drive:</Text>
+                    <Text textStyle='bold-sm'>Ổ cứng:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.hardDrive}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>RAM:</Text>
+                    <Text textStyle='bold-sm'>Bộ nhớ:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.ram}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>VGA:</Text>
+                    <Text textStyle='bold-sm'>Card màn hình:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.vga}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>PSU:</Text>
+                    <Text textStyle='bold-sm'>Nguồn:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.psu}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Monitor:</Text>
+                    <Text textStyle='bold-sm'>Màn hình:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.monitor}</Text>
@@ -171,25 +171,25 @@ export default function FacilityDetail() {
               <GridItem colSpan={1}>
                 <Grid templateColumns='repeat(4, 1fr)' gap={4}>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Keyboard:</Text>
+                    <Text textStyle='bold-sm'>Bàn phím:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.keyboard}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Mouse:</Text>
+                    <Text textStyle='bold-sm'>Chuột:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.mouse}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Headphone:</Text>
+                    <Text textStyle='bold-sm'>Tai nghe:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.headPhone}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Fan case:</Text>
+                    <Text textStyle='bold-sm'>Tản nhiệt:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.fanCase}</Text>
@@ -201,7 +201,7 @@ export default function FacilityDetail() {
                     <Text>{facility.configuration?.webcam}</Text>
                   </GridItem>
                   <GridItem colSpan={1}>
-                    <Text textStyle='bold-sm'>Card reader:</Text>
+                    <Text textStyle='bold-sm'>Đầu đọc thẻ:</Text>
                   </GridItem>
                   <GridItem colSpan={3}>
                     <Text>{facility.configuration?.cardReader}</Text>

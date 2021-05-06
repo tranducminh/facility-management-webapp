@@ -137,8 +137,8 @@ export default function RepairmanComponent() {
                         return <Icon key={index_} as={FaFax} fontSize='1em' />
                       case 'printer':
                         return <Icon key={index_} as={BiPrinter} fontSize='1.2em' />
-                      case 'node':
-                        return <Icon key={index_} as={GiWifiRouter} fontSize='1.2em' />
+                      // case 'node':
+                      //   return <Icon key={index_} as={GiWifiRouter} fontSize='1.2em' />
                       default:
                         break
                     }
@@ -176,7 +176,7 @@ export default function RepairmanComponent() {
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
+      {/* <Box w='50%' mt={5} float='right'>
         <ReactPaginate
           previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
           nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
@@ -192,16 +192,16 @@ export default function RepairmanComponent() {
           // subContainerClassName='pages pagination'
           activeClassName='active'
         />
-      </Box>
+      </Box> */}
 
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>New repairman</ModalHeader>
+          <ModalHeader>Tạo kỹ thuật viên mới</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired>
-              <FormLabel>Identity</FormLabel>
+              <FormLabel>Mã nhân viên</FormLabel>
               <Input
                 colorScheme='teal'
                 placeholder='Identity'
@@ -209,7 +209,7 @@ export default function RepairmanComponent() {
               />
             </FormControl>
             <FormControl mt='3' isRequired>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Tên</FormLabel>
               <Input
                 colorScheme='teal'
                 placeholder='Name'
@@ -217,7 +217,7 @@ export default function RepairmanComponent() {
               />
             </FormControl>
             <FormControl mt='3' isRequired>
-              <FormLabel>Unit</FormLabel>
+              <FormLabel>Đơn vị</FormLabel>
               <Input
                 colorScheme='teal'
                 placeholder='Unit'
@@ -225,7 +225,7 @@ export default function RepairmanComponent() {
               />
             </FormControl>
             <FormControl mt='3' isRequired>
-              <FormLabel>Specialize</FormLabel>
+              <FormLabel>Chuyên môn</FormLabel>
               <Checkbox
                 isChecked={allChecked}
                 isIndeterminate={isIndeterminate}
@@ -238,7 +238,7 @@ export default function RepairmanComponent() {
                   ])
                 }}
                 colorScheme='teal'>
-                All
+                Tất cả
               </Checkbox>
               <Flex pl={6} mt={1} spacing={1} justifyContent='space-around'>
                 <Checkbox
@@ -252,7 +252,7 @@ export default function RepairmanComponent() {
                     ])
                   }}
                   colorScheme='teal'>
-                  Computer
+                  Máy tính
                 </Checkbox>
                 <Checkbox
                   isChecked={checkedItems[1]}
@@ -265,7 +265,7 @@ export default function RepairmanComponent() {
                     ])
                   }}
                   colorScheme='teal'>
-                  Printer
+                  Máy in
                 </Checkbox>
                 <Checkbox
                   isChecked={checkedItems[2]}
@@ -278,9 +278,9 @@ export default function RepairmanComponent() {
                     ])
                   }}
                   colorScheme='teal'>
-                  Fax
+                  Máy fax
                 </Checkbox>
-                <Checkbox
+                {/* <Checkbox
                   isChecked={checkedItems[3]}
                   onChange={(e) => {
                     setCheckedItems([
@@ -292,16 +292,16 @@ export default function RepairmanComponent() {
                   }}
                   colorScheme='teal'>
                   Node
-                </Checkbox>
+                </Checkbox> */}
               </Flex>
             </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button size='sm' onClick={onCloseUser} mr={3}>
-              Cancel
+              Hủy
             </Button>
             <Button size='sm' colorScheme='teal' onClick={createNewRepairman}>
-              Save
+              Tạo mới
             </Button>
           </ModalFooter>
         </ModalContent>

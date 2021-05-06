@@ -146,6 +146,27 @@ export default function Room() {
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Menu variant='ghost'>
+              <MenuButton size='sm' as={Button} rightIcon={<ChevronDownIcon />}>
+                <Text textStyle='bold-sm'>Thiết bị</Text>
+              </MenuButton>
+              <MenuList>
+                <MenuItemOption
+                  value='user'
+                  onClick={() => {
+                    router.push(
+                      `/admin/buildings/building-${building.name}/floor-${floor.name}/room-${room.name}/employees`
+                    )
+                  }}>
+                  <Text textStyle='bold-sm'>Cán bộ</Text>
+                </MenuItemOption>
+                <MenuItemOption value='facility'>
+                  <Text textStyle='bold-sm'>Thiết bị</Text>
+                </MenuItemOption>
+              </MenuList>
+            </Menu>
+          </BreadcrumbItem>
         </Breadcrumb>
         <Flex justifyContent='flex-start' alignItems='center'>
           <Text textStyle='bold-sm' mr='3'>

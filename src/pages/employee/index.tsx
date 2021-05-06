@@ -13,19 +13,22 @@ function Home({ t }: { readonly t: TFunction }) {
       <Flex justify='space-between' align='center'>
         <Box maxW='50%'>
           <Box fontSize='xxx-large' fontWeight='bold'>
-            {t('hcma')}
+            Học viện chính trị
+          </Box>
+          <Box fontSize='xxx-large' fontWeight='bold'>
+            Quốc gia Hồ Chí Minh
           </Box>
           <Box fontSize='xx-large' fontWeight='medium'>
-            {t('webName')}
+            Hệ thống quản lý cơ sở vật chất
           </Box>
           <Link href='/employee/facilities'>
             <Button
               variant='solid'
               fontWeight='bold'
-              size='lg'
+              size='md'
               mt={5}
               colorScheme='teal'>
-              {t('start')}
+              Bắt đầu
             </Button>
           </Link>
         </Box>

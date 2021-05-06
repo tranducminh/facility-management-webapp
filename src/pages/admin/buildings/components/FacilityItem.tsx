@@ -45,9 +45,19 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             textTransform='uppercase'>
             #{facility.id}
           </Box>
-          <Badge borderRadius='full' colorScheme='teal'>
-            {facility.facilityType?.name}
-          </Badge>
+          {facility.facilityType?.name === 'printer' ? (
+            <Badge borderRadius='full' colorScheme='teal'>
+              Máy in
+            </Badge>
+          ) : facility.facilityType?.name === 'computer' ? (
+            <Badge borderRadius='full' colorScheme='teal'>
+              Máy tính
+            </Badge>
+          ) : facility.facilityType?.name === 'fax' ? (
+            <Badge borderRadius='full' colorScheme='teal'>
+              Máy fax
+            </Badge>
+          ) : null}
         </Box>
 
         <Box fontWeight='semibold' as='h2' lineHeight='tight' isTruncated>
@@ -81,7 +91,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
           <GridItem colSpan={2} margin='auto 0'>
             <HStack spacing={4}>
               <Tag size='sm' key='status' variant='solid' colorScheme='teal'>
-                aa
+                Sẵn sàng
               </Tag>
             </HStack>
           </GridItem>
@@ -95,7 +105,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             size='sm'
             onClick={onOpenReport}>
             <Text pt='0.15rem' fontSize='13px'>
-              Handle error
+              Báo hỏng
             </Text>
           </Button>
           <Button
@@ -105,7 +115,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             size='sm'
             onClick={onOpen}>
             <Text pt='0.15rem' fontSize='13px'>
-              Detail
+              Chi tiết
             </Text>
           </Button>
         </Box>

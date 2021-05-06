@@ -57,6 +57,7 @@ export type EMPLOYEE = {
   email?: string
   unit?: string
   hasRoom?: string
+  avatar?: string
   facilities?: []
   room?: {
     id?: number
@@ -78,6 +79,8 @@ export type REPAIRMAN = {
   name?: string
   unit?: string
   phone?: string
+  email?: string
+  avatar?: string
   specializes?: [
     {
       description?: string
@@ -86,6 +89,7 @@ export type REPAIRMAN = {
       }
     }
   ]
+  histories?: HISTORY[]
 }
 
 export type FACILITY = {

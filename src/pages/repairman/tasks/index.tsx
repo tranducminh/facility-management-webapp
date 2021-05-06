@@ -24,14 +24,19 @@ export default function Task() {
   const [requests, setRequests] = useState<REQUEST[]>([])
 
   const refresh = () => {
-    axios.get('/repairman/me/requests').then((response) => {
-      setRequests(
-        // eslint-disable-next-line array-callback-return
-        response.data.repairman.requests.filter((item: REQUEST) => {
-          return item.status === 'assigned' || item.status === 'inprocess'
-        })
-      )
-    })
+    axios
+      .get('/repairman/me/requests')
+      .then((response) => {
+        setRequests(
+          // eslint-disable-next-line array-callback-return
+          response.data.repairman.requests.filter((item: REQUEST) => {
+            return item.status === 'assigned' || item.status === 'inprocess'
+          })
+        )
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
   useEffect(() => {
     refresh()

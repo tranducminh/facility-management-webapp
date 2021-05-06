@@ -16,51 +16,58 @@ import {
   Box,
   Grid,
   GridItem,
+  Divider,
 } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons'
+import { RiCommunityLine } from 'react-icons/ri'
+import { FaBirthdayCake } from 'react-icons/fa'
 import AdminDashboard from '../../../layouts/AdminDashboard'
 import axios from '../../../utils/axios'
 import { Link } from '../../../../i18n'
-import { ROOM } from '../../../types'
+import { EMPLOYEE, ROOM } from '../../../types'
+import { useColor } from '../../../theme/useColorMode'
 
 function Arrangement() {
-  const [mode, setMode] = useState('Room - Employee')
-  const [rooms, setRooms] = useState([])
-  const [columns, setColumns] = useState({
-    room: {
-      id: 'room',
-    },
-  })
+  const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
+  const [mode, setMode] = useState('Phòng - Cán bộ')
+  const [rooms, setRooms] = useState<ROOM[]>([])
+  const [activeRoom, setActiveRoom] = useState<ROOM>()
+  const [employees, setEmployees] = useState<EMPLOYEE[]>([])
   useEffect(() => {
     axios
-      .get('/buildings/A1/floors/4')
+      .get('/rooms')
       .then((response) => {
-        setRooms(response.data.floor.rooms)
+        setRooms(response.data.rooms)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    axios
+      .get('/employees?hasRoom=false')
+      .then((response) => {
+        setEmployees(response.data.employees)
       })
       .catch((error) => {
         console.log(error)
       })
   }, [])
 
-  const onDragEnd = (result: any) => {
-    const { destination, source, draggableId } = result
+  const chooseRoom = (id?: number) => {
+    setActiveRoom(rooms.filter((room: ROOM) => room.id === id)[0])
+  }
 
-    if (!destination) {
-      return
-    }
+  function allowDrop(ev) {
+    ev.preventDefault()
+  }
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return
-    }
+  function drag(ev) {
+    ev.dataTransfer.setData('text', ev.target.id)
+  }
 
-    const deletedRoom = rooms.splice(source.index, 1)[0]
-    debugger
-    rooms.splice(destination.index, 0, deletedRoom)
-    debugger
-    setRooms(rooms)
+  function drop(ev) {
+    ev.preventDefault()
+    let data = ev.dataTransfer.getData('text')
+    ev.target.appendChild(document.getElementById(data))
   }
 
   return (
@@ -70,14 +77,14 @@ function Arrangement() {
           <BreadcrumbItem>
             <Link href='/admin/arrangement'>
               <BreadcrumbLink>
-                <Text textStyle='bold-md'>Arrangement</Text>
+                <Text textStyle='bold-md'>Sắp xếp</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
         </Breadcrumb>
         <Flex alignItems='center'>
           <Text textStyle='bold-sm' mr='3'>
-            Mode:
+            Chế độ:
           </Text>
           <Menu>
             <MenuButton size='sm' as={Button} rightIcon={<ChevronDownIcon />}>
@@ -86,22 +93,17 @@ function Arrangement() {
             <MenuList>
               <MenuOptionGroup
                 defaultValue='room-employee'
-                title='Mode'
+                title='Chế độ'
                 type='radio'>
                 <MenuItemOption
                   value='room-employee'
-                  onClick={() => setMode('Room - Employee')}>
-                  <Text textStyle='bold-sm'>Room - Employee</Text>
+                  onClick={() => setMode('Phòng - Cán bộ')}>
+                  <Text textStyle='bold-sm'>Phòng - Cán bộ</Text>
                 </MenuItemOption>
                 <MenuItemOption
                   value='employee-facility'
-                  onClick={() => setMode('Employee - Facility')}>
-                  <Text textStyle='bold-sm'>Employee - Facility</Text>
-                </MenuItemOption>
-                <MenuItemOption
-                  value='room-facility'
-                  onClick={() => setMode('Room - Facility')}>
-                  <Text textStyle='bold-sm'>Room - Facility</Text>
+                  onClick={() => setMode('Cán bộ - Thiết bị')}>
+                  <Text textStyle='bold-sm'>Cán bộ - Thiết bị</Text>
                 </MenuItemOption>
               </MenuOptionGroup>
             </MenuList>
@@ -109,49 +111,119 @@ function Arrangement() {
         </Flex>
       </Flex>
 
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Grid templateColumns='repeat(8, 1fr)' gap={4}>
-          <GridItem colSpan={2}>
-            <RoomColumn rooms={rooms} />
-          </GridItem>
-        </Grid>
-      </DragDropContext>
-    </AdminDashboard>
-  )
-}
-
-const RoomColumn = ({ rooms }: { rooms: ROOM[] }) => {
-  return (
-    <Box>
-      <Text textStyle='bold-md'>Rooms</Text>
-      <Droppable droppableId='1'>
-        {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            {rooms.map((room: ROOM, index: number) => (
-              <Draggable draggableId={room.id?.toString() || '1'} index={index}>
-                {(provided_) => (
-                  <div
-                    {...provided_.draggableProps}
-                    {...provided_.dragHandleProps}
-                    ref={provided_.innerRef}>
-                    <Box
-                      key={index}
-                      border='1px solid #ffffff'
-                      borderRadius='4'
-                      p='3'
-                      textAlign='center'
-                      my='3'>
-                      <Text textStyle='bold-sm'>{room.name}</Text>
-                    </Box>
-                  </div>
-                )}
-              </Draggable>
+      <Grid templateColumns='repeat(9, 1fr)' gap={4}>
+        <GridItem colSpan={2} h='90vh' overflow='auto'>
+          {rooms &&
+            rooms.map((room: ROOM, index: number) => (
+              <Box
+                key={index}
+                borderWidth='1px'
+                borderRadius='lg'
+                overflow='hidden'
+                p='5'
+                mb='5'
+                onClick={() => chooseRoom(room.id)}
+                backgroundColor={
+                  room.id === activeRoom?.id ? selectBgColor : ''
+                }
+                color={room.id === activeRoom?.id ? hoverTextColor : ''}
+                _hover={{
+                  color: hoverTextColor,
+                  backgroundColor: hoverBgColor,
+                  borderRadius: '0.5em',
+                }}
+                cursor='pointer'>
+                <Text textStyle='bold-sm'>#{room.id}</Text>
+                <Text>Phòng: {room.name}</Text>
+                <Text>Tòa nhà: {room.floor?.building?.name}</Text>
+                <Text>Số lượng cán bộ: {room.employees?.length}</Text>
+              </Box>
             ))}
-            {provided.placeholder}
+        </GridItem>
+        <GridItem colSpan={5} borderRadius='lg' backgroundColor='#1c2531' p='3'>
+          <div
+            onDrop={(event) => drop(event)}
+            onDragOver={(event) => allowDrop(event)}>
+            <Flex justifyContent='space-between' w='100%' mb='5'>
+              <Text textStyle='bold-xl'>Phòng: {activeRoom?.name}</Text>
+              <Text textStyle='bold-xl'>
+                Tòa nhà: {activeRoom?.floor?.building?.name}
+              </Text>
+            </Flex>
+            <Grid templateColumns='repeat(2, 1fr)' gap={4}>
+              {activeRoom?.employees &&
+                activeRoom?.employees.map(
+                  (employee: EMPLOYEE, index: number) => (
+                    <GridItem colSpan={1}>
+                      <Box
+                        key={index}
+                        borderWidth='1px'
+                        borderRadius='lg'
+                        overflow='hidden'
+                        p='5'
+                        mb='5'>
+                        <Text textStyle='bold-sm'>#{employee.identity}</Text>
+                        <Text isTruncated textStyle='bold-sm'>
+                          {employee.name}
+                        </Text>
+                        <Divider my='2' />
+                        <Flex alignItems='center'>
+                          <RiCommunityLine />
+                          <Text ml='2'>{employee.unit}</Text>
+                        </Flex>
+                        <Flex alignItems='center' mt='2'>
+                          <FaBirthdayCake />
+                          {employee.dateOfBirth ? (
+                            <Text ml='2'>
+                              {new Date(employee.dateOfBirth).getDate()}/
+                              {new Date(employee.dateOfBirth).getMonth() + 1}/
+                              {new Date(employee.dateOfBirth).getFullYear()}
+                            </Text>
+                          ) : null}
+                        </Flex>
+                      </Box>
+                    </GridItem>
+                  )
+                )}
+            </Grid>
           </div>
-        )}
-      </Droppable>
-    </Box>
+        </GridItem>
+        <GridItem colSpan={2}>
+          {employees &&
+            employees.map((employee: EMPLOYEE, index: number) => (
+              <div draggable='true' onDragStart={(event) => drag(event)}>
+                <Box
+                  key={index}
+                  borderWidth='1px'
+                  borderRadius='lg'
+                  overflow='hidden'
+                  p='5'
+                  mb='5'
+                  _hover={{
+                    color: hoverTextColor,
+                    backgroundColor: hoverBgColor,
+                    borderRadius: '0.5em',
+                  }}
+                  cursor='pointer'>
+                  <Text textStyle='bold-sm'>#{employee.identity}</Text>
+                  <Text isTruncated textStyle='bold-sm'>
+                    {employee.name}
+                  </Text>
+                  <Divider my='2' />
+                  <Flex alignItems='center'>
+                    <RiCommunityLine />
+                    <Text ml='2'>{employee.unit}</Text>
+                  </Flex>
+                  <Flex alignItems='center' mt='2'>
+                    <FaBirthdayCake />
+                    <Text ml='2'>{employee.dateOfBirth}</Text>
+                  </Flex>
+                </Box>
+              </div>
+            ))}
+        </GridItem>
+      </Grid>
+    </AdminDashboard>
   )
 }
 

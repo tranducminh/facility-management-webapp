@@ -24,9 +24,14 @@ export default function Task() {
   const [histories, setHistories] = useState<HISTORY[]>([])
 
   const refresh = () => {
-    axios.get('/repairman/me/histories').then((response) => {
-      setHistories(response.data.repairman.histories)
-    })
+    axios
+      .get('/repairman/me/histories')
+      .then((response) => {
+        setHistories(response.data.repairman.histories)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
   useEffect(() => {
     refresh()
@@ -54,7 +59,7 @@ export default function Task() {
           <BreadcrumbItem>
             <Link href='/repairman/tasks'>
               <BreadcrumbLink>
-                <Text textStyle='bold-md'>Lích sử làm việc</Text>
+                <Text textStyle='bold-md'>Lịch sử làm việc</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
@@ -90,7 +95,7 @@ export default function Task() {
                         key='status'
                         variant='solid'
                         colorScheme='red'>
-                        Khồng hoàn thành
+                        Không hoàn thành
                       </Tag>
                     )}
                     {history.createdAt ? (

@@ -12,7 +12,7 @@ export default function FacilityList({
       {!facilities
         ? null
         : facilities.map((facility: FACILITY, index: number) => (
-          <GridItem key={index} colSpan={1} maxW='18rem'>
+          <GridItem key={index} colSpan={1} overflow='hidden'>
             <FacilityItem facility={facility} />
           </GridItem>
         ))}

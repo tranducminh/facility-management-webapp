@@ -17,17 +17,31 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { BellIcon, UnlockIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import {
+  BellIcon,
+  UnlockIcon,
+  MoonIcon,
+  SunIcon,
+  ChevronDownIcon,
+} from '@chakra-ui/icons'
 import { GoGitPullRequest } from 'react-icons/go'
 import { TFunction } from 'next-i18next'
+import { RootStateOrAny, useSelector, useDispatch } from 'react-redux'
 import { useColor } from '../../theme/useColorMode'
 import { i18n, withTranslation, Link } from '../../../i18n'
 import Logo from '../../components/Logo'
+import { logout } from '../../redux/actions/auth.action'
 
 function EmployeeHeader({ t }: { readonly t: TFunction }) {
+  const auth = useSelector((state: RootStateOrAny) => state.auth)
+  const dispatch = useDispatch()
   const { colorMode, toggleColorMode } = useColorMode()
   const { buttonColorMode } = useColor()
   const borderColor = useColorModeValue('gray.100', 'gray.900')
+
+  const onHandleLogout = () => {
+    dispatch(logout())
+  }
   return (
     <Container
       maxW='100%'
@@ -39,7 +53,7 @@ function EmployeeHeader({ t }: { readonly t: TFunction }) {
           <Logo />
         </Box>
         <Spacer />
-        <Menu>
+        {/* <Menu>
           <MenuButton color={buttonColorMode} as={Button} variant='ghost'>
             <Image
               src={
@@ -64,7 +78,7 @@ function EmployeeHeader({ t }: { readonly t: TFunction }) {
               {t('english')}
             </MenuItem>
           </MenuList>
-        </Menu>
+        </Menu> */}
         <IconButton
           aria-label='Color mode'
           color={buttonColorMode}
@@ -187,14 +201,26 @@ function EmployeeHeader({ t }: { readonly t: TFunction }) {
           </MenuList>
         </Menu>
 
-        <Button
-          leftIcon={<UnlockIcon fontSize='14px' />}
-          variant='ghost'
-          color={buttonColorMode}>
-          <Link href='/employee/login'>
-            <Text textStyle='bold-md'>{t('login')}</Text>
-          </Link>
-        </Button>
+        {!auth.isAuth ? (
+          <Button
+            leftIcon={<UnlockIcon fontSize='14px' />}
+            variant='ghost'
+            color={buttonColorMode}
+            size='sm'>
+            <Link href='/employee/login'>
+              <Text textStyle='bold-md'>Đăng nhập</Text>
+            </Link>
+          </Button>
+        ) : (
+          <Menu>
+            <MenuButton as={Button} size='sm' rightIcon={<ChevronDownIcon />}>
+              {auth.user.name}
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={onHandleLogout}>Đăng xuất</MenuItem>
+            </MenuList>
+          </Menu>
+        )}
       </Flex>
     </Container>
   )

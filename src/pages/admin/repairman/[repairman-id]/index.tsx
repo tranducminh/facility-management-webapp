@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Flex,
   Breadcrumb,
@@ -9,31 +10,53 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Grid,
-  GridItem,
+  Tag,
+  HStack,
+  Badge
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import AdminDashboard from '../../../../layouts/AdminDashboard'
 import { Link } from '../../../../../i18n'
 import RepairmanDetailComponent from '../components/RepairmanDetail'
-import HistoryItem from '../components/HistoryItem'
+import HistoryDetail from '../components/HistoryDetail'
 import axios from '../../../../utils/axios'
-import { REPAIRMAN } from '../../../../types'
+import { REPAIRMAN, HISTORY } from '../../../../types'
 
 export default function RepairmanDetail() {
   const router = useRouter()
   const [repairman, setRepairman] = useState<REPAIRMAN>({})
-  useEffect(() => {
+  const refresh = () => {
     axios
       .get(`/repairman/${router.query['repairman-id']}`)
       .then((response) => {
         setRepairman(response.data.repairman)
+        debugger
       })
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  useEffect(() => {
+    refresh()
   }, [])
+
+  const convertFacilityName = (name?: string) => {
+    switch (name) {
+      case 'computer':
+        return 'Máy tính'
+      case 'printer':
+        return 'Máy in'
+      case 'fax':
+        return 'Máy fax'
+      case 'node':
+        return 'Nút mạng'
+      default:
+        break
+    }
+  }
+
   return (
     <AdminDashboard isRepairman>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -78,13 +101,66 @@ export default function RepairmanDetail() {
             </Flex>
           </AccordionButton>
           <AccordionPanel py={5}>
-            <Grid templateColumns='repeat(3, 1fr)' gap={4}>
-              {[...Array(18)].map((value, index) => (
-                <GridItem colSpan={1}>
-                  <HistoryItem />
-                </GridItem>
-              ))}
-            </Grid>
+            <Accordion allowMultiple>
+              {!repairman.histories
+                ? null
+                : repairman.histories.map((history: HISTORY, index: number) => (
+                  <AccordionItem key={index}>
+                    <AccordionButton>
+                      <Flex
+                        justifyContent='space-between'
+                        alignItems='center'
+                        w='100%'>
+                        <Flex alignItems='center'>
+                          <Text textStyle='bold-md'>
+                            #{history.id} - {history.request?.facility?.name}
+                          </Text>
+                          <HStack spacing={4} ml='4'>
+                            <Badge borderRadius='full' colorScheme='teal'>
+                              {convertFacilityName(
+                                history.request?.facility?.facilityType?.name
+                              )}
+                            </Badge>
+                            {history.request?.status === 'completed' ? (
+                              <Tag
+                                size='sm'
+                                key='status'
+                                variant='solid'
+                                colorScheme='green'>
+                                Hoàn thành
+                              </Tag>
+                            ) : (
+                              <Tag
+                                size='sm'
+                                key='status'
+                                variant='solid'
+                                colorScheme='red'>
+                                Không hoàn thành
+                              </Tag>
+                            )}
+                            {history.createdAt ? (
+                              <Tag
+                                size='sm'
+                                key='status'
+                                variant='solid'
+                                colorScheme='gray'>
+                                {`
+                        ${new Date(history.createdAt).getDate()}
+                        - ${new Date(history.createdAt).getMonth() + 1}
+                        - ${new Date(history.createdAt).getFullYear()}`}
+                              </Tag>
+                            ) : null}
+                          </HStack>
+                        </Flex>
+                      </Flex>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel py={5}>
+                      <HistoryDetail history={history} refresh={refresh} />
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}
+            </Accordion>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

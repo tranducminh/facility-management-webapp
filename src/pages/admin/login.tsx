@@ -17,36 +17,31 @@ import { useState, useEffect } from 'react'
 import { TFunction } from 'next-i18next'
 import { useRouter } from 'next/router'
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux'
-import EmployeeLayout from '../../layouts/EmployeeLayout'
-import { withTranslation } from '../../../i18n'
-import axios from '../../utils/axios'
-import { loginEmployee } from '../../redux/actions/auth.action'
+import AdminLayout from '../../layouts/AdminLayout'
+import { loginAdmin } from '../../redux/actions/auth.action'
 
-function Login({ t }: { readonly t: TFunction }) {
+function AdminLogin() {
   const dispatch = useDispatch()
   const auth = useSelector((state: RootStateOrAny) => state.auth)
   const router = useRouter()
 
   const [show, setShow] = useState(false)
-  const [identity, setIdentity] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const handleClick = () => setShow(!show)
 
   const onHandleLogin = () => {
-    dispatch(loginEmployee({ identity, password }))
+    dispatch(loginAdmin({ email, password }))
   }
 
   useEffect(() => {
     if (auth.isAuth) {
-      router.push('/employee/facilities')
+      router.push('/admin/buildings')
     }
   }, [auth])
 
   return (
-    <EmployeeLayout>
-      <Head>
-        <title>{t('title')}</title>
-      </Head>
+    <AdminLayout>
       <Flex align='flex-end'>
         <Image src='/assets/images/login_img_1.svg' maxW='30%' />
         <Spacer />
@@ -58,12 +53,12 @@ function Login({ t }: { readonly t: TFunction }) {
             Hệ thống quản lý cơ sở vật chất
           </Text>
           <FormControl id='email' isRequired mt={5}>
-            <FormLabel fontSize='sm'>Mã nhân viên</FormLabel>
+            <FormLabel fontSize='sm'>Email</FormLabel>
             <Input
-              placeholder='Mã nhân viên'
+              placeholder='Email'
               fontSize='sm'
               fontWeight='bold'
-              onChange={(event) => setIdentity(event.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </FormControl>
           <FormControl id='password' isRequired mt={5}>
@@ -74,12 +69,12 @@ function Login({ t }: { readonly t: TFunction }) {
                 type={show ? 'text' : 'password'}
                 placeholder='Mật khẩu'
                 fontSize='sm'
-                fontWeight='medium'
+                fontWeight='bold'
                 onChange={(event) => setPassword(event.target.value)}
               />
               <InputRightElement width='4.5rem'>
                 <Button h='1.75rem' size='xs' onClick={handleClick}>
-                  {show ? 'Ẩn' : 'Hiển thị'}
+                  {show ? 'Hide' : 'Show'}
                 </Button>
               </InputRightElement>
             </InputGroup>
@@ -103,12 +98,8 @@ function Login({ t }: { readonly t: TFunction }) {
         <Spacer />
         <Image src='/assets/images/login_img_2.svg' maxW='30%' />
       </Flex>
-    </EmployeeLayout>
+    </AdminLayout>
   )
 }
 
-Login.getInitialProps = async () => ({
-  namespacesRequired: ['user-login'],
-})
-
-export default withTranslation('user-login')(Login)
+export default AdminLogin

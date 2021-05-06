@@ -666,13 +666,13 @@ export default function NewFacility() {
                       <FormLabel fontSize='sm'>Tòa nhà</FormLabel>
                       <Select
                         value={currentBuilding.name}
-                        placeholder='Select option'
+                        placeholder='Chọn tòa nhà'
                         onChange={(event) => {
                           setCurrentBuildingId(parseInt(event.target.value))
                         }}>
                         {buildings.map((item: BUILDING, index: number) => (
                           <option key={index} value={item.id}>
-                            Building {item.name}
+                            Tòa nhà {item.name}
                           </option>
                         ))}
                       </Select>
@@ -683,7 +683,7 @@ export default function NewFacility() {
                       <FormLabel fontSize='sm'>Tầng</FormLabel>
                       <Select
                         value={currentFloor.name}
-                        placeholder='Select option'
+                        placeholder='Chọn tầng'
                         onChange={(event) => {
                           setCurrentFloorId(parseInt(event.target.value))
                         }}>
@@ -692,7 +692,7 @@ export default function NewFacility() {
                           : currentBuilding.floors.map(
                             (item: FLOOR, index: number) => (
                               <option key={index} value={item.id}>
-                                Floor {item.name}
+                                Tầng {item.name}
                               </option>
                             )
                           )}
@@ -704,7 +704,7 @@ export default function NewFacility() {
                       <FormLabel fontSize='sm'>Phòng</FormLabel>
                       <Select
                         value={currentRoom.name}
-                        placeholder='Select option'
+                        placeholder='Chọn phòng'
                         onChange={(event) => {
                           setCurrentRoomId(parseInt(event.target.value))
                         }}>
@@ -713,7 +713,7 @@ export default function NewFacility() {
                           : currentFloor.rooms.map(
                             (item: ROOM, index: number) => (
                               <option key={index} value={item.id}>
-                                Room {item.name}
+                                Phòng {item.name}
                               </option>
                             )
                           )}
@@ -760,13 +760,13 @@ export default function NewFacility() {
                   <FormLabel fontSize='sm'>Tòa nhà</FormLabel>
                   <Select
                     value={currentBuilding?.name}
-                    placeholder='Select option'
+                    placeholder='Chọn tòa nhà'
                     onChange={(event) => {
                       setCurrentBuildingId(parseInt(event.target.value))
                     }}>
                     {buildings.map((item: BUILDING, index: number) => (
                       <option key={index} value={item.id}>
-                        Building {item.name}
+                        Tòa nhà {item.name}
                       </option>
                     ))}
                   </Select>
@@ -777,7 +777,7 @@ export default function NewFacility() {
                   <FormLabel fontSize='sm'>Tầng</FormLabel>
                   <Select
                     value={currentFloor?.name}
-                    placeholder='Select option'
+                    placeholder='Chọn tầng'
                     onChange={(event) => {
                       setCurrentFloorId(parseInt(event.target.value))
                     }}>
@@ -786,7 +786,7 @@ export default function NewFacility() {
                       : currentBuilding.floors.map(
                         (item: FLOOR, index: number) => (
                           <option key={index} value={item.id}>
-                            Floor {item.name}
+                            Tầng {item.name}
                           </option>
                         )
                       )}
@@ -798,7 +798,7 @@ export default function NewFacility() {
                   <FormLabel fontSize='sm'>Phòng</FormLabel>
                   <Select
                     value={currentRoom?.name}
-                    placeholder='Select option'
+                    placeholder='Chọn phòng'
                     onChange={(event) => {
                       setCurrentRoomId(parseInt(event.target.value))
                     }}>
@@ -806,7 +806,7 @@ export default function NewFacility() {
                       ? null
                       : currentFloor.rooms.map((item: ROOM, index: number) => (
                         <option key={index} value={item.id}>
-                          Room {item.name}
+                          Phòng {item.name}
                         </option>
                       ))}
                   </Select>
@@ -817,7 +817,7 @@ export default function NewFacility() {
                   <FormLabel fontSize='sm'>Cán bộ</FormLabel>
                   <Select
                     value={currentEmployee?.name}
-                    placeholder='Select option'
+                    placeholder='Chọn cán bộ'
                     onChange={(event) => {
                       setCurrentEmployeeId(parseInt(event.target.value))
                     }}>
@@ -841,13 +841,13 @@ export default function NewFacility() {
                   <GridItem colSpan={1}>
                     <Grid templateColumns='repeat(3, 1fr)' gap={4}>
                       <GridItem colSpan={1}>
-                        <Text textStyle='bold-sm'>Name:</Text>
+                        <Text textStyle='bold-sm'>Tên:</Text>
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Text>{currentEmployee?.name}</Text>
                       </GridItem>
                       <GridItem colSpan={1}>
-                        <Text textStyle='bold-sm'>Phone:</Text>
+                        <Text textStyle='bold-sm'>Số điện thoại:</Text>
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Text>{currentEmployee?.phone}</Text>
@@ -863,19 +863,19 @@ export default function NewFacility() {
                   <GridItem colSpan={1}>
                     <Grid templateColumns='repeat(3, 1fr)' gap={4}>
                       <GridItem colSpan={1}>
-                        <Text textStyle='bold-sm'>Building:</Text>
+                        <Text textStyle='bold-sm'>Tòa nhà:</Text>
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Text>{currentBuilding?.name}</Text>
                       </GridItem>
                       <GridItem colSpan={1}>
-                        <Text textStyle='bold-sm'>Room:</Text>
+                        <Text textStyle='bold-sm'>Phòng:</Text>
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Text>{currentRoom?.name}</Text>
                       </GridItem>
                       <GridItem colSpan={1}>
-                        <Text textStyle='bold-sm'>Unit:</Text>
+                        <Text textStyle='bold-sm'>Đơn vị:</Text>
                       </GridItem>
                       <GridItem colSpan={2}>
                         <Text>{currentEmployee?.unit}</Text>
@@ -894,11 +894,11 @@ export default function NewFacility() {
         colorScheme='teal'
         mt='5'
         onClick={createNewFacility}>
-        Update
+        Cập nhật thông tin
       </Button>
       <Link href={`/admin/facilities/${facility?.id}`}>
         <Button size='sm' float='right' mt='5' mr='5'>
-          Cancel
+          Hủy
         </Button>
       </Link>
     </AdminDashboard>
