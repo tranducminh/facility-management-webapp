@@ -58,7 +58,7 @@ export default function RejectRequest() {
           </Tr>
         </Thead>
         <Tbody>
-          {[...Array(5)].map((value, index) => (
+          {[...Array(5)].map(() => (
             <Tr>
               <Td>211196</Td>
               <Td>Room A01</Td>

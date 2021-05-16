@@ -42,7 +42,6 @@ import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
 import { REQUEST } from '../../../../types'
-import axios from '../../../../utils/axios'
 
 export default function InProcessRequest({
   requests,
@@ -79,8 +78,8 @@ export default function InProcessRequest({
           </Tr>
         </Thead>
         <Tbody>
-          {requests.map((request, index) => (
-            <Tr>
+          {requests.map((request: REQUEST, index: number) => (
+            <Tr key={index}>
               <Td>{request.id}</Td>
               <Td>{request.facility?.name}</Td>
               <Td>{request.problem}</Td>

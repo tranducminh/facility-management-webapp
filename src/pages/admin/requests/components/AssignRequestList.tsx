@@ -41,16 +41,9 @@ import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
-import axios from '../../../../utils/axios'
-import { REPAIRMAN, REQUEST } from '../../../../types'
+import { REQUEST } from '../../../../types'
 
-export default function ApproveRequest({
-  requests,
-  refresh,
-}: {
-  requests: REQUEST[]
-  refresh: Function
-}) {
+export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
 
@@ -82,8 +75,8 @@ export default function ApproveRequest({
           </Tr>
         </Thead>
         <Tbody>
-          {requests.map((request, index) => (
-            <Tr>
+          {requests.map((request: REQUEST, index: number) => (
+            <Tr key={index}>
               <Td>{request.id}</Td>
               <Td>{request.facility?.name}</Td>
               <Td>{request.employee?.name}</Td>

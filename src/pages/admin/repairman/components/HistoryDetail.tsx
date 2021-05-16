@@ -12,21 +12,15 @@ import {
   REQUEST,
 } from '../../../../types'
 
-export default function TaskDetail({
-  history = {},
-  refresh,
-}: {
-  history?: HISTORY
-  refresh: Function
-}) {
+export default function TaskDetail({ history = {} }: { history?: HISTORY }) {
   const [employee, setEmployee] = useState<EMPLOYEE>({})
   const [facility, setFacility] = useState<FACILITY>({})
   const [request, setRequest] = useState<REQUEST>({})
 
   useEffect(() => {
-    setRequest(history.request)
-    setEmployee(history.request.employee || {})
-    setFacility(history.request.facility || {})
+    setRequest(history?.request || {})
+    setEmployee(history.request?.employee || {})
+    setFacility(history.request?.facility || {})
   }, [history])
 
   const convertName = (name?: string) => {
@@ -395,35 +389,33 @@ export default function TaskDetail({
                 </Text>
                 <Grid templateColumns='repeat(9, 1fr)' gap={4} pl='10'>
                   {request.replacements &&
-                    request.replacements.map(
-                      (replacement: REPLACEMENT, index: number) => (
-                        <>
-                          <GridItem colSpan={9}>
-                            <Text textStyle='bold-sm'>
-                              {convertName(replacement.component)}:
-                            </Text>
-                          </GridItem>
-                          <GridItem colSpan={4}>
-                            <Flex alignItems='center' h='100%'>
-                              <Text pl='10'>{replacement.source}</Text>
-                            </Flex>
-                          </GridItem>
-                          <GridItem colSpan={1}>
-                            <Flex
-                              justifyContent='center'
-                              alignItems='center'
-                              h='100%'>
-                              <ArrowRightIcon w={3} h={3} />
-                            </Flex>
-                          </GridItem>
-                          <GridItem colSpan={4}>
-                            <Flex alignItems='center' h='100%'>
-                              <Text>{replacement.target}</Text>
-                            </Flex>
-                          </GridItem>
-                        </>
-                      )
-                    )}
+                    request.replacements.map((replacement: REPLACEMENT) => (
+                      <>
+                        <GridItem colSpan={9}>
+                          <Text textStyle='bold-sm'>
+                            {convertName(replacement.component)}:
+                          </Text>
+                        </GridItem>
+                        <GridItem colSpan={4}>
+                          <Flex alignItems='center' h='100%'>
+                            <Text pl='10'>{replacement.source}</Text>
+                          </Flex>
+                        </GridItem>
+                        <GridItem colSpan={1}>
+                          <Flex
+                            justifyContent='center'
+                            alignItems='center'
+                            h='100%'>
+                            <ArrowRightIcon w={3} h={3} />
+                          </Flex>
+                        </GridItem>
+                        <GridItem colSpan={4}>
+                          <Flex alignItems='center' h='100%'>
+                            <Text>{replacement.target}</Text>
+                          </Flex>
+                        </GridItem>
+                      </>
+                    ))}
                 </Grid>
               </GridItem>
             </Grid>

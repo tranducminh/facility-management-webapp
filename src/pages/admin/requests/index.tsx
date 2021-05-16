@@ -110,10 +110,10 @@ export default function Request() {
             <PendingRequest requests={pendingRequest} refresh={refresh} />
           </TabPanel>
           <TabPanel>
-            <AssignRequest requests={assignedRequest} refresh={refresh} />
+            <AssignRequest requests={assignedRequest} />
           </TabPanel>
           <TabPanel>
-            <InProcessRequest requests={inProcessRequest} refresh={refresh} />
+            <InProcessRequest requests={inProcessRequest} />
           </TabPanel>
           <TabPanel>
             <CompletedRequest requests={completedRequest} />
@@ -125,7 +125,7 @@ export default function Request() {
             />
           </TabPanel>
           <TabPanel>
-            <RejectRequest requests={rejectedRequest} refresh={refresh} />
+            <RejectRequest requests={rejectedRequest} />
           </TabPanel>
         </TabPanels>
       </Tabs>

@@ -45,10 +45,8 @@ import { REQUEST } from '../../../../types'
 
 export default function InProcessRequest({
   requests,
-  refresh,
 }: {
   requests: REQUEST[]
-  refresh: Function
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
@@ -81,8 +79,8 @@ export default function InProcessRequest({
           </Tr>
         </Thead>
         <Tbody>
-          {requests.map((request, index) => (
-            <Tr>
+          {requests.map((request: REQUEST, index: number) => (
+            <Tr key={index}>
               <Td>{request.id}</Td>
               <Td>{request.facility?.name}</Td>
               <Td>{request.employee?.name}</Td>

@@ -5,11 +5,13 @@ import {
   Container,
   Button,
   IconButton,
-  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  MenuGroup,
+  MenuDivider,
+  Icon,
   Text,
   useColorMode,
   useColorModeValue,
@@ -21,24 +23,44 @@ import {
   SunIcon,
   ChevronDownIcon,
 } from '@chakra-ui/icons'
-
-import { TFunction } from 'next-i18next'
+import { GoGitPullRequest } from 'react-icons/go'
 import { RootStateOrAny, useSelector, useDispatch } from 'react-redux'
+import Link from 'next/link'
+import Pusher from 'pusher-js'
+import { useEffect, useState } from 'react'
 import { useColor } from '../../theme/useColorMode'
-import { i18n, withTranslation, Link } from '../../../i18n'
 import AdminLogo from '../../components/AdminLogo'
 import { logout } from '../../redux/actions/auth.action'
+import { NOTIFICATION } from '../../types'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../redux/actions/notification.action'
 
-function AdminHeader({ t }: { readonly t: TFunction }) {
+function AdminHeader() {
   const auth = useSelector((state: RootStateOrAny) => state.auth)
   const dispatch = useDispatch()
   const { colorMode, toggleColorMode } = useColorMode()
   const { buttonColorMode } = useColor()
   const borderColor = useColorModeValue('gray.100', 'gray.900')
-
+  const [notifications, setNotifications] = useState<NOTIFICATION[]>([])
   const onHandleLogout = () => {
     dispatch(logout())
   }
+
+  const pusher = new Pusher('75ba4bf21a42e1773cf4', {
+    cluster: 'ap1',
+  })
+  useEffect(() => {
+    const channel = pusher.subscribe(auth.user.channel)
+    channel.bind('common', (data: { notification: NOTIFICATION }) => {
+      setNotifications([data.notification, ...notifications])
+      dispatch(pushNotification({ title: data.notification.content }))
+      dispatch(resetNotification())
+      channel.unbind('common')
+    })
+  }, [notifications])
+
   return (
     <Container
       maxW='100%'
@@ -50,32 +72,6 @@ function AdminHeader({ t }: { readonly t: TFunction }) {
           <AdminLogo />
         </Box>
         <Spacer />
-        {/* <Menu>
-          <MenuButton color={buttonColorMode} as={Button} variant='ghost'>
-            <Image
-              src={
-                i18n.language === 'vi'
-                  ? '/assets/images/vietnam.svg'
-                  : '/assets/images/uk.svg'
-              }
-              w='1.3rem'
-            />
-          </MenuButton>
-          <MenuList>
-            <MenuItem
-              textStyle='medium'
-              onClick={() => i18n.changeLanguage('vi')}>
-              <Image src='/assets/images/vietnam.svg' w='1.3rem' mr={3} />
-              {t('vietnamese')}
-            </MenuItem>
-            <MenuItem
-              textStyle='medium'
-              onClick={() => i18n.changeLanguage('en')}>
-              <Image src='/assets/images/uk.svg' w='1.3rem' mr={3} />
-              {t('english')}
-            </MenuItem>
-          </MenuList>
-        </Menu> */}
         <IconButton
           aria-label='Color mode'
           color={buttonColorMode}
@@ -89,13 +85,114 @@ function AdminHeader({ t }: { readonly t: TFunction }) {
           variant='ghost'
           onClick={toggleColorMode}
         />
-        <IconButton
-          aria-label='Color mode'
-          size='md'
-          color={buttonColorMode}
-          icon={<BellIcon fontSize='1.2em' />}
-          variant='ghost'
-        />
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label='Options'
+            icon={
+              <IconButton
+                aria-label='Color mode'
+                size='md'
+                color={buttonColorMode}
+                icon={<BellIcon fontSize='1.2em' />}
+                variant='ghost'
+              />
+            }
+            size='md'
+            variant='ghost'
+          />
+          <MenuList maxH='20rem' overflow='auto'>
+            <Text textStyle='bold-md' py='1' px='4'>
+              Thông báo
+            </Text>
+            <MenuGroup title='Mới'>
+              <MenuItem
+                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='teal' />}
+                maxW='18rem'
+                h='3.6rem'>
+                <Text noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is approved
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={
+                  <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
+                }
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is rejected
+                </Text>
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title='Cũ hơn'>
+              <MenuItem
+                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='red' />}
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is expired, please return facility
+                  facility facility facility facility
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='teal' />}
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is approved
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={
+                  <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
+                }
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is rejected
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='red' />}
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is expired, please return facility
+                  facility facility facility facility
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='teal' />}
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is approved
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={
+                  <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
+                }
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is rejected
+                </Text>
+              </MenuItem>
+              <MenuItem
+                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='red' />}
+                maxW='18rem'
+                h='3.6rem'>
+                <Text fontWeight='semibold' noOfLines={2} w='100%'>
+                  Your request <b>#211196</b> is expired, please return facility
+                  facility facility facility facility
+                </Text>
+              </MenuItem>
+            </MenuGroup>
+          </MenuList>
+        </Menu>
         {!auth.isAuth ? (
           <Button
             leftIcon={<UnlockIcon fontSize='14px' />}
@@ -125,8 +222,4 @@ function AdminHeader({ t }: { readonly t: TFunction }) {
   )
 }
 
-AdminHeader.getInitialProps = async () => ({
-  namespacesRequired: ['header'],
-})
-
-export default withTranslation('header')(AdminHeader)
+export default AdminHeader

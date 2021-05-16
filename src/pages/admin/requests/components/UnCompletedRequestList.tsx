@@ -114,8 +114,8 @@ export default function UnCompletedRequest({
           </Tr>
         </Thead>
         <Tbody>
-          {requests.map((request, index) => (
-            <Tr>
+          {requests.map((request: REQUEST, index: number) => (
+            <Tr key={index}>
               <Td>{request.id}</Td>
               <Td>{request.facility?.name}</Td>
               <Td>{request.employee?.name}</Td>

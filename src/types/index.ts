@@ -39,6 +39,10 @@ export type ROOM = {
   floor?: {
     id?: number
     name?: string
+    building?: {
+      id?: number
+      name?: string
+    }
   }
   employees?: [
     {
@@ -92,37 +96,20 @@ export type REPAIRMAN = {
   histories?: HISTORY[]
 }
 
+export type SPECIALIZE = {
+  description?: string
+  facilityType?: {
+    name?: string
+  }
+}
+
 export type FACILITY = {
   id?: number
   name?: string
   origin?: string
   price?: number
   status?: string
-  configuration?: {
-    cpu?: string
-    mainboard?: string
-    psu?: string
-    ram?: string
-    vga?: string
-    hardDrive?: string
-    opticalDrive?: string
-    monitor?: string
-    mouse?: string
-    keyboard?: string
-    headPhone?: string
-    webcam?: string
-    cardReader?: string
-    fanCase?: string
-    resolution?: string
-    printSpeed?: string
-    paperSize?: string
-    model?: string
-    duplexPrint?: string
-    communication?: string
-    printInk?: string
-    faxSpeed?: string
-    nodeName?: string
-  }
+  configuration?: CONFIGURATION
   employee?: {
     id?: number
     identity?: string
@@ -228,4 +215,42 @@ export type HISTORY = {
   repairman?: REPAIRMAN
   request?: REQUEST
   createdAt?: string
+}
+
+export type NOTIFICATION = {
+  id?: number
+  content?: string
+  receiverType?: string
+  receiverId?: string
+  senderType?: string
+  senderId?: string
+  isRead?: boolean
+  type?: NotificationType
+  room?: ROOM
+  request?: REQUEST
+  facility?: FACILITY
+}
+
+export enum NotificationType {
+  NEW_REQUEST = 'new-request',
+  APPROVED_REQUEST = 'approved-request',
+  REJECTED_REQUEST = 'rejected-request',
+  INPROCESS_REQUEST = 'inprocess-request',
+  COMPLETED_REQUEST = 'completed-request',
+  UNCOMPLETED_REQUEST = 'uncompleted-request',
+
+  ASSIGNED_TASK = 'assigned-task',
+  STARTED_TASK = 'started-task',
+  REJECTED_TASK = 'rejected-task',
+  COMPLETED_TASK = 'completed-task',
+  UNCOMPLETED_TASK = 'uncompleted-task',
+
+  NEW_ROOM = 'new-room',
+  PENDING_ROOM = 'pending-room',
+
+  NEW_FACILITY_OWNER = 'new-facility-owner',
+  REMOVED_FACILITY_OWNER = 'removed-facility-owner',
+  UPDATED_FACILITY_INFO = 'updated-facility-info',
+
+  UPDATED_PROFILE = 'updated-profile',
 }

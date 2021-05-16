@@ -6,8 +6,6 @@ import {
   Text,
   LinkBox,
   Icon,
-  Flex,
-  Spinner,
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import { CgProfile } from 'react-icons/cg'
@@ -21,7 +19,6 @@ import RepairmanHeader from './components/RepairmanHeader'
 import { Link } from '../../i18n'
 import { useColor } from '../theme/useColorMode'
 import { fetchMe } from '../redux/actions/auth.action'
-import RepairmanLayout from './RepairmanLayout'
 
 /* eslint-disable react/destructuring-assignment */
 export default function RepairmanDashboard(props: any) {

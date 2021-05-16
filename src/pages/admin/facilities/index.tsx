@@ -30,10 +30,6 @@ export default function Facility() {
   const [statusName, setStatusName] = useState('Sẵn sàng')
   const [status, setStatus] = useState('ready')
 
-  const [computer, setComputer] = useState<FACILITY[]>([])
-  const [printer, setPrinter] = useState<FACILITY[]>([])
-  const [fax, setFax] = useState<FACILITY[]>([])
-  const [node, setNode] = useState<FACILITY[]>([])
   const [currentFacilities, setCurrentFacilities] = useState<FACILITY[]>([{}])
   useEffect(() => {
     axios.get('/facilities').then((response) => {
@@ -42,7 +38,6 @@ export default function Facility() {
   }, [])
 
   useEffect(() => {
-    console.log(status)
     axios.get(`/facilities?type=${mode}&status=${status}`).then((response) => {
       setCurrentFacilities(response.data.facilities)
     })

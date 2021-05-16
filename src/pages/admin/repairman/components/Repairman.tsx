@@ -11,7 +11,6 @@ import {
   Td,
   Tag,
   Button,
-  Box,
   HStack,
   Text,
   Modal,
@@ -32,16 +31,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
   Search2Icon,
   ArrowRightIcon,
 } from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
-import { GiWifiRouter } from 'react-icons/gi'
 import { Link } from '../../../../../i18n'
 import axios from '../../../../utils/axios'
 import { REPAIRMAN } from '../../../../types'

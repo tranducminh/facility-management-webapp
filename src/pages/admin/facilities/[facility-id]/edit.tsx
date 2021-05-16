@@ -25,7 +25,6 @@ import {
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import AdminDashboard from '../../../../layouts/AdminDashboard'
 import axios from '../../../../utils/axios'

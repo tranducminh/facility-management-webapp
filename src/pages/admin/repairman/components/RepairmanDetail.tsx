@@ -33,8 +33,6 @@ export default function RepairmanDetail({
   const [printerDescription, setPrinterDescription] = useState<string>('')
   const [isCheckFax, setIsCheckFax] = useState<boolean>(false)
   const [faxDescription, setFaxDescription] = useState<string>('')
-  const [isCheckNode, setIsCheckNode] = useState<boolean>(false)
-  const [nodeDescription, setNodeDescription] = useState<string>('')
 
   useEffect(() => {
     repairman.specializes?.forEach((specialize) => {
@@ -52,11 +50,6 @@ export default function RepairmanDetail({
           setIsCheckFax(true)
           setFaxDescription(specialize.description || '')
           break
-        case 'node':
-          setIsCheckNode(true)
-          setNodeDescription(specialize.description || '')
-          break
-
         default:
           break
       }

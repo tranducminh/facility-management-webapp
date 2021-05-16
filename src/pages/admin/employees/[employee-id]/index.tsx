@@ -26,7 +26,6 @@ export default function UserDetail() {
   const [employee, setEmployee] = useState<EMPLOYEE>({})
   const [facilities, setFacilities] = useState<FACILITY[]>([])
   useEffect(() => {
-    console.log(router.query)
     axios
       .get(`/employees/${router.query['employee-id']}`)
       .then((result) => {

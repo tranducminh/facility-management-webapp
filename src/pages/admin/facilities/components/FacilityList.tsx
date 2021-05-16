@@ -12,21 +12,21 @@ import {
   Box,
   HStack,
   Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Grid,
-  GridItem,
-  Divider,
-  useDisclosure,
+  // Modal,
+  // ModalOverlay,
+  // ModalContent,
+  // ModalHeader,
+  // ModalFooter,
+  // ModalBody,
+  // ModalCloseButton,
+  // Grid,
+  // GridItem,
+  // Divider,
+  // useDisclosure,
 } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
-import { useState } from 'react'
+// import { useState } from 'react'
 import Link from 'next/link'
 import { FACILITY } from '../../../../types'
 

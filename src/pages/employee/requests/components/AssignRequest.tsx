@@ -42,7 +42,6 @@ import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
 import { REQUEST } from '../../../../types'
-import axios from '../../../../utils/axios'
 
 export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()

@@ -15,24 +15,20 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  FormControl,
-  FormLabel,
-  Select,
   Text,
   Divider,
-  Flex,
   useDisclosure,
 } from '@chakra-ui/react'
-import { WarningTwoIcon, ViewIcon } from '@chakra-ui/icons'
+import { ViewIcon } from '@chakra-ui/icons'
 import { FACILITY } from '../../../../types'
 
 export default function FacilityItem({ facility }: { facility: FACILITY }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const {
-    isOpen: isOpenReport,
-    onOpen: onOpenReport,
-    onClose: onCloseReport,
-  } = useDisclosure()
+  // const {
+  //   isOpen: isOpenReport,
+  //   onOpen: onOpenReport,
+  //   onClose: onCloseReport,
+  // } = useDisclosure()
 
   return (
     <Box w='100%' borderWidth='1px' borderRadius='lg' overflow='hidden'>
@@ -98,7 +94,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
         </Grid>
 
         <Box d='flex' alignItems='center' justifyContent='space-between' mt={5}>
-          <Button
+          {/* <Button
             leftIcon={<WarningTwoIcon />}
             colorScheme='red'
             variant='link'
@@ -107,7 +103,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             <Text pt='0.15rem' fontSize='13px'>
               Báo hỏng
             </Text>
-          </Button>
+          </Button> */}
           <Button
             leftIcon={<ViewIcon />}
             colorScheme='teal'

@@ -37,7 +37,6 @@ export default function Building() {
       .then((result) => {
         const building_ = result.data.building
         setBuilding(building_)
-        console.log(building_.floors.length)
         debugger
         if (building_.floors.length > 0) {
           debugger

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Grid, GridItem } from '@chakra-ui/react'
 import { FACILITY } from '../../../../types'
 import FacilityItem from './FacilityItem'

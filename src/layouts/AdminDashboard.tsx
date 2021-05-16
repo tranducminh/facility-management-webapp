@@ -6,8 +6,7 @@ import {
   Text,
   LinkBox,
   Icon,
-  Flex,
-  Spinner,
+  useToast,
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import { FiUsers } from 'react-icons/fi'
@@ -16,7 +15,6 @@ import { GoGitPullRequest } from 'react-icons/go'
 import { BsBuilding, BsTools } from 'react-icons/bs'
 import { GiAutoRepair } from 'react-icons/gi'
 import { AiOutlineUnorderedList } from 'react-icons/ai'
-import { HiOutlineDocumentReport } from 'react-icons/hi'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useSelector, RootStateOrAny, useDispatch } from 'react-redux'
@@ -24,12 +22,15 @@ import AdminHeader from './components/AdminHeader'
 import { Link } from '../../i18n'
 import { useColor } from '../theme/useColorMode'
 import { fetchMe } from '../redux/actions/auth.action'
-import AdminLayout from './AdminLayout'
 
 /* eslint-disable react/destructuring-assignment */
 export default function AdminDashboard(props: any) {
   const router = useRouter()
+  const toast = useToast()
   const auth = useSelector((state: RootStateOrAny) => state.auth)
+  const notification = useSelector(
+    (state: RootStateOrAny) => state.notification
+  )
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -45,6 +46,19 @@ export default function AdminDashboard(props: any) {
       router.push('/admin/login')
     }
   }, [auth])
+
+  useEffect(() => {
+    if (notification.isEnabled) {
+      toast({
+        title: notification.title,
+        description: notification.description,
+        status: notification.status,
+        position: 'top',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }, [notification])
 
   useEffect(() => {
     dispatch(fetchMe({ role: 'admin' }))

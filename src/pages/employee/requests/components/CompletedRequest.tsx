@@ -230,7 +230,7 @@ export default function CompletedRequest({
               {!replacements
                 ? null
                 : replacements.map(
-                  (replacement: REPLACEMENT, index: number) => (
+                  (replacement: REPLACEMENT) => (
                     <>
                       <GridItem colStart={2} colEnd={12} pl='5'>
                         <Text textStyle='bold-sm'>

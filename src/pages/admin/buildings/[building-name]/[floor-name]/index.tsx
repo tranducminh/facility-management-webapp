@@ -82,7 +82,6 @@ export default function BuildingDetail() {
       })
   }
   const createNewRoom = () => {
-    console.log(newRoomName)
     debugger
     axios
       .post('/rooms', { name: newRoomName, floorId: floor.id })

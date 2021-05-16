@@ -15,14 +15,11 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  FormControl,
-  FormLabel,
-  Textarea,
   Text,
   Divider,
   useDisclosure,
 } from '@chakra-ui/react'
-import { WarningTwoIcon, ViewIcon } from '@chakra-ui/icons'
+import { ViewIcon } from '@chakra-ui/icons'
 import { FACILITY } from '../../../../types'
 
 export default function FacilityItem({ facility }: { facility: FACILITY }) {

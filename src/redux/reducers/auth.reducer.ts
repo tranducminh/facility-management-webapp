@@ -7,6 +7,7 @@ const defaultState: any = {
   token: '',
   user: {
     name: 'user',
+    channel: '',
   },
 }
 

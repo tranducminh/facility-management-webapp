@@ -26,8 +26,6 @@ import {
   Flex,
   Grid,
   GridItem,
-  Divider,
-  Icon,
   useDisclosure,
 } from '@chakra-ui/react'
 import {
@@ -37,20 +35,9 @@ import {
 } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 import { useState } from 'react'
-import { RiComputerLine } from 'react-icons/ri'
-import { BiPrinter } from 'react-icons/bi'
-import { FaFax } from 'react-icons/fa'
-import { GiWifiRouter } from 'react-icons/gi'
-import axios from '../../../../utils/axios'
-import { REPAIRMAN, REQUEST } from '../../../../types'
+import { REQUEST } from '../../../../types'
 
-export default function RejectRequest({
-  requests,
-  refresh,
-}: {
-  requests: REQUEST[]
-  refresh: Function
-}) {
+export default function RejectRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
 

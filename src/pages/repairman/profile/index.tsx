@@ -23,7 +23,7 @@ import moment from 'moment'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import { Link } from '../../../../i18n'
 import axios from '../../../utils/axios'
-import { REPAIRMAN } from '../../../types'
+import { REPAIRMAN, SPECIALIZE } from '../../../types'
 
 export default function RepairmanDetail() {
   const [focused, setFocused] = useState<boolean>(false)
@@ -41,7 +41,7 @@ export default function RepairmanDetail() {
   useEffect(() => {
     axios.get('/repairman/me').then((response) => {
       setRepairman(response.data.repairman)
-      response.data.repairman.specializes?.forEach((specialize) => {
+      response.data.repairman.specializes?.forEach((specialize: SPECIALIZE) => {
         switch (specialize.facilityType?.name) {
           case 'computer':
             setIsCheckComputer(true)

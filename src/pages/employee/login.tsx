@@ -19,7 +19,6 @@ import { useRouter } from 'next/router'
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 import { withTranslation } from '../../../i18n'
-import axios from '../../utils/axios'
 import { loginEmployee } from '../../redux/actions/auth.action'
 
 function Login({ t }: { readonly t: TFunction }) {

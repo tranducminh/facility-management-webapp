@@ -37,7 +37,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
   const createNewRequest = () => {
     axios
       .post('/requests', { problem, facilityId: facility.id })
-      .then((response) => {
+      .then(() => {
         onCloseReport()
       })
       .catch((error) => {

@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import {
   FormControl,
   FormLabel,
@@ -14,7 +13,6 @@ import {
   Checkbox,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { TFunction } from 'next-i18next'
 import { useRouter } from 'next/router'
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux'
 import AdminLayout from '../../layouts/AdminLayout'

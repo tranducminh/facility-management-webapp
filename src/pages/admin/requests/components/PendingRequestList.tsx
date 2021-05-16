@@ -35,12 +35,7 @@ import {
   Icon,
   Textarea,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Search2Icon,
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
+import { Search2Icon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'

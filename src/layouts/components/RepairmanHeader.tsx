@@ -6,7 +6,6 @@ import {
   Container,
   Button,
   IconButton,
-  Image,
   Menu,
   MenuButton,
   MenuList,
@@ -16,15 +15,13 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { BellIcon, UnlockIcon, MoonIcon, SunIcon, ChevronDownIcon } from '@chakra-ui/icons'
-
-import { TFunction } from 'next-i18next'
 import { RootStateOrAny, useSelector, useDispatch } from 'react-redux'
+import Link from 'next/link'
 import { useColor } from '../../theme/useColorMode'
-import { i18n, withTranslation, Link } from '../../../i18n'
 import RepairmanLogo from '../../components/RepairmanLogo'
 import { logout } from '../../redux/actions/auth.action'
 
-function RepairmanHeader({ t }: { readonly t: TFunction }) {
+function RepairmanHeader() {
   const auth = useSelector((state: RootStateOrAny) => state.auth)
   const dispatch = useDispatch()
   const { colorMode, toggleColorMode } = useColorMode()
@@ -41,32 +38,6 @@ function RepairmanHeader({ t }: { readonly t: TFunction }) {
           <RepairmanLogo />
         </Box>
         <Spacer />
-        {/* <Menu>
-          <MenuButton color={buttonColorMode} as={Button} variant='ghost'>
-            <Image
-              src={
-                i18n.language === 'vi'
-                  ? '/assets/images/vietnam.svg'
-                  : '/assets/images/uk.svg'
-              }
-              w='1.3rem'
-            />
-          </MenuButton>
-          <MenuList>
-            <MenuItem
-              textStyle='medium'
-              onClick={() => i18n.changeLanguage('vi')}>
-              <Image src='/assets/images/vietnam.svg' w='1.3rem' mr={3} />
-              {t('vietnamese')}
-            </MenuItem>
-            <MenuItem
-              textStyle='medium'
-              onClick={() => i18n.changeLanguage('en')}>
-              <Image src='/assets/images/uk.svg' w='1.3rem' mr={3} />
-              {t('english')}
-            </MenuItem>
-          </MenuList>
-        </Menu> */}
         <IconButton
           aria-label='Color mode'
           color={buttonColorMode}
@@ -112,8 +83,4 @@ function RepairmanHeader({ t }: { readonly t: TFunction }) {
   )
 }
 
-RepairmanHeader.getInitialProps = async () => ({
-  namespacesRequired: ['header'],
-})
-
-export default withTranslation('header')(RepairmanHeader)
+export default RepairmanHeader

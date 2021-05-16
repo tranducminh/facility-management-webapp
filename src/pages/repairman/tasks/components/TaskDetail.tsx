@@ -42,8 +42,8 @@ export default function TaskDetail({
   const [employee, setEmployee] = useState<EMPLOYEE>({})
   const [facility, setFacility] = useState<FACILITY>({})
   const [solution, setSolution] = useState<string>('')
-  const [options, setOptions] = useState<string[] | number[]>([])
-  const [replacement, setReplacement] = useState({})
+  const [options, setOptions] = useState<(string | number)[]>([])
+  const [replacement, setReplacement] = useState<{ [name: string]: string }>({})
   const [reason, setReason] = useState<string>('')
 
   useEffect(() => {
@@ -72,13 +72,16 @@ export default function TaskDetail({
         console.log(error)
       })
     options.forEach((option: string | number) => {
-      axios.post('/replacements', {
-        facilityId: facility.id,
-        requestId: request.id,
-        component: option,
-        source: facility.configuration[option.toString()],
-        target: replacement[option.toString()],
-      })
+      const configuration = facility.configuration as { [name: string]: string }
+      if (configuration[option.toString()] && replacement[option.toString()]) {
+        axios.post('/replacements', {
+          facilityId: facility.id,
+          requestId: request.id,
+          component: option,
+          source: configuration[option.toString()],
+          target: replacement[option.toString()],
+        })
+      }
     })
   }
 
@@ -462,40 +465,48 @@ export default function TaskDetail({
               </GridItem>
               <GridItem colSpan={8}>
                 <Grid templateColumns='repeat(9, 1fr)' gap={4}>
-                  {options.map((option: string | number, index: number) => (
-                    <>
-                      <GridItem colSpan={9}>
-                        <Text textStyle='bold-sm'>{convertName(option)}:</Text>
-                      </GridItem>
-                      <GridItem colSpan={4}>
-                        <Flex alignItems='center' h='100%'>
-                          <Text pl='4'>
-                            {facility.configuration &&
-                              facility.configuration[option.toString()]}
-                          </Text>
-                        </Flex>
-                      </GridItem>
-                      <GridItem colSpan={1}>
-                        <Flex
-                          justifyContent='center'
-                          alignItems='center'
-                          h='100%'>
-                          <ArrowRightIcon w={3} h={3} />
-                        </Flex>
-                      </GridItem>
-                      <GridItem colSpan={4}>
-                        <Textarea
-                          name={option.toString()}
-                          onChange={(event) => {
-                            setReplacement({
-                              ...replacement,
-                              [event.target.name]: event.target.value,
-                            })
-                          }}
-                        />
-                      </GridItem>
-                    </>
-                  ))}
+                  {options &&
+                    options.map((option: string | number) => {
+                      const configuration = facility.configuration as {
+                        [name: string]: string
+                      }
+                      return (
+                        <>
+                          <GridItem colSpan={9}>
+                            <Text textStyle='bold-sm'>
+                              {convertName(option)}:
+                            </Text>
+                          </GridItem>
+                          <GridItem colSpan={4}>
+                            <Flex alignItems='center' h='100%'>
+                              <Text pl='4'>
+                                {configuration &&
+                                  configuration[option.toString()]}
+                              </Text>
+                            </Flex>
+                          </GridItem>
+                          <GridItem colSpan={1}>
+                            <Flex
+                              justifyContent='center'
+                              alignItems='center'
+                              h='100%'>
+                              <ArrowRightIcon w={3} h={3} />
+                            </Flex>
+                          </GridItem>
+                          <GridItem colSpan={4}>
+                            <Textarea
+                              name={option.toString()}
+                              onChange={(event) => {
+                                setReplacement({
+                                  ...replacement,
+                                  [event.target.name]: event.target.value,
+                                })
+                              }}
+                            />
+                          </GridItem>
+                        </>
+                      )
+                    })}
                 </Grid>
                 <Button size='sm' mt='5' onClick={onOpen}>
                   Chọn linh kiện cần thay thế
@@ -553,7 +564,7 @@ export default function TaskDetail({
             <CheckboxGroup
               colorScheme='green'
               value={options}
-              onChange={(value) => setOptions(value)}>
+              onChange={(value: (string | number)[]) => setOptions(value)}>
               <Grid templateColumns='repeat(3, 1fr)' gap={2}>
                 {facility.facilityType?.name === 'computer' ? (
                   <>

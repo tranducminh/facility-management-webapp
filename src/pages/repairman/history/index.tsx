@@ -116,7 +116,7 @@ export default function Task() {
               <AccordionIcon />
             </AccordionButton>
             <AccordionPanel py={5}>
-              <HistoryDetail history={history} refresh={refresh} />
+              <HistoryDetail history={history} />
             </AccordionPanel>
           </AccordionItem>
         ))}

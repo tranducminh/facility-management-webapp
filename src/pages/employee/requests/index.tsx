@@ -25,7 +25,6 @@ export default function Request() {
   const [completedRequest, setCompletedRequest] = useState<REQUEST[]>([])
   const [unCompletedRequest, setUnCompletedRequest] = useState<REQUEST[]>([])
   const [rejectedRequest, setRejectedRequest] = useState<REQUEST[]>([])
-  const [deletedRequest, setDeletedRequest] = useState<REQUEST[]>([])
 
   const refresh = () => {
     axios.get('/employees/me/requests').then((response) => {
@@ -47,9 +46,6 @@ export default function Request() {
       )
       setRejectedRequest(
         requests.filter((request: REQUEST) => request.status === 'rejected')
-      )
-      setDeletedRequest(
-        requests.filter((request: REQUEST) => request.status === 'deleted')
       )
     })
   }

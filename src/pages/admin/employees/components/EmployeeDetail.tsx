@@ -42,7 +42,7 @@ export default function EmployeeDetail({ employee }: { employee: EMPLOYEE }) {
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
           avatar: await getBase64(avatar),
         })
-        .then((response) => {
+        .then(() => {
           alert('success')
         })
         .catch((error) => {
@@ -58,7 +58,7 @@ export default function EmployeeDetail({ employee }: { employee: EMPLOYEE }) {
           phone,
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
         })
-        .then((response) => {
+        .then(() => {
           alert('success')
         })
         .catch((error) => {
@@ -184,7 +184,7 @@ export default function EmployeeDetail({ employee }: { employee: EMPLOYEE }) {
             <Input
               type='file'
               display='none'
-              onChange={(event) => {
+              onChange={(event: any) => {
                 setAvatarUrl(URL.createObjectURL(event.target?.files[0]))
                 setAvatar(event.target?.files[0])
               }}

@@ -66,8 +66,8 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
           </Tr>
         </Thead>
         <Tbody>
-          {requests.map((request, index) => (
-            <Tr>
+          {requests.map((request: REQUEST, index: number) => (
+            <Tr key={index}>
               <Td>{request.id}</Td>
               <Td>
                 <Text minW='7rem' noOfLines={1} isTruncated>

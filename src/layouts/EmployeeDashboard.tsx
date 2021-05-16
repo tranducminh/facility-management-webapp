@@ -6,8 +6,7 @@ import {
   Text,
   LinkBox,
   Icon,
-  Spinner,
-  Flex,
+  useToast,
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import { CgProfile } from 'react-icons/cg'
@@ -21,7 +20,6 @@ import EmployeeHeader from './components/EmployeeHeader'
 import { Link } from '../../i18n'
 import { useColor } from '../theme/useColorMode'
 import { fetchMe } from '../redux/actions/auth.action'
-import EmployeeLayout from './EmployeeLayout'
 
 /* eslint-disable react/destructuring-assignment */
 export default function EmployeeDashboard(props: any) {
@@ -29,6 +27,10 @@ export default function EmployeeDashboard(props: any) {
   const router = useRouter()
   const dispatch = useDispatch()
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
+  const notification = useSelector(
+    (state: RootStateOrAny) => state.notification
+  )
+  const toast = useToast()
 
   useEffect(() => {
     if (auth.role === 'admin') {
@@ -43,6 +45,19 @@ export default function EmployeeDashboard(props: any) {
       router.push('/employee/login')
     }
   }, [auth])
+
+  useEffect(() => {
+    if (notification.isEnabled) {
+      toast({
+        title: notification.title,
+        description: notification.description,
+        status: notification.status,
+        position: 'bottom-left',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
+  }, [notification])
 
   useEffect(() => {
     dispatch(fetchMe({ role: 'employee' }))
