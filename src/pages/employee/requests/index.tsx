@@ -9,6 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import EmployeeDashboard from '../../../layouts/EmployeeDashboard'
 import axios from '../../../utils/axios'
 import AssignRequest from './components/AssignRequest'
@@ -25,6 +26,9 @@ export default function Request() {
   const [completedRequest, setCompletedRequest] = useState<REQUEST[]>([])
   const [unCompletedRequest, setUnCompletedRequest] = useState<REQUEST[]>([])
   const [rejectedRequest, setRejectedRequest] = useState<REQUEST[]>([])
+  const [defaultTab, setDefaultTab] = useState<number>(0)
+
+  const router = useRouter()
 
   const refresh = () => {
     axios.get('/employees/me/requests').then((response) => {
@@ -50,11 +54,42 @@ export default function Request() {
     })
   }
   useEffect(() => {
+    const type = router.query.type || 'pending'
+    debugger
+    switch (type) {
+      case 'pending':
+        setDefaultTab(0)
+        break
+      case 'assigned':
+        setDefaultTab(1)
+        break
+      case 'inprocess':
+        setDefaultTab(2)
+        break
+      case 'completed':
+        setDefaultTab(3)
+        break
+      case 'uncompleted':
+        setDefaultTab(4)
+        break
+      case 'rejected':
+        setDefaultTab(5)
+        break
+
+      default:
+        break
+    }
     refresh()
   }, [])
   return (
     <EmployeeDashboard isRequest>
-      <Tabs size='md' variant='enclosed' colorScheme='teal' defaultIndex={0}>
+      <Tabs
+        size='md'
+        variant='enclosed'
+        colorScheme='teal'
+        defaultIndex={0}
+        index={defaultTab}
+        onChange={(index: number) => setDefaultTab(index)}>
         <TabList>
           <Tab>
             <Text textStyle='bold-sm'>Đang chờ</Text>
@@ -104,14 +139,6 @@ export default function Request() {
               </Badge>
             ) : null}
           </Tab>
-          {/* <Tab>
-            <Text textStyle='bold-sm'>Đã xóa</Text>
-            {deletedRequest.length > 0 ? (
-              <Badge ml='2' colorScheme='red'>
-                {deletedRequest.length}
-              </Badge>
-            ) : null}
-          </Tab> */}
         </TabList>
         <TabPanels>
           <TabPanel>

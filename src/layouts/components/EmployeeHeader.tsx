@@ -133,6 +133,21 @@ function EmployeeHeader() {
       case NotificationType.UPDATED_FACILITY_INFO:
         router.push(`/employee/facilities/${notificationTemp.facility?.id}`)
         break
+      case NotificationType.APPROVED_REQUEST:
+        router.push(`/employee/requests?type=approved`)
+        break
+      case NotificationType.REJECTED_REQUEST:
+        router.push(`/employee/requests?type=rejected`)
+        break
+      case NotificationType.INPROCESS_REQUEST:
+        router.push(`/employee/requests?type=inprocess`)
+        break
+      case NotificationType.COMPLETED_REQUEST:
+        router.push(`/employee/requests?type=completed`)
+        break
+      case NotificationType.UNCOMPLETED_REQUEST:
+        router.push(`/employee/requests?type=uncompleted`)
+        break
       default:
         break
     }

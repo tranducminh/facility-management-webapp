@@ -35,14 +35,16 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
   } = useDisclosure()
   const [problem, setProblem] = useState<string>('')
   const createNewRequest = () => {
-    axios
-      .post('/requests', { problem, facilityId: facility.id })
-      .then(() => {
-        onCloseReport()
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    if (facility.status === 'ready') {
+      axios
+        .post('/requests', { problem, facilityId: facility.id })
+        .then(() => {
+          onCloseReport()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
   }
 
   return (
@@ -109,8 +111,8 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
               <Tag size='sm' key='status' variant='solid' colorScheme='teal'>
                 Sắn sàng
               </Tag>
-            ) : facility.status === 'ready' ? (
-              <Tag size='sm' key='status' variant='solid' colorScheme='yellow'>
+            ) : facility.status === 'repairing' ? (
+              <Tag size='sm' key='status' variant='solid' colorScheme='blue'>
                 Đang sửa chữa
               </Tag>
             ) : (
@@ -127,7 +129,8 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             colorScheme='red'
             variant='link'
             size='sm'
-            onClick={onOpenReport}>
+            onClick={onOpenReport}
+            disabled={facility.status !== 'ready'}>
             <Text pt='1' fontSize='13px'>
               Báo hỏng
             </Text>

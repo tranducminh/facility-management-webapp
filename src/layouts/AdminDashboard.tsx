@@ -53,7 +53,7 @@ export default function AdminDashboard(props: any) {
         title: notification.title,
         description: notification.description,
         status: notification.status,
-        position: 'top',
+        position: 'bottom-left',
         duration: 3000,
         isClosable: true,
       })

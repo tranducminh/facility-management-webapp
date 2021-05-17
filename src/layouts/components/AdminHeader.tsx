@@ -28,14 +28,18 @@ import { RootStateOrAny, useSelector, useDispatch } from 'react-redux'
 import Link from 'next/link'
 import Pusher from 'pusher-js'
 import { useEffect, useState } from 'react'
+import { SiGoogleclassroom } from 'react-icons/si'
+import { BiTask } from 'react-icons/bi'
+import { useRouter } from 'next/router'
 import { useColor } from '../../theme/useColorMode'
 import AdminLogo from '../../components/AdminLogo'
 import { logout } from '../../redux/actions/auth.action'
-import { NOTIFICATION } from '../../types'
+import { NOTIFICATION, NotificationType } from '../../types'
 import {
   pushNotification,
   resetNotification,
 } from '../../redux/actions/notification.action'
+import axios from '../../utils/axios'
 
 function AdminHeader() {
   const auth = useSelector((state: RootStateOrAny) => state.auth)
@@ -44,6 +48,10 @@ function AdminHeader() {
   const { buttonColorMode } = useColor()
   const borderColor = useColorModeValue('gray.100', 'gray.900')
   const [notifications, setNotifications] = useState<NOTIFICATION[]>([])
+  const [newNotifications, setNewNotifications] = useState<NOTIFICATION[]>([])
+  const [unReadNotification, setUnReadNotification] = useState<number>(0)
+  const router = useRouter()
+
   const onHandleLogout = () => {
     dispatch(logout())
   }
@@ -51,15 +59,87 @@ function AdminHeader() {
   const pusher = new Pusher('75ba4bf21a42e1773cf4', {
     cluster: 'ap1',
   })
+  const refreshUnReadNotificationTotal = () => {
+    axios
+      .get('/notifications/unread')
+      .then((res) => {
+        setUnReadNotification(res.data.total)
+        debugger
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   useEffect(() => {
-    const channel = pusher.subscribe(auth.user.channel)
+    axios
+      .get('/notifications')
+      .then((res) => {
+        setNotifications(res.data.notifications)
+        debugger
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    refreshUnReadNotificationTotal()
+  }, [])
+
+  useEffect(() => {
+    const channel = pusher.subscribe('admin')
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
-      setNotifications([data.notification, ...notifications])
-      dispatch(pushNotification({ title: data.notification.content }))
+      setNewNotifications([data.notification, ...newNotifications])
+      dispatch(
+        pushNotification({
+          title: data.notification.content,
+          id: data.notification.id,
+        })
+      )
+      debugger
       dispatch(resetNotification())
+      refreshUnReadNotificationTotal()
       channel.unbind('common')
     })
-  }, [notifications])
+  }, [newNotifications])
+
+  const onHandleNotification = (notificationId?: number) => {
+    axios
+      .patch(`/notifications/${notificationId}/read`)
+      .then(() => {
+        console.log('aaaa')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    const notificationTemp =
+      notifications.filter((item) => item.id === notificationId)[0] ||
+      newNotifications.filter((item) => item.id === notificationId)[0]
+
+    switch (notificationTemp.type) {
+      case NotificationType.NEW_REQUEST:
+        router.push('/admin/requests?type=pending')
+        break
+
+      default:
+        break
+    }
+  }
+
+  function generateNotificationIcon(type?: NotificationType) {
+    switch (type) {
+      case NotificationType.NEW_REQUEST:
+        return <Icon as={GoGitPullRequest} w={6} h={6} color='teal' />
+      case NotificationType.STARTED_TASK:
+        return <Icon as={BiTask} w={6} h={6} color='green' />
+      case NotificationType.REJECTED_TASK:
+        return <Icon as={BiTask} w={6} h={6} color='red' />
+      case NotificationType.COMPLETED_TASK:
+        return <Icon as={BiTask} w={6} h={6} color='teal' />
+      case NotificationType.UNCOMPLETED_TASK:
+        return <Icon as={BiTask} w={6} h={6} color='red' />
+      default:
+        return <Icon as={SiGoogleclassroom} w={6} h={6} color='yellow.500' />
+    }
+  }
 
   return (
     <Container
@@ -89,108 +169,113 @@ function AdminHeader() {
           <MenuButton
             as={IconButton}
             aria-label='Options'
-            icon={
-              <IconButton
-                aria-label='Color mode'
-                size='md'
-                color={buttonColorMode}
-                icon={<BellIcon fontSize='1.2em' />}
-                variant='ghost'
-              />
-            }
+            position='relative'
             size='md'
             variant='ghost'
-          />
+            mr='5'
+            outline='none'>
+            <IconButton
+              aria-label='Color mode'
+              size='md'
+              color={buttonColorMode}
+              icon={<BellIcon fontSize='1.2em' />}
+              variant='ghost'
+            />
+            {unReadNotification > 0 ? (
+              <Box
+                w='1.25rem'
+                h='1.25rem'
+                lineHeight='1.25rem'
+                backgroundColor='red.600'
+                borderRadius='0.2rem'
+                position='absolute'
+                right='0'
+                top='0'>
+                <Text fontSize='xs' textAlign='center' color='white'>
+                  {unReadNotification}
+                </Text>
+              </Box>
+            ) : null}
+          </MenuButton>
+
           <MenuList maxH='20rem' overflow='auto'>
-            <Text textStyle='bold-md' py='1' px='4'>
+            <Text textStyle='bold-xl' py='1' px='4'>
               Thông báo
             </Text>
-            <MenuGroup title='Mới'>
-              <MenuItem
-                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='teal' />}
-                maxW='18rem'
-                h='3.6rem'>
-                <Text noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is approved
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={
-                  <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
-                }
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is rejected
-                </Text>
-              </MenuItem>
-            </MenuGroup>
-            <MenuDivider />
-            <MenuGroup title='Cũ hơn'>
-              <MenuItem
-                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='red' />}
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is expired, please return facility
-                  facility facility facility facility
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='teal' />}
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is approved
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={
-                  <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
-                }
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is rejected
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='red' />}
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is expired, please return facility
-                  facility facility facility facility
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='teal' />}
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is approved
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={
-                  <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
-                }
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is rejected
-                </Text>
-              </MenuItem>
-              <MenuItem
-                icon={<Icon as={GoGitPullRequest} w={6} h={6} color='red' />}
-                maxW='18rem'
-                h='3.6rem'>
-                <Text fontWeight='semibold' noOfLines={2} w='100%'>
-                  Your request <b>#211196</b> is expired, please return facility
-                  facility facility facility facility
-                </Text>
-              </MenuItem>
-            </MenuGroup>
+            {newNotifications.length <= 0 && notifications.length <= 0 ? (
+              <Text textStyle='md' py='1' px='4'>
+                Không có thông báo nào
+              </Text>
+            ) : null}
+            {newNotifications.length > 0 ? (
+              <>
+                <MenuGroup title='Mới'>
+                  {newNotifications.map((notification, index) => (
+                    <MenuItem
+                      position='relative'
+                      cursor='pointer'
+                      key={index}
+                      icon={generateNotificationIcon(notification.type)}
+                      maxW='18rem'
+                      h='3.6rem'
+                      onClick={() => onHandleNotification(notification.id)}>
+                      <Text
+                        pr='0.3rem'
+                        fontWeight='semibold'
+                        noOfLines={2}
+                        w='100%'>
+                        {notification.content}
+                      </Text>
+                      {!notification.isRead ? (
+                        <Box
+                          w='0.6rem'
+                          h='0.6rem'
+                          borderRadius='0.3rem'
+                          backgroundColor='green.500'
+                          position='absolute'
+                          right='0.6rem'
+                          top='1.5rem'
+                        />
+                      ) : null}
+                    </MenuItem>
+                  ))}
+                </MenuGroup>
+                <MenuDivider />
+              </>
+            ) : null}
+            {notifications.length > 0 ? (
+              <MenuGroup title='Cũ hơn'>
+                {notifications.map((notification, index) => (
+                  <MenuItem
+                    position='relative'
+                    cursor='pointer'
+                    key={index}
+                    icon={generateNotificationIcon(notification.type)}
+                    maxW='18rem'
+                    h='3.6rem'
+                    onClick={() => onHandleNotification(notification.id)}>
+                    <Text
+                      pr='0.3rem'
+                      fontWeight='semibold'
+                      noOfLines={2}
+                      w='100%'>
+                      {notification.content}
+                    </Text>
+                    {!notification.isRead ? (
+                      <Box
+                        w='0.6rem'
+                        h='0.6rem'
+                        borderRadius='0.3rem'
+                        backgroundColor='green.500'
+                        position='absolute'
+                        right='0.6rem'
+                        top='1.5rem'
+                      />
+                    ) : null}
+                  </MenuItem>
+                ))}
+              </MenuGroup>
+            ) : null}
           </MenuList>
         </Menu>
         {!auth.isAuth ? (

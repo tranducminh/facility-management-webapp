@@ -6,6 +6,7 @@ import {
   Text,
   LinkBox,
   Icon,
+  useToast,
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import { CgProfile } from 'react-icons/cg'
@@ -26,6 +27,10 @@ export default function RepairmanDashboard(props: any) {
   const router = useRouter()
   const dispatch = useDispatch()
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
+  const notification = useSelector(
+    (state: RootStateOrAny) => state.notification
+  )
+  const toast = useToast()
 
   useEffect(() => {
     if (auth.role === 'admin') {
@@ -44,6 +49,19 @@ export default function RepairmanDashboard(props: any) {
   useEffect(() => {
     dispatch(fetchMe({ role: 'repairman' }))
   }, [])
+
+  useEffect(() => {
+    if (notification.isEnabled) {
+      toast({
+        title: notification.title,
+        description: notification.description,
+        status: notification.status,
+        position: 'bottom-left',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
+  }, [notification])
 
   return (
     <Box>

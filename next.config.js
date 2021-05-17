@@ -11,18 +11,8 @@ module.exports = {
   async redirects() {
     return [
       {
-        source: '/user/:slug/components/:slug',
-        destination: '/user',
-        permanent: true,
-      },
-      {
-        source: '/manager/:slug/components/:slug',
-        destination: '/manager',
-        permanent: true,
-      },
-      {
-        source: '/manager',
-        destination: '/manager/rooms',
+        source: '/',
+        destination: '/employee',
         permanent: true,
       },
     ]

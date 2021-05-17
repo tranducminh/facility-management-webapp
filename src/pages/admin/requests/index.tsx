@@ -9,6 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import AdminDashboard from '../../../layouts/AdminDashboard'
 import axios from '../../../utils/axios'
 import AssignRequest from './components/AssignRequestList'
@@ -26,6 +27,9 @@ export default function Request() {
   const [completedRequest, setCompletedRequest] = useState<REQUEST[]>([])
   const [unCompletedRequest, setUnCompletedRequest] = useState<REQUEST[]>([])
   const [rejectedRequest, setRejectedRequest] = useState<REQUEST[]>([])
+  const [defaultTab, setDefaultTab] = useState<number>(0)
+  const router = useRouter()
+
   const refresh = () => {
     axios.get('/requests').then((response) => {
       const requests = response.data.requests || []
@@ -50,11 +54,42 @@ export default function Request() {
     })
   }
   useEffect(() => {
+    const type = router.query.type || 'pending'
+    debugger
+    switch (type) {
+      case 'pending':
+        setDefaultTab(0)
+        break
+      case 'assigned':
+        setDefaultTab(1)
+        break
+      case 'inprocess':
+        setDefaultTab(2)
+        break
+      case 'completed':
+        setDefaultTab(3)
+        break
+      case 'uncompleted':
+        setDefaultTab(4)
+        break
+      case 'rejected':
+        setDefaultTab(5)
+        break
+
+      default:
+        break
+    }
     refresh()
   }, [])
   return (
     <AdminDashboard isRequest>
-      <Tabs size='md' variant='enclosed' colorScheme='teal' defaultIndex={0}>
+      <Tabs
+        size='md'
+        variant='enclosed'
+        colorScheme='teal'
+        defaultIndex={0}
+        index={defaultTab}
+        onChange={(index: number) => setDefaultTab(index)}>
         <TabList>
           <Tab>
             <Text textStyle='bold-sm'>Đang chờ</Text>
