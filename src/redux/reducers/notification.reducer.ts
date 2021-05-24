@@ -19,7 +19,7 @@ const defaultState: {
 export const NotificationReducer = (state = defaultState, action: any) => {
   switch (action.type) {
     case NotificationType.PUSH_NOTIFICATION:
-      if (state.id !== action.payload.id) {
+      if (state.id !== action.payload.id || !state.id) {
         debugger
         return {
           ...defaultState,

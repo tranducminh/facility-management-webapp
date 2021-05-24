@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable radix */
 import {
   Table,
   Thead,
@@ -22,24 +22,33 @@ import {
   InputLeftElement,
   Input,
   Flex,
-  Grid,
   FormControl,
   FormLabel,
   Select,
   useDisclosure,
+  FormErrorMessage,
+  IconButton,
 } from '@chakra-ui/react'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Search2Icon,
   ArrowRightIcon,
+  ViewIcon,
 } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 import { useEffect, useState } from 'react'
-import { Link } from '../../../../../i18n'
+import { Formik, Form, Field } from 'formik'
+import { MdDelete } from 'react-icons/md'
+import Link from 'next/link'
 import axios from '../../../../utils/axios'
 import { BUILDING, EMPLOYEE, FLOOR, ROOM } from '../../../../types'
 
+type FormData = {
+  identity: string
+  name: string
+  unit: string
+}
 export default function EmployeeComponent() {
   const {
     isOpen: isOpenUser,
@@ -52,9 +61,6 @@ export default function EmployeeComponent() {
   const [newEmployeeBuilding, setNewEmployeeBuilding] = useState<string>('')
   const [newEmployeeFloor, setNewEmployeeFloor] = useState<string>('')
   const [newEmployeeRoom, setNewEmployeeRoom] = useState<string>('')
-  const [identity, setIdentity] = useState<string>('')
-  const [name, setName] = useState<string>('')
-  const [unit, setUnit] = useState<string>('')
 
   const [currentBuilding, setCurrentBuilding] = useState<BUILDING>({})
   const [currentFloor, setCurrentFloor] = useState<FLOOR>({})
@@ -86,13 +92,10 @@ export default function EmployeeComponent() {
     }
   }, [newEmployeeFloor])
 
-  const createNewEmployee = () => {
-    axios
+  const createNewEmployee = async (data: FormData) => {
+    await axios
       .post('/employees', {
-        identity,
-        name,
-        unit,
-        // eslint-disable-next-line radix
+        ...data,
         roomId: parseInt(newEmployeeRoom),
       })
       .then(() => {
@@ -102,6 +105,46 @@ export default function EmployeeComponent() {
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  function validateIdentity(value: string) {
+    let error
+    if (!value) {
+      error = 'Mã nhân viên không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateName(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên nhân viên không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateUnit(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên đơn vị không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateFloor() {
+    let error
+    if (newEmployeeBuilding && !newEmployeeFloor) {
+      error = 'Tầng không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateRoom() {
+    let error
+    if (newEmployeeFloor && !newEmployeeRoom) {
+      error = 'Phòng không được bỏ trống'
+    }
+    return error
   }
 
   return (
@@ -129,7 +172,6 @@ export default function EmployeeComponent() {
             <Th>Tên</Th>
             <Th>Đơn vị</Th>
             <Th>Phòng</Th>
-            <Th>Đã có phòng</Th>
             <Th isNumeric>Hành động</Th>
           </Tr>
         </Thead>
@@ -146,33 +188,32 @@ export default function EmployeeComponent() {
                     {employee?.room?.name}
                   </Text>
                 ) : (
-                  <Text textStyle='normal'>No room</Text>
-                )}
-              </Td>
-              <Td>
-                {employee.hasRoom === 'true' ? (
-                  <Tag
-                    size='sm'
-                    key='status'
-                    variant='solid'
-                    colorScheme='teal'>
-                    True
-                  </Tag>
-                ) : (
                   <Tag
                     size='sm'
                     key='status'
                     variant='solid'
                     colorScheme='yellow'>
-                    False
+                    Chưa có phòng
                   </Tag>
                 )}
               </Td>
               <Td isNumeric>
+                <IconButton
+                  colorScheme='red'
+                  aria-label='Remove employee'
+                  variant='outline'
+                  size='sm'
+                  icon={<MdDelete />}
+                  mr='2'
+                />
                 <Link href={`/admin/employees/${employee.identity}`}>
-                  <Button colorScheme='teal' variant='ghost' size='sm'>
-                    Chi tiết
-                  </Button>
+                  <IconButton
+                    colorScheme='teal'
+                    aria-label='View Employee'
+                    variant='outline'
+                    size='sm'
+                    icon={<ViewIcon />}
+                  />
                 </Link>
               </Td>
             </Tr>
@@ -184,7 +225,6 @@ export default function EmployeeComponent() {
             <Th>Tên</Th>
             <Th>Đơn vị</Th>
             <Th>Phòng</Th>
-            <Th>Đã có phòng</Th>
             <Th isNumeric>Hành động</Th>
           </Tr>
         </Tfoot>
@@ -210,92 +250,156 @@ export default function EmployeeComponent() {
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Tạo cán bộ mối</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl isRequired>
-              <FormLabel>Mã nhân viên</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Mã nhân viên'
-                onChange={(event) => setIdentity(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mt='3' isRequired>
-              <FormLabel>Tên</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Tên'
-                onChange={(event) => setName(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mt='3' isRequired>
-              <FormLabel>Đơn vị</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Đơn vị'
-                onChange={(event) => setUnit(event.target.value)}
-              />
-            </FormControl>
-            <Grid templateColumns='repeat(2, 1fr)' gap={6}>
-              <FormControl mt='3' isRequired>
-                <FormLabel>Tòa nhà</FormLabel>
-                <Select
-                  placeholder='Chọn tòa nhà'
-                  onChange={(event) => {
-                    setNewEmployeeBuilding(event.target.value)
-                  }}>
-                  {buildings.map((item: BUILDING, index: number) => (
-                    <option key={index} value={item.name}>
-                      Tòa nhà {item.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl mt='3' isRequired>
-                <FormLabel>Tầng</FormLabel>
-                <Select
-                  placeholder='Chọn tầng'
-                  onChange={(event) => {
-                    setNewEmployeeFloor(event.target.value)
-                  }}>
-                  {!currentBuilding?.floors
-                    ? null
-                    : currentBuilding.floors.map(
-                      (item: FLOOR, index: number) => (
-                        <option key={index} value={item.name}>
-                          Tầng {item.name}
-                        </option>
-                      )
+          <Formik
+            initialValues={{ identity: '', name: '', unit: '' }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await createNewEmployee(values)
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>Tạo cán bộ mới</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <Field name='identity' validate={validateIdentity}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={
+                          form.errors.identity && form.touched.identity
+                        }>
+                        <FormLabel>Mã nhân viên</FormLabel>
+                        <Input
+                          colorScheme='teal'
+                          placeholder='Mã nhân viên'
+                          {...field}
+                        />
+                        <FormErrorMessage>
+                          {form.errors?.identity}
+                        </FormErrorMessage>
+                      </FormControl>
                     )}
-                </Select>
-              </FormControl>
-              <FormControl mt='3' isRequired>
-                <FormLabel>Phòng</FormLabel>
-                <Select
-                  placeholder='Chọn phòng'
-                  onChange={(event) => {
-                    setNewEmployeeRoom(event.target.value)
-                  }}>
-                  {!currentFloor?.rooms
-                    ? null
-                    : currentFloor.rooms.map((item: ROOM, index: number) => (
-                      <option key={index} value={item.id}>
-                        Phòng {item.name}
-                      </option>
-                    ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          </ModalBody>
-          <ModalFooter>
-            <Button size='sm' onClick={onCloseUser} mr={3}>
-              Hủy
-            </Button>
-            <Button size='sm' colorScheme='teal' onClick={createNewEmployee}>
-              Tạo mới
-            </Button>
-          </ModalFooter>
+                  </Field>
+                  <Field name='name' validate={validateName}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.name && form.touched.name}>
+                        <FormLabel>Tên</FormLabel>
+                        <Input
+                          colorScheme='teal'
+                          placeholder='Tên'
+                          {...field}
+                        />
+                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name='unit' validate={validateUnit}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.unit && form.touched.unit}>
+                        <FormLabel>Đơn vị</FormLabel>
+                        <Input
+                          colorScheme='teal'
+                          placeholder='Đơn vị'
+                          {...field}
+                        />
+                        <FormErrorMessage>{form.errors?.unit}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Flex justifyContent='space-between'>
+                    <FormControl mt='3' w='48%'>
+                      <FormLabel>Tòa nhà</FormLabel>
+                      <Select
+                        placeholder='Chọn tòa nhà'
+                        onChange={(event) => {
+                          setNewEmployeeBuilding(event.target.value)
+                        }}>
+                        {buildings.map((item: BUILDING, index: number) => (
+                          <option key={index} value={item.name}>
+                            Tòa nhà {item.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <Field name='floor' validate={validateFloor}>
+                      {({ field, form }: { field: any; form: any }) => (
+                        <FormControl
+                          mt='3'
+                          w='48%'
+                          isRequired={!!newEmployeeBuilding}
+                          isInvalid={form.errors.floor && form.touched.floor}>
+                          <FormLabel>Tầng</FormLabel>
+                          <Select
+                            placeholder='Chọn tầng'
+                            {...field}
+                            onChange={(event) => {
+                              setNewEmployeeFloor(event.target.value)
+                            }}>
+                            {!currentBuilding?.floors
+                              ? null
+                              : currentBuilding.floors.map(
+                                (item: FLOOR, index: number) => (
+                                  <option key={index} value={item.name}>
+                                    Tầng {item.name}
+                                  </option>
+                                )
+                              )}
+                          </Select>
+                          <FormErrorMessage>
+                            {form.errors?.floor}
+                          </FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Flex>
+                  <Field name='room' validate={validateRoom}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        mt='3'
+                        w='48%'
+                        isRequired={!!newEmployeeFloor}
+                        isInvalid={form.errors.room && form.touched.room}>
+                        <FormLabel>Phòng</FormLabel>
+                        <Select
+                          placeholder='Chọn phòng'
+                          {...field}
+                          onChange={(event) => {
+                            setNewEmployeeRoom(event.target.value)
+                          }}>
+                          {!currentFloor?.rooms
+                            ? null
+                            : currentFloor.rooms.map(
+                              (item: ROOM, index: number) => (
+                                <option key={index} value={item.id}>
+                                  Phòng {item.name}
+                                </option>
+                              )
+                            )}
+                        </Select>
+                        <FormErrorMessage>{form.errors?.room}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </ModalBody>
+                <ModalFooter>
+                  <Button size='sm' onClick={onCloseUser} mr={3}>
+                    Hủy
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Tạo mới
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
     </div>

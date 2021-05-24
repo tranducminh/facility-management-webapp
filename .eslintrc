@@ -17,6 +17,7 @@
     "jest": true
   },
   "rules": {
+    // "react-hooks/exhaustive-deps": 0,
     "linebreak-style": 0,
     "jsx-quotes": 0,
     "max-classes-per-file": 0,

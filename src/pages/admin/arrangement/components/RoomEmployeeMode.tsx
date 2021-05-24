@@ -10,7 +10,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
 import axios from '../../../../utils/axios'
 import { EMPLOYEE, ROOM } from '../../../../types'
 import { useColor } from '../../../../theme/useColorMode'
@@ -19,6 +19,7 @@ import {
   resetNotification,
 } from '../../../../redux/actions/notification.action'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
+import { ReducersType } from '../../../../redux/reducers'
 
 export default function RoomEmployeeMode() {
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
@@ -27,6 +28,8 @@ export default function RoomEmployeeMode() {
   const [employees, setEmployees] = useState<EMPLOYEE[]>([])
   const [currentEmployee, setCurrentEmployee] = useState<string>('')
   const dispatch = useDispatch()
+  const useTypedSelector: TypedUseSelectorHook<ReducersType> = useSelector
+  const arrangement = useTypedSelector((state) => state.arrangement)
   const { colorMode } = useColorMode()
   const refreshRoom = () => {
     axios
@@ -55,6 +58,11 @@ export default function RoomEmployeeMode() {
     refreshEmployee()
   }, [])
 
+  useEffect(() => {
+    chooseRoom(arrangement.currentRoomId)
+    debugger
+  }, [arrangement, rooms])
+
   const chooseRoom = (id?: number) => {
     setActiveRoom(rooms.filter((room: ROOM) => room.id === id)[0])
   }
@@ -69,14 +77,15 @@ export default function RoomEmployeeMode() {
 
   function dropEmployee(ev: any) {
     ev.preventDefault()
-    document
-      .querySelector('#employees')
-      ?.appendChild(document?.getElementById(currentEmployee) as Node)
+    // document
+    //   .querySelector('#employees')
+    //   ?.appendChild(document?.getElementById(currentEmployee) as Node)
 
     axios
       .put(`/employees/${currentEmployee}/room`, { roomId: activeRoom?.id })
       .then((res) => {
         refreshRoom()
+        refreshEmployee()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -93,14 +102,15 @@ export default function RoomEmployeeMode() {
 
   function dropRevertEmployee(ev: any) {
     ev.preventDefault()
-    document
-      .querySelector('#pending-employee')
-      ?.appendChild(document?.getElementById(currentEmployee) as Node)
+    // document
+    //   .querySelector('#pending-employee')
+    //   ?.appendChild(document?.getElementById(currentEmployee) as Node)
 
     axios
       .delete(`/employees/${currentEmployee}/room`)
       .then((res) => {
         refreshRoom()
+        refreshEmployee()
         dispatch(
           pushNotification({
             title: res.data.message,

@@ -20,12 +20,18 @@ import moment from 'moment'
 import EmployeeDashboard from '../../../layouts/EmployeeDashboard'
 import axios from '../../../utils/axios'
 import { EMPLOYEE } from '../../../types'
+import { getBase64 } from '../../../utils/file'
 
 export default function Profile() {
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment()
   )
+  const [email, setEmail] = useState<string>()
+  const [phone, setPhone] = useState<string>()
+  const [avatar, setAvatar] = useState<File | null>()
+  const [avatarUrl, setAvatarUrl] = useState<string>()
+
   const [employee, setEmployee] = useState<EMPLOYEE>({})
   useEffect(() => {
     axios
@@ -37,6 +43,45 @@ export default function Profile() {
         console.log(error)
       })
   }, [])
+
+  useEffect(() => {
+    setEmail(employee.email || '')
+    setPhone(employee.phone || '')
+    setAvatarUrl(employee.avatar)
+    handleDateChange(moment(new Date(employee.dateOfBirth || new Date())))
+  }, [employee])
+
+  const onHandleUpdate = async () => {
+    if (avatar) {
+      axios
+        .put(`/employees/me`, {
+          email,
+          phone,
+          dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
+          avatar: await getBase64(avatar),
+        })
+        .then(() => {
+          alert('success')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } else {
+      axios
+        .put(`/employees/me`, {
+          email,
+          phone,
+          dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
+        })
+        .then(() => {
+          alert('success')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+
   return (
     <EmployeeDashboard isProfile>
       <Text textStyle='bold-xl'>Thông tin phòng</Text>
@@ -92,15 +137,15 @@ export default function Profile() {
       </Text>
       <Grid templateColumns='repeat(5, 1fr)' gap={4} mt='5'>
         <GridItem colSpan={3}>
-          <FormControl id='identity'>
+          <FormControl id='identity' isRequired>
             <FormLabel>Mã nhân viên</FormLabel>
             <Input type='text' isDisabled value={employee.identity} />
           </FormControl>
-          <FormControl id='name' mt='5'>
+          <FormControl id='name' mt='5' isRequired>
             <FormLabel>Tên</FormLabel>
             <Input type='text' isDisabled value={employee.name} />
           </FormControl>
-          <FormControl id='unit' mt='5'>
+          <FormControl id='unit' mt='5' isRequired>
             <FormLabel>Đơn vị</FormLabel>
             <Input type='text' isDisabled value={employee.unit} />
           </FormControl>
@@ -122,34 +167,64 @@ export default function Profile() {
           </FormControl>
           <FormControl id='email' mt='5'>
             <FormLabel>Email</FormLabel>
-            <Input type='email' value={employee.email} />
+            <Input
+              type='email'
+              defaultValue={employee.email}
+              onChange={(event) => {
+                setEmail(event.target.value)
+              }}
+            />
           </FormControl>
           <FormControl id='phone' mt='5'>
             <FormLabel>Số điện thoại</FormLabel>
-            <Input type='text' value={employee.phone} />
+            <Input
+              type='text'
+              defaultValue={employee.phone}
+              onChange={(event) => {
+                setPhone(event.target.value)
+              }}
+            />
           </FormControl>
 
-          <Button colorScheme='teal' size='sm' my='5' float='right'>
+          <Button
+            colorScheme='teal'
+            size='sm'
+            my='5'
+            float='right'
+            onClick={onHandleUpdate}>
             Lưu thay đổi
           </Button>
         </GridItem>
         <GridItem colSpan={2}>
           <Center>
             <Avatar
-              name='Dan Abrahmov'
+              name={`${employee.name}`}
               w='12rem'
               h='12rem'
-              src='https://bit.ly/dan-abramov'
+              src={`${avatarUrl}`}
             />
           </Center>
           <Center mt={5}>
-            <Button
-              size='sm'
-              variant='outline'
-              leftIcon={<EditIcon />}
-              colorScheme='teal'>
-              Chỉnh sửa
-            </Button>
+            <FormControl id='avatar'>
+              <FormLabel
+                display='flex'
+                justifyContent='center'
+                alignItems='center'
+                cursor='pointer'>
+                <EditIcon colorScheme='teal' />
+                <Text ml='3' colorScheme='teal' textStyle='bold-sm'>
+                  Chỉnh sửa
+                </Text>
+              </FormLabel>
+              <Input
+                type='file'
+                display='none'
+                onChange={(event: any) => {
+                  setAvatarUrl(URL.createObjectURL(event.target?.files[0]))
+                  setAvatar(event.target?.files[0])
+                }}
+              />
+            </FormControl>
           </Center>
         </GridItem>
       </Grid>

@@ -100,7 +100,7 @@ function RepairmanHeader() {
 
   const onHandleNotification = (notificationId?: number) => {
     axios
-      .patch(`/notifications/${notificationId}/read`)
+      .put(`/notifications/${notificationId}/read`)
       .then(() => {
         console.log('aaaa')
       })

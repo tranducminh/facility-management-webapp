@@ -31,6 +31,7 @@ import {
   FormControl,
   FormLabel,
   Select,
+  FormErrorMessage,
   useDisclosure,
 } from '@chakra-ui/react'
 import {
@@ -44,9 +45,13 @@ import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
+import { Formik, Form, Field } from 'formik'
 import axios from '../../../../utils/axios'
 import { REPAIRMAN, REQUEST } from '../../../../types'
 
+type FormData = {
+  repairmanId?: number
+}
 export default function UnCompletedRequest({
   requests,
   refresh,
@@ -79,17 +84,26 @@ export default function UnCompletedRequest({
     )
   }
 
-  const onAssignRequest = (requestId?: number) => {
+  const onAssignRequest = () => {
     axios
-      .put(`/requests/${requestId}/assign`, {
+      .put(`/requests/${currentRequest.id}/assign`, {
         repairmanId: currentRepairman.id,
       })
       .then(() => {
         refresh()
+        onClose()
       })
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  function validateRepairmanId() {
+    let error
+    if (!currentRepairman.id) {
+      error = 'Kỹ thuật viên không được bỏ trống'
+    }
+    return error
   }
 
   return (
@@ -165,205 +179,249 @@ export default function UnCompletedRequest({
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>#{currentRequest.id}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Grid templateColumns='repeat(12, 1fr)' gap={15}>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Thiết bị</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.facility?.name}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Mã cán bộ</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>#{currentRequest.employee?.identity}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Cán bộ yêu cầu</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.employee?.name}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Phòng</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>
-                  {currentRequest.employee?.room?.floor?.building?.name} /
-                  {currentRequest.employee?.room?.name}
-                </Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Vấn đề</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.problem}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Trạng thái</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <HStack spacing={4}>
-                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Không hoàn thành
-                  </Tag>
-                </HStack>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Lý do</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={13}>
-                <Text>{currentRequest.uncompletedReason}</Text>
-              </GridItem>
-              <GridItem colStart={1} colEnd={13}>
-                <Divider />
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Kỹ thuật viên hiện tại</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.repairman?.name}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Mã nhân viên</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>#{currentRequest.repairman?.identity}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Đơn vị</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.repairman?.unit}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Chuyên môn</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                {currentRequest.repairman?.specializes?.map(
-                  (specialize, index_) => {
-                    switch (specialize.facilityType?.name) {
-                      case 'computer':
-                        return (
-                          <Icon
-                            key={index_}
-                            as={RiComputerLine}
-                            fontSize='1.2em'
-                          />
-                        )
-                      case 'fax':
-                        return <Icon key={index_} as={FaFax} fontSize='1em' />
-                      case 'printer':
-                        return (
-                          <Icon key={index_} as={BiPrinter} fontSize='1.2em' />
-                        )
-                      case 'node':
-                        return (
-                          <Icon
-                            key={index_}
-                            as={GiWifiRouter}
-                            fontSize='1.2em'
-                          />
-                        )
-                      default:
-                        break
-                    }
-                  }
-                )}
-              </GridItem>
-              <GridItem colStart={1} colEnd={13}>
-                <Divider />
-              </GridItem>
-              <GridItem colStart={2} colEnd={12}>
-                <FormControl isRequired>
-                  <FormLabel fontWeight='bold'>Kỹ thuật viên mới</FormLabel>
-                  <Flex alignItems='center' justifyContent='space-between'>
-                    <Select
-                      placeholder='Chọn kỹ thuật viên mới'
-                      textStyle='normal'
-                      onChange={(event) => {
-                        // eslint-disable-next-line radix
-                        onChangeRepairman(parseInt(event.target.value))
-                      }}>
-                      {suitableRepairman.map(
-                        (repairman: REPAIRMAN, index: number) => (
-                          <option key={index} value={repairman.id}>
-                            {repairman.name}
-                          </option>
-                        )
+          <Formik
+            initialValues={{ repairmanId: 1 }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await onAssignRequest()
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>#{currentRequest.id}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Grid templateColumns='repeat(12, 1fr)' gap={15}>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Thiết bị</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.facility?.name}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Mã cán bộ</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>#{currentRequest.employee?.identity}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Cán bộ yêu cầu</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.employee?.name}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Phòng</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>
+                        {currentRequest.employee?.room?.floor?.building?.name} /
+                        {currentRequest.employee?.room?.name}
+                      </Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Vấn đề</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.problem}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Trạng thái</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <HStack spacing={4}>
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='red'>
+                          Không hoàn thành
+                        </Tag>
+                      </HStack>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Lý do</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={13}>
+                      <Text>{currentRequest.uncompletedReason}</Text>
+                    </GridItem>
+                    <GridItem colStart={1} colEnd={13}>
+                      <Divider />
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Kỹ thuật viên hiện tại</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.repairman?.name}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Mã nhân viên</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>#{currentRequest.repairman?.identity}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Đơn vị</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.repairman?.unit}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Chuyên môn</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      {currentRequest.repairman?.specializes?.map(
+                        (specialize, index_) => {
+                          switch (specialize.facilityType?.name) {
+                            case 'computer':
+                              return (
+                                <Icon
+                                  key={index_}
+                                  as={RiComputerLine}
+                                  fontSize='1.2em'
+                                />
+                              )
+                            case 'fax':
+                              return (
+                                <Icon key={index_} as={FaFax} fontSize='1em' />
+                              )
+                            case 'printer':
+                              return (
+                                <Icon
+                                  key={index_}
+                                  as={BiPrinter}
+                                  fontSize='1.2em'
+                                />
+                              )
+                            case 'node':
+                              return (
+                                <Icon
+                                  key={index_}
+                                  as={GiWifiRouter}
+                                  fontSize='1.2em'
+                                />
+                              )
+                            default:
+                              break
+                          }
+                        }
                       )}
-                    </Select>
-                  </Flex>
-                </FormControl>
-              </GridItem>
-              {currentRepairman.id ? (
-                <>
-                  <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-sm'>Mã nhân viên</Text>
-                  </GridItem>
-                  <GridItem colStart={5} colEnd={12}>
-                    <Text>#{currentRepairman.identity}</Text>
-                  </GridItem>
-                  <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-sm'>Đơn vị</Text>
-                  </GridItem>
-                  <GridItem colStart={5} colEnd={12}>
-                    <Text>{currentRepairman.unit}</Text>
-                  </GridItem>
-                  <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-sm'>Chuyên môn</Text>
-                  </GridItem>
-                  <GridItem colStart={5} colEnd={12}>
-                    {currentRepairman.specializes?.map((specialize, index_) => {
-                      switch (specialize.facilityType?.name) {
-                        case 'computer':
-                          return (
-                            <Icon
-                              key={index_}
-                              as={RiComputerLine}
-                              fontSize='1.2em'
-                            />
-                          )
-                        case 'fax':
-                          return <Icon key={index_} as={FaFax} fontSize='1em' />
-                        case 'printer':
-                          return (
-                            <Icon
-                              key={index_}
-                              as={BiPrinter}
-                              fontSize='1.2em'
-                            />
-                          )
-                        case 'node':
-                          return (
-                            <Icon
-                              key={index_}
-                              as={GiWifiRouter}
-                              fontSize='1.2em'
-                            />
-                          )
-                        default:
-                          break
-                      }
-                    })}
-                  </GridItem>
-                </>
-              ) : null}
-            </Grid>
-          </ModalBody>
+                    </GridItem>
+                    <GridItem colStart={1} colEnd={13}>
+                      <Divider />
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={12}>
+                      <Field name='repairmanId' validate={validateRepairmanId}>
+                        {({ field, form }: { field: any; form: any }) => (
+                          <FormControl
+                            isRequired
+                            isInvalid={
+                              form.errors.repairmanId &&
+                              form.touched.repairmanId
+                            }>
+                            <FormLabel fontWeight='bold'>
+                              Kỹ thuật viên mới
+                            </FormLabel>
+                            <Select
+                              placeholder='Chọn kỹ thuật viên mới'
+                              textStyle='normal'
+                              {...field}
+                              value={currentRepairman.id}
+                              onChange={(event) => {
+                                // eslint-disable-next-line radix
+                                onChangeRepairman(parseInt(event.target.value))
+                              }}>
+                              {suitableRepairman.map(
+                                (repairman: REPAIRMAN, index: number) => (
+                                  <option key={index} value={repairman.id}>
+                                    {repairman.name}
+                                  </option>
+                                )
+                              )}
+                            </Select>
+                            <FormErrorMessage>
+                              {form.errors?.repairmanId}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                    </GridItem>
+                    {currentRepairman.id ? (
+                      <>
+                        <GridItem colStart={2} colEnd={5}>
+                          <Text textStyle='bold-sm'>Mã nhân viên</Text>
+                        </GridItem>
+                        <GridItem colStart={5} colEnd={12}>
+                          <Text>#{currentRepairman.identity}</Text>
+                        </GridItem>
+                        <GridItem colStart={2} colEnd={5}>
+                          <Text textStyle='bold-sm'>Đơn vị</Text>
+                        </GridItem>
+                        <GridItem colStart={5} colEnd={12}>
+                          <Text>{currentRepairman.unit}</Text>
+                        </GridItem>
+                        <GridItem colStart={2} colEnd={5}>
+                          <Text textStyle='bold-sm'>Chuyên môn</Text>
+                        </GridItem>
+                        <GridItem colStart={5} colEnd={12}>
+                          {currentRepairman.specializes?.map(
+                            (specialize, index_) => {
+                              switch (specialize.facilityType?.name) {
+                                case 'computer':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={RiComputerLine}
+                                      fontSize='1.2em'
+                                    />
+                                  )
+                                case 'fax':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={FaFax}
+                                      fontSize='1em'
+                                    />
+                                  )
+                                case 'printer':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={BiPrinter}
+                                      fontSize='1.2em'
+                                    />
+                                  )
+                                // case 'node':
+                                //   return (
+                                //     <Icon
+                                //       key={index_}
+                                //       as={GiWifiRouter}
+                                //       fontSize='1.2em'
+                                //     />
+                                //   )
+                                default:
+                                  break
+                              }
+                            }
+                          )}
+                        </GridItem>
+                      </>
+                    ) : null}
+                  </Grid>
+                </ModalBody>
 
-          <ModalFooter>
-            <Button
-              size='sm'
-              colorScheme='teal'
-              mr={3}
-              onClick={() => onAssignRequest(currentRequest.id)}>
-              Bàn giao cho kỹ thuật viên mới
-            </Button>
-          </ModalFooter>
+                <ModalFooter>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    mr={3}
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Bàn giao cho kỹ thuật viên mới
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
     </div>

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   Flex,
   Breadcrumb,
@@ -12,7 +11,13 @@ import {
   AccordionIcon,
   Tag,
   HStack,
-  Badge
+  Badge,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Button,
+  Spinner,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -26,15 +31,25 @@ import { REPAIRMAN, HISTORY } from '../../../../types'
 export default function RepairmanDetail() {
   const router = useRouter()
   const [repairman, setRepairman] = useState<REPAIRMAN>({})
-  const refresh = () => {
+  const [histories, setHistories] = useState<HISTORY[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isError, setIsError] = useState<boolean>(false)
+  const refresh = (repairmanId?: string) => {
     axios
-      .get(`/repairman/${router.query['repairman-id']}`)
-      .then((response) => {
-        setRepairman(response.data.repairman)
-        debugger
+      .get(
+        `/repairman/${repairmanId || router.query['repairman-id']?.toString()}`
+      )
+      .then((res) => {
+        setRepairman(res.data.repairman)
+        setHistories(res.data.repairman.histories)
+        setIsLoading(false)
       })
       .catch((error) => {
-        console.log(error)
+        console.log(router.query['repairman-id'])
+        if (error.response.status === 404) {
+          setIsError(true)
+          debugger
+        }
       })
   }
 
@@ -57,6 +72,34 @@ export default function RepairmanDetail() {
     }
   }
 
+  if (isError) {
+    return (
+      <AdminDashboard isRepairman>
+        <Alert
+          status='error'
+          variant='subtle'
+          flexDirection='column'
+          alignItems='center'
+          justifyContent='center'
+          textAlign='center'
+          height='200px'>
+          <AlertIcon boxSize='40px' mr={0} />
+          <AlertTitle mt={4} mb={1} fontSize='lg'>
+            Không tìm thấy kỹ thuật viên với mã nhân viên #
+            {router.query['repairman-id']}
+          </AlertTitle>
+          <AlertDescription maxWidth='sm' mt='3'>
+            <Link href='/admin/repairman'>
+              <Button size='sm' variant='ghost' colorScheme='teal'>
+                Trở về trang danh sách kỹ thuật viên
+              </Button>
+            </Link>
+          </AlertDescription>
+        </Alert>
+      </AdminDashboard>
+    )
+  }
+
   return (
     <AdminDashboard isRepairman>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -69,42 +112,49 @@ export default function RepairmanDetail() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/repairman/211196'>
-              <BreadcrumbLink>
-                <Text textStyle='bold-md'>
-                  #{repairman.identity} - {repairman.name}
-                </Text>
-              </BreadcrumbLink>
-            </Link>
+            {isLoading ? (
+              <Spinner size='sm' />
+            ) : (
+              <Link href={`/ admin / repairman / ${repairman?.identity} `}>
+                <BreadcrumbLink>
+                  <Text textStyle='bold-md'>
+                    #{repairman.identity} - {repairman.name}
+                  </Text>
+                </BreadcrumbLink>
+              </Link>
+            )}
           </BreadcrumbItem>
         </Breadcrumb>
       </Flex>
+      {isLoading ? (
+        <Spinner size='md' />
+      ) : (
+        <Accordion defaultIndex={[0]} allowMultiple>
+          <AccordionItem>
+            <AccordionButton>
+              <Flex justifyContent='space-between' alignItems='center' w='100%'>
+                <Text textStyle='bold-md'>Thông tin kỹ thuật viên</Text>
+                <AccordionIcon />
+              </Flex>
+            </AccordionButton>
+            <AccordionPanel py={5}>
+              <RepairmanDetailComponent
+                repairman={repairman}
+                refresh={refresh}
+              />
+            </AccordionPanel>
+          </AccordionItem>
 
-      <Accordion defaultIndex={[0]} allowMultiple>
-        <AccordionItem>
-          <AccordionButton>
-            <Flex justifyContent='space-between' alignItems='center' w='100%'>
-              <Text textStyle='bold-md'>Thông tin kỹ thuật viên</Text>
-              <AccordionIcon />
-            </Flex>
-          </AccordionButton>
-          <AccordionPanel py={5}>
-            <RepairmanDetailComponent repairman={repairman} />
-          </AccordionPanel>
-        </AccordionItem>
-
-        <AccordionItem>
-          <AccordionButton>
-            <Flex justifyContent='space-between' alignItems='center' w='100%'>
-              <Text textStyle='bold-md'>Lịch sử nhiệm vụ</Text>
-              <AccordionIcon />
-            </Flex>
-          </AccordionButton>
-          <AccordionPanel py={5}>
-            <Accordion allowMultiple>
-              {!repairman.histories
-                ? null
-                : repairman.histories.map((history: HISTORY, index: number) => (
+          <AccordionItem>
+            <AccordionButton>
+              <Flex justifyContent='space-between' alignItems='center' w='100%'>
+                <Text textStyle='bold-md'>Lịch sử nhiệm vụ</Text>
+                <AccordionIcon />
+              </Flex>
+            </AccordionButton>
+            <AccordionPanel py={5}>
+              <Accordion allowMultiple>
+                {histories.map((history: HISTORY, index: number) => (
                   <AccordionItem key={index}>
                     <AccordionButton>
                       <Flex
@@ -145,9 +195,9 @@ export default function RepairmanDetail() {
                                 variant='solid'
                                 colorScheme='gray'>
                                 {`
-                        ${new Date(history.createdAt).getDate()}
-                        - ${new Date(history.createdAt).getMonth() + 1}
-                        - ${new Date(history.createdAt).getFullYear()}`}
+  ${new Date(history.createdAt).getDate()}
+  - ${new Date(history.createdAt).getMonth() + 1}
+  - ${new Date(history.createdAt).getFullYear()} `}
                               </Tag>
                             ) : null}
                           </HStack>
@@ -160,10 +210,11 @@ export default function RepairmanDetail() {
                     </AccordionPanel>
                   </AccordionItem>
                 ))}
-            </Accordion>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
+              </Accordion>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      )}
     </AdminDashboard>
   )
 }

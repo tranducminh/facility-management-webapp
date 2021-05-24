@@ -1,5 +1,5 @@
+/* eslint-disable radix */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable prettier/prettier */
 import { RiCommunityLine } from 'react-icons/ri'
 import { FaBirthdayCake } from 'react-icons/fa'
 import { IoMdPricetag } from 'react-icons/io'
@@ -12,19 +12,34 @@ import {
   Flex,
   Text,
   Badge,
-  Tag
+  Tag,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
+import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
 import axios from '../../../../utils/axios'
 import { EMPLOYEE, FACILITY } from '../../../../types'
+import { ReducersType } from '../../../../redux/reducers'
 import { useColor } from '../../../../theme/useColorMode'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
 
 export default function EmployeeFacilityMode() {
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
   const [activeEmployee, setActiveEmployee] = useState<EMPLOYEE>()
   const [employees, setEmployees] = useState<EMPLOYEE[]>([])
   const [facilities, setFacilities] = useState<FACILITY[]>([])
-  const [currentEmployee, setCurrentEmployee] = useState<string>('')
+  const [currentFacility, setCurrentFacility] = useState<string>('')
+  const dispatch = useDispatch()
+  const useTypedSelector: TypedUseSelectorHook<ReducersType> = useSelector
+  const arrangement = useTypedSelector((state) => state.arrangement)
+
+  useEffect(() => {
+    chooseEmployee(arrangement.currentEmployeeId)
+  }, [arrangement, employees])
+
   useEffect(() => {
     axios
       .get('/employees')
@@ -50,20 +65,75 @@ export default function EmployeeFacilityMode() {
     )
   }
 
-  function allowDropEmployee(ev: any) {
+  function allowDropFacility(ev: any) {
     ev.preventDefault()
   }
 
-  async function dragEmployee(ev: any) {
-    await setCurrentEmployee(ev.target.id)
+  async function dragFacility(ev: any) {
+    await setCurrentFacility(ev.target.id)
   }
 
   function dropEmployee(ev: any) {
     ev.preventDefault()
     document
-      .querySelector('#employees')
-      ?.appendChild(document?.getElementById(currentEmployee) as Node)
+      .querySelector('#facilities')
+      ?.appendChild(document?.getElementById(currentFacility) as Node)
+
+    axios
+      .put(`/facilities/${currentFacility}/owner`, {
+        employeeId: activeEmployee?.id,
+      })
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
+
+  function dropRevertFacility(ev: any) {
+    ev.preventDefault()
+    document
+      .querySelector('#pending-facilities')
+      ?.appendChild(document?.getElementById(currentFacility) as Node)
+
+    axios
+      .delete(`/facilities/${currentFacility}/owner`)
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const generateFacilityTypeName = (facilityType?: string) => {
+    switch (facilityType) {
+      case 'computer':
+        return 'Máy tính'
+      case 'printer':
+        return 'Máy in'
+      case 'fax':
+        return 'Máy fax'
+      default:
+        return null
+    }
+  }
+
   return (
     <Grid templateColumns='repeat(9, 1fr)' gap={4}>
       <GridItem colSpan={2} h='100vh' overflow='auto'>
@@ -83,7 +153,9 @@ export default function EmployeeFacilityMode() {
               }}
               cursor='pointer'
               onClick={() => chooseEmployee(employee.id)}
-              backgroundColor={employee.id === activeEmployee?.id ? selectBgColor : ''}
+              backgroundColor={
+                employee.id === activeEmployee?.id ? selectBgColor : ''
+              }
               color={employee.id === activeEmployee?.id ? hoverTextColor : ''}>
               <Text textStyle='bold-sm'>#{employee.identity}</Text>
               <Text isTruncated textStyle='bold-sm'>
@@ -109,20 +181,31 @@ export default function EmployeeFacilityMode() {
             </Box>
           ))}
       </GridItem>
-      <GridItem colSpan={5} borderRadius='lg' backgroundColor='#1c2531' p='3' h='100vh' overflow='auto'>
+      <GridItem
+        colSpan={5}
+        borderRadius='lg'
+        backgroundColor='#1c2531'
+        p='3'
+        h='100vh'
+        overflow='auto'>
         <div
           id='active-room'
           onDrop={(e) => dropEmployee(e)}
-          onDragOver={(e) => allowDropEmployee(e)}>
+          onDragOver={(e) => allowDropFacility(e)}>
           <Flex justifyContent='space-between' w='100%' mb='5'>
             <Text textStyle='bold-xl'>{activeEmployee?.name}</Text>
             <Text textStyle='bold-xl'>#{activeEmployee?.identity}</Text>
           </Flex>
-          <Grid templateColumns='repeat(2, 1fr)' gap={4} id='employees'>
+          <Grid templateColumns='repeat(2, 1fr)' gap={4} id='facilities'>
             {activeEmployee?.facilities &&
               activeEmployee?.facilities.map(
                 (facility: FACILITY, index: number) => (
-                  <GridItem colSpan={1} overflow='hidden'>
+                  <GridItem
+                    colSpan={1}
+                    overflow='hidden'
+                    draggable='true'
+                    onDragStart={(e) => dragFacility(e)}
+                    id={facility.id?.toString()}>
                     <Box
                       key={index}
                       borderWidth='1px'
@@ -136,35 +219,47 @@ export default function EmployeeFacilityMode() {
                       <Divider my='2' />
                       <Flex justifyContent='space-between' mb='2'>
                         <Badge borderRadius='full' colorScheme='teal'>
-                          {facility.facilityType?.name === 'computer'
-                            ? 'Máy tính'
-                            : facility.facilityType?.name === 'printer'
-                              ? 'Máy in'
-                              : facility.facilityType?.name === 'fax'
-                                ? 'Máy fax'
-                                : null}
+                          {generateFacilityTypeName(
+                            facility.facilityType?.name
+                          )}
                         </Badge>
                         {facility.status === 'ready' ? (
-                          <Tag size='sm' key='status' variant='solid' colorScheme='teal'>
+                          <Tag
+                            size='sm'
+                            key='status'
+                            variant='solid'
+                            colorScheme='teal'>
                             Sẵn sàng
                           </Tag>
-                        ) : facility.status === 'ready' ? (
-                          <Tag size='sm' key='status' variant='solid' colorScheme='yellow'>
+                        ) : facility.status === 'repairing' ? (
+                          <Tag
+                            size='sm'
+                            key='status'
+                            variant='solid'
+                            colorScheme='blue'>
                             Đang sửa chữa
                           </Tag>
                         ) : (
-                          <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                          <Tag
+                            size='sm'
+                            key='status'
+                            variant='solid'
+                            colorScheme='red'>
                             Đang hỏng
                           </Tag>
                         )}
                       </Flex>
                       <Flex alignItems='center' mb='1'>
                         <SiOrigin />
-                        <Text isTruncated ml='2'>{facility.origin}</Text>
+                        <Text isTruncated ml='2'>
+                          {facility.origin}
+                        </Text>
                       </Flex>
                       <Flex alignItems='center'>
                         <IoMdPricetag />
-                        <Text isTruncated ml='2'>{facility.price}</Text>
+                        <Text isTruncated ml='2'>
+                          {facility.price}
+                        </Text>
                       </Flex>
                     </Box>
                   </GridItem>
@@ -173,7 +268,13 @@ export default function EmployeeFacilityMode() {
           </Grid>
         </div>
       </GridItem>
-      <GridItem colSpan={2} h='100vh' overflow='auto'>
+      <GridItem
+        colSpan={2}
+        h='100vh'
+        overflow='auto'
+        onDrop={(e) => dropRevertFacility(e)}
+        onDragOver={(e) => allowDropFacility(e)}
+        id='pending-facilities'>
         {facilities &&
           facilities.map((facility: FACILITY, index: number) => (
             <GridItem
@@ -182,7 +283,7 @@ export default function EmployeeFacilityMode() {
               className='student'
               overflow='hidden'
               id={`${facility.id}`}
-              onDragStart={(e) => dragEmployee(e)}>
+              onDragStart={(e) => dragFacility(e)}>
               <Box
                 key={index}
                 borderWidth='1px'
@@ -202,34 +303,56 @@ export default function EmployeeFacilityMode() {
                 </Text>
                 <Divider my='2' />
                 <Flex justifyContent='space-between' mb='2'>
-                  {facility.facilityType?.name === 'computer'
-                    ? <Badge borderRadius='full' colorScheme='teal'>Máy tính</Badge>
-                    : facility.facilityType?.name === 'printer'
-                      ? <Badge borderRadius='full' colorScheme='teal'>Máy in</Badge>
-                      : facility.facilityType?.name === 'fax'
-                        ? <Badge borderRadius='full' colorScheme='teal'>Máy fax</Badge>
-                        : null}
+                  {facility.facilityType?.name === 'computer' ? (
+                    <Badge borderRadius='full' colorScheme='teal'>
+                      Máy tính
+                    </Badge>
+                  ) : facility.facilityType?.name === 'printer' ? (
+                    <Badge borderRadius='full' colorScheme='teal'>
+                      Máy in
+                    </Badge>
+                  ) : facility.facilityType?.name === 'fax' ? (
+                    <Badge borderRadius='full' colorScheme='teal'>
+                      Máy fax
+                    </Badge>
+                  ) : null}
                   {facility.status === 'ready' ? (
-                    <Tag size='sm' key='status' variant='solid' colorScheme='teal'>
+                    <Tag
+                      size='sm'
+                      key='status'
+                      variant='solid'
+                      colorScheme='teal'>
                       Sẵn sàng
                     </Tag>
-                  ) : facility.status === 'ready' ? (
-                    <Tag size='sm' key='status' variant='solid' colorScheme='yellow'>
+                  ) : facility.status === 'repairing' ? (
+                    <Tag
+                      size='sm'
+                      key='status'
+                      variant='solid'
+                      colorScheme='yellow'>
                       Đang sửa chữa
                     </Tag>
                   ) : (
-                    <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                    <Tag
+                      size='sm'
+                      key='status'
+                      variant='solid'
+                      colorScheme='red'>
                       Đang hỏng
                     </Tag>
                   )}
                 </Flex>
                 <Flex alignItems='center' mb='1'>
                   <SiOrigin />
-                  <Text isTruncated ml='2'>{facility.origin}</Text>
+                  <Text isTruncated ml='2'>
+                    {facility.origin}
+                  </Text>
                 </Flex>
                 <Flex alignItems='center'>
                   <IoMdPricetag />
-                  <Text isTruncated ml='2'>{facility.price}</Text>
+                  <Text isTruncated ml='2'>
+                    {facility.price}
+                  </Text>
                 </Flex>
               </Box>
             </GridItem>

@@ -13,10 +13,15 @@ import {
   MenuList,
   MenuOptionGroup,
   MenuItemOption,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  AlertTitle,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { ChevronDownIcon } from '@chakra-ui/icons'
+import { ChevronDownIcon, ArrowRightIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
 import { Link } from '../../../../../../../i18n'
 import AdminDashboard from '../../../../../../layouts/AdminDashboard'
 import { useColor } from '../../../../../../theme/useColorMode'
@@ -29,6 +34,7 @@ import {
   FLOOR,
   ROOM,
 } from '../../../../../../types'
+import { setCurrentRoom } from '../../../../../../redux/actions/arrangement.action'
 
 export default function Room() {
   const [groupByText, setGroupByText] = useState('Cán bộ')
@@ -51,6 +57,12 @@ export default function Room() {
   const [currentFacilities, setCurrentFacilities] = useState<
     FACILITY[] | undefined
   >([])
+
+  const dispatch = useDispatch()
+  const handoverFacility = () => {
+    dispatch(setCurrentRoom({ roomId: room?.id }))
+    router.push('/admin/arrangement')
+  }
 
   const refreshData = () => {
     const buildingName = router.query['building-name'] as string
@@ -200,12 +212,46 @@ export default function Room() {
 
       <Grid templateColumns='repeat(15, 1fr)' gap={4}>
         <GridItem colSpan={groupBy === 'user' ? 12 : 13}>
-          <Text textStyle='bold-md' mb='5'>
-            {groupBy === 'user'
-              ? `#${currentEmployee.identity} - ${currentEmployee.name}`
-              : currentFacilityTypeText}
-          </Text>
-          <FacilityList facilities={currentFacilities} />
+          {currentEmployee?.id ? (
+            <>
+              <Text textStyle='bold-md' mb='5'>
+                {groupBy === 'user'
+                  ? `#${currentEmployee.identity} - ${currentEmployee.name}`
+                  : currentFacilityTypeText}
+              </Text>
+              <FacilityList
+                employee={currentEmployee}
+                facilities={currentFacilities}
+              />
+            </>
+          ) : (
+            <Alert
+              status='info'
+              variant='subtle'
+              flexDirection='column'
+              alignItems='center'
+              justifyContent='center'
+              textAlign='center'
+              height='200px'>
+              <AlertIcon boxSize='40px' mr={0} />
+              <AlertTitle mt={4} mb={1} fontSize='lg'>
+                Phòng {room.name} chưa có cán bộ nào
+              </AlertTitle>
+              <AlertDescription maxWidth='sm'>
+                <Button
+                  rightIcon={<ArrowRightIcon fontSize='xs' />}
+                  colorScheme='teal'
+                  variant='ghost'
+                  size='sm'
+                  onClick={handoverFacility}
+                  mt='5'>
+                  <Text textStyle='bold-sm' mt='0.1rem'>
+                    Phân bổ cán bộ ngay
+                  </Text>
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
         </GridItem>
         {groupBy === 'user' ? (
           <GridItem

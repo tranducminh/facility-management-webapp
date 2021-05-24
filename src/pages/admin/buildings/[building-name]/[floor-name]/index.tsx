@@ -20,11 +20,13 @@ import {
   FormControl,
   FormLabel,
   useDisclosure,
+  FormErrorMessage,
 } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Formik, Form, Field } from 'formik'
 import AdminDashboard from '../../../../../layouts/AdminDashboard'
 import { useColor } from '../../../../../theme/useColorMode'
 import RoomList from '../../components/RoomList'
@@ -40,11 +42,14 @@ export default function BuildingDetail() {
     onOpen: onOpenNewRoom,
     onClose: onCloseNewRoom,
   } = useDisclosure()
+
   const [building, setBuilding] = useState<BUILDING>({})
   const [floor, setFloor] = useState<FLOOR>({})
   const [rooms, setRooms] = useState<ROOM[]>([])
-  const [newFloorName, setNewFloorName] = useState<string>('')
-  const [newRoomName, setNewRoomName] = useState<string>('')
+
+  type FormData = {
+    name: string
+  }
 
   const refreshData = () => {
     const buildingName = router.query['building-name'] as string
@@ -70,9 +75,9 @@ export default function BuildingDetail() {
         console.log(error)
       })
   }
-  const createNewFloor = () => {
+  const createNewFloor = (data: FormData) => {
     axios
-      .post('/floors', { name: newFloorName, buildingId: building.id })
+      .post('/floors', { ...data, buildingId: building.id })
       .then(() => {
         refreshData()
         onClose()
@@ -81,10 +86,9 @@ export default function BuildingDetail() {
         console.log(error)
       })
   }
-  const createNewRoom = () => {
-    debugger
+  const createNewRoom = (data: FormData) => {
     axios
-      .post('/rooms', { name: newRoomName, floorId: floor.id })
+      .post('/rooms', { ...data, floorId: floor.id })
       .then(() => {
         refreshData()
         onCloseNewRoom()
@@ -97,6 +101,23 @@ export default function BuildingDetail() {
     refreshData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query])
+
+  function validateFloorName(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên tầng không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateRoomName(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên phòng không được bỏ trống'
+    }
+    return error
+  }
+
   return (
     <AdminDashboard isBuilding>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -189,48 +210,98 @@ export default function BuildingDetail() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Tạo tầng mới</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Tên tầng</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Tên tầng'
-                onChange={(event) => setNewFloorName(event.target.value)}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button size='sm' onClick={onClose} mr={3}>
-              Hủy
-            </Button>
-            <Button size='sm' colorScheme='teal' onClick={createNewFloor}>
-              Tạo mới
-            </Button>
-          </ModalFooter>
+          <Formik
+            initialValues={{ name: '' }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await createNewFloor(values)
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>Tạo tầng mới</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <Field name='name' validate={validateFloorName}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.name && form.touched.name}>
+                        <FormLabel>Tên tầng</FormLabel>
+                        <Input
+                          {...field}
+                          id='name'
+                          colorScheme='teal'
+                          placeholder='Tên tầng'
+                        />
+                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </ModalBody>
+                <ModalFooter>
+                  <Button size='sm' onClick={onClose} mr={3}>
+                    Hủy
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Tạo mới
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
 
       <Modal isOpen={isOpenNewRoom} onClose={onCloseNewRoom}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Tạo phòng mới</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Tên phòng</FormLabel>
-              <Input colorScheme='teal' placeholder='Tên phòng' onChange={(event) => setNewRoomName(event.target.value)} />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button size='sm' onClick={onCloseNewRoom} mr={3}>
-              Hủy
-            </Button>
-            <Button size='sm' colorScheme='teal' onClick={createNewRoom}>
-              Tạo mới
-            </Button>
-          </ModalFooter>
+          <Formik
+            initialValues={{ name: '' }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await createNewRoom(values)
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>Tạo phòng mới</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <Field name='name' validate={validateRoomName}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.name && form.touched.name}>
+                        <FormLabel>Tên phòng</FormLabel>
+                        <Input
+                          {...field}
+                          id='name'
+                          colorScheme='teal'
+                          placeholder='Tên phòng'
+                        />
+                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </ModalBody>
+                <ModalFooter>
+                  <Button size='sm' onClick={onCloseNewRoom} mr={3}>
+                    Hủy
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Tạo mới
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
     </AdminDashboard>

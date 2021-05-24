@@ -24,6 +24,7 @@ import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import { Link } from '../../../../i18n'
 import axios from '../../../utils/axios'
 import { REPAIRMAN, SPECIALIZE } from '../../../types'
+import { getBase64 } from '../../../utils/file'
 
 export default function RepairmanDetail() {
   const [focused, setFocused] = useState<boolean>(false)
@@ -31,36 +32,104 @@ export default function RepairmanDetail() {
     moment()
   )
   const [repairman, setRepairman] = useState<REPAIRMAN>({})
+  const [email, setEmail] = useState<string>()
+  const [phone, setPhone] = useState<string>()
+  const [avatar, setAvatar] = useState<File | null>()
+  const [avatarUrl, setAvatarUrl] = useState<string>()
+
   const [isCheckComputer, setIsCheckComputer] = useState<boolean>(false)
   const [computerDescription, setComputerDescription] = useState<string>('')
+  const [computerId, setComputerId] = useState<number>()
   const [isCheckPrinter, setIsCheckPrinter] = useState<boolean>(false)
   const [printerDescription, setPrinterDescription] = useState<string>('')
+  const [printerId, setPrinterId] = useState<number>()
   const [isCheckFax, setIsCheckFax] = useState<boolean>(false)
   const [faxDescription, setFaxDescription] = useState<string>('')
+  const [faxId, setFaxId] = useState<number>()
+
+  const onHandleUpdate = async () => {
+    const data = {
+      email,
+      phone,
+      dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
+      specializes: [
+        {
+          id: computerId,
+          isActive: isCheckComputer,
+          description: computerDescription,
+        },
+        {
+          id: printerId,
+          isActive: isCheckPrinter,
+          description: printerDescription,
+        },
+        {
+          id: faxId,
+          isActive: isCheckFax,
+          description: faxDescription,
+        },
+      ],
+    }
+    console.log(data)
+    debugger
+    if (avatar) {
+      axios
+        .put(`/repairman/me`, {
+          ...data,
+          avatar: await getBase64(avatar),
+        })
+        .then(() => {
+          alert('success')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } else {
+      axios
+        .put(`/repairman/me`, {
+          ...data,
+        })
+        .then(() => {
+          alert('success')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }
+
+  useEffect(() => {
+    repairman.specializes?.forEach((specialize: SPECIALIZE) => {
+      switch (specialize.facilityType?.name) {
+        case 'computer':
+          setIsCheckComputer(specialize.isActive || false)
+          setComputerDescription(specialize.description || '')
+          setComputerId(specialize.id)
+          break
+        case 'printer':
+          setIsCheckPrinter(specialize.isActive || false)
+          setPrinterDescription(specialize.description || '')
+          setPrinterId(specialize.id)
+          break
+        case 'fax':
+          setIsCheckFax(specialize.isActive || false)
+          setFaxDescription(specialize.description || '')
+          setFaxId(specialize.id)
+          break
+        default:
+          break
+      }
+    })
+
+    setEmail(repairman.email)
+    setPhone(repairman.phone)
+    setAvatarUrl(repairman.avatar)
+    handleDateChange(moment(new Date(repairman.dateOfBirth || new Date())))
+  }, [repairman])
 
   useEffect(() => {
     axios.get('/repairman/me').then((response) => {
       setRepairman(response.data.repairman)
-      response.data.repairman.specializes?.forEach((specialize: SPECIALIZE) => {
-        switch (specialize.facilityType?.name) {
-          case 'computer':
-            setIsCheckComputer(true)
-            setComputerDescription(specialize.description || '')
-            break
-          case 'printer':
-            setIsCheckPrinter(true)
-            setPrinterDescription(specialize.description || '')
-            break
-          case 'fax':
-            debugger
-            setIsCheckFax(true)
-            setFaxDescription(specialize.description || '')
-            break
-
-          default:
-            break
-        }
-      })
     })
   }, [])
 
@@ -79,15 +148,15 @@ export default function RepairmanDetail() {
       </Flex>
       <Grid templateColumns='repeat(5, 1fr)' gap={4}>
         <GridItem colSpan={3}>
-          <FormControl id='identity'>
+          <FormControl id='identity' isRequired>
             <FormLabel>Mã nhân viên</FormLabel>
             <Input type='text' value={repairman.identity} disabled />
           </FormControl>
-          <FormControl id='name' mt='5'>
+          <FormControl id='name' mt='5' isRequired>
             <FormLabel>Tên</FormLabel>
             <Input type='text' value={repairman.name} disabled />
           </FormControl>
-          <FormControl id='unit' mt='5'>
+          <FormControl id='unit' mt='5' isRequired>
             <FormLabel>Đơn vị</FormLabel>
             <Input type='text' value={repairman.unit} disabled />
           </FormControl>
@@ -109,61 +178,121 @@ export default function RepairmanDetail() {
           </FormControl>
           <FormControl id='email' mt='5'>
             <FormLabel>Email</FormLabel>
-            <Input type='email' value={repairman.email} />
+            <Input
+              type='email'
+              defaultValue={repairman.email}
+              onChange={(event) => {
+                setEmail(event.target.value)
+              }}
+            />
           </FormControl>
           <FormControl id='phone' mt='5'>
             <FormLabel>Số điện thoại</FormLabel>
-            <Input type='text' value={repairman.phone} />
+            <Input
+              type='text'
+              defaultValue={repairman.phone}
+              onChange={(event) => {
+                setPhone(event.target.value)
+              }}
+            />
           </FormControl>
           <FormControl id='phone' mt='5'>
             <FormLabel>Chuyên môn</FormLabel>
             <Box pl='5'>
-              <Checkbox isChecked={isCheckComputer} colorScheme='teal'>
-                <Text textStyle='bold-sm' value={computerDescription}>
-                  Máy tính
-                </Text>
+              <Checkbox
+                isChecked={isCheckComputer}
+                colorScheme='teal'
+                onChange={(e) => setIsCheckComputer(e.target.checked)}>
+                <Text textStyle='bold-sm'>Máy tính</Text>
               </Checkbox>
-              <Textarea mt='1' placeholder='Here is a sample placeholder' />
+              <Textarea
+                mt='1'
+                placeholder='Mô tả'
+                defaultValue={computerDescription}
+                onChange={(event) => {
+                  setComputerDescription(event.target.value)
+                }}
+              />
             </Box>
             <Box pl='5' mt='4'>
-              <Checkbox isChecked={isCheckPrinter} colorScheme='teal'>
-                <Text textStyle='bold-sm' value={printerDescription}>
-                  Máy in
-                </Text>
+              <Checkbox
+                isChecked={isCheckPrinter}
+                colorScheme='teal'
+                onChange={(e) => setIsCheckPrinter(e.target.checked)}>
+                <Text textStyle='bold-sm'>Máy in</Text>
               </Checkbox>
-              <Textarea mt='1' placeholder='Here is a sample placeholder' />
+              <Textarea
+                mt='1'
+                placeholder='Mô tả'
+                defaultValue={printerDescription}
+                onChange={(event) => {
+                  setPrinterDescription(event.target.value)
+                }}
+              />
             </Box>
             <Box pl='5' mt='4'>
-              <Checkbox isChecked={isCheckFax} colorScheme='teal'>
-                <Text textStyle='bold-sm' value={faxDescription}>
-                  Máy fax
-                </Text>
+              <Checkbox
+                isChecked={isCheckFax}
+                colorScheme='teal'
+                onChange={(e) => setIsCheckFax(e.target.checked)}>
+                <Text textStyle='bold-sm'>Máy fax</Text>
               </Checkbox>
-              <Textarea mt='1' placeholder='Here is a sample placeholder' />
+              <Textarea
+                mt='1'
+                placeholder='Mô tả'
+                defaultValue={faxDescription}
+                onChange={(event) => {
+                  setFaxDescription(event.target.value)
+                }}
+              />
             </Box>
           </FormControl>
 
-          <Button colorScheme='teal' size='sm' my='5' float='right'>
-            Save changes
+          <Button
+            colorScheme='teal'
+            size='sm'
+            my='5'
+            float='right'
+            onClick={onHandleUpdate}>
+            Cập nhật thông tin
           </Button>
         </GridItem>
         <GridItem colSpan={2}>
           <Center>
             <Avatar
-              name='Dan Abrahmov'
+              name={`${repairman.name}`}
               w='12rem'
               h='12rem'
-              src='https://bit.ly/dan-abramov'
+              src={`${avatarUrl}`}
             />
           </Center>
           <Center mt={5}>
-            <Button
-              size='sm'
-              variant='outline'
-              leftIcon={<EditIcon />}
-              colorScheme='teal'>
-              Edit
-            </Button>
+            <FormControl id='avatar'>
+              <FormLabel
+                display='flex'
+                justifyContent='center'
+                alignItems='center'
+                cursor='pointer'>
+                {/* <Button
+                size='sm'
+                variant='outline'
+                leftIcon={<EditIcon />}
+                colorScheme='teal'> */}
+                <EditIcon colorScheme='teal' />
+                <Text ml='3' colorScheme='teal' textStyle='bold-sm'>
+                  Chỉnh sửa
+                </Text>
+                {/* </Button> */}
+              </FormLabel>
+              <Input
+                type='file'
+                display='none'
+                onChange={(event: any) => {
+                  setAvatarUrl(URL.createObjectURL(event.target?.files[0]))
+                  setAvatar(event.target?.files[0])
+                }}
+              />
+            </FormControl>
           </Center>
         </GridItem>
       </Grid>

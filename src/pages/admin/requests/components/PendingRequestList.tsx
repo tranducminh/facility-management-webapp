@@ -34,6 +34,7 @@ import {
   Divider,
   Icon,
   Textarea,
+  FormErrorMessage,
 } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { useState } from 'react'
@@ -41,8 +42,14 @@ import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
+import { Formik, Form, Field } from 'formik'
 import axios from '../../../../utils/axios'
 import { REPAIRMAN, REQUEST } from '../../../../types'
+
+type FormData = {
+  rejectedReason?: string
+  repairmanId?: number
+}
 
 export default function PendingRequestList({
   requests,
@@ -60,7 +67,6 @@ export default function PendingRequestList({
   const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
   const [suitableRepairman, setSuitableRepairman] = useState<REPAIRMAN[]>([])
   const [currentRepairman, setCurrentRepairman] = useState<REPAIRMAN>({})
-  const [rejectedReason, setRejectedReason] = useState<string>('')
 
   const onOpenRequest = (id?: number) => {
     onOpen()
@@ -82,31 +88,55 @@ export default function PendingRequestList({
     )
   }
 
-  const onAssignRequest = (requestId?: number) => {
-    axios
-      .put(`/requests/${requestId}/assign`, {
+  const onAssignRequest = async () => {
+    await axios
+      .put(`/requests/${currentRequest.id}/assign`, {
         repairmanId: currentRepairman.id,
       })
       .then(() => {
         refresh()
+        onClose()
+        onCloseReject()
       })
       .catch((error) => {
         console.log(error)
       })
   }
 
-  const onRejectRequest = (requestId?: number) => {
-    axios
+  const onRejectRequest = async (
+    requestId?: number,
+    rejectedReason?: string
+  ) => {
+    await axios
       .put(`/requests/${requestId}/reject`, {
         rejectedReason,
       })
       .then(() => {
         refresh()
+        onClose()
+        onCloseReject()
       })
       .catch((error) => {
         console.log(error)
       })
   }
+
+  function validateRejectedReason(value: string) {
+    let error
+    if (!value) {
+      error = 'Lý do từ chối không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateRepairmanId() {
+    let error
+    if (!currentRepairman.id) {
+      error = 'Kỹ thuật viên không được bỏ trống'
+    }
+    return error
+  }
+
   return (
     <div>
       <Flex justifyContent='flex-end' mb={5}>
@@ -204,175 +234,244 @@ export default function PendingRequestList({
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>#{currentRequest.id}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Grid templateColumns='repeat(12, 1fr)' gap={15}>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Thiết bị</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.facility?.name}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Mã cán bộ</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>#{currentRequest.employee?.identity}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Cán bộ yêu cầu</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.employee?.name}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Phòng</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>
-                  {currentRequest.employee?.room?.floor?.building?.name} /
-                  {currentRequest.employee?.room?.name}
-                </Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Vấn đề</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <Text>{currentRequest.problem}</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-sm'>Trạng thái</Text>
-              </GridItem>
-              <GridItem colStart={5} colEnd={12}>
-                <HStack spacing={4}>
-                  <Tag
-                    size='sm'
-                    key='status'
-                    variant='solid'
-                    colorScheme='yellow'>
-                    Đang chờ
-                  </Tag>
-                </HStack>
-              </GridItem>
-              <GridItem colStart={2} colEnd={12}>
-                <Divider />
-              </GridItem>
-              <GridItem colStart={2} colEnd={12}>
-                <FormControl isRequired>
-                  <FormLabel fontWeight='bold'>Kỹ thuật viên</FormLabel>
-                  <Flex alignItems='center' justifyContent='space-between'>
-                    <Select
-                      placeholder='Chọn kỹ thuật viên'
-                      textStyle='normal'
-                      onChange={(event) => {
-                        onChangeRepairman(parseInt(event.target.value))
-                      }}>
-                      {suitableRepairman.map(
-                        (repairman: REPAIRMAN, index: number) => (
-                          <option key={index} value={repairman.id}>
-                            {repairman.name}
-                          </option>
-                        )
-                      )}
-                    </Select>
-                  </Flex>
-                </FormControl>
-              </GridItem>
-              {currentRepairman.id ? (
-                <>
-                  <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-sm'>Mã nhân viên</Text>
-                  </GridItem>
-                  <GridItem colStart={5} colEnd={12}>
-                    <Text>#{currentRepairman.identity}</Text>
-                  </GridItem>
-                  <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-sm'>Đơn vị</Text>
-                  </GridItem>
-                  <GridItem colStart={5} colEnd={12}>
-                    <Text>{currentRepairman.unit}</Text>
-                  </GridItem>
-                  <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-sm'>Chuyên môn</Text>
-                  </GridItem>
-                  <GridItem colStart={5} colEnd={12}>
-                    {currentRepairman.specializes?.map((specialize, index_) => {
-                      switch (specialize.facilityType?.name) {
-                        case 'computer':
-                          return (
-                            <Icon
-                              key={index_}
-                              as={RiComputerLine}
-                              fontSize='1.2em'
-                            />
-                          )
-                        case 'fax':
-                          return <Icon key={index_} as={FaFax} fontSize='1em' />
-                        case 'printer':
-                          return (
-                            <Icon
-                              key={index_}
-                              as={BiPrinter}
-                              fontSize='1.2em'
-                            />
-                          )
-                        case 'node':
-                          return (
-                            <Icon
-                              key={index_}
-                              as={GiWifiRouter}
-                              fontSize='1.2em'
-                            />
-                          )
-                        default:
-                          break
-                      }
-                    })}
-                  </GridItem>
-                </>
-              ) : null}
-            </Grid>
-          </ModalBody>
+          <Formik
+            initialValues={{ repairmanId: 1 }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await onAssignRequest()
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>#{currentRequest.id}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Grid templateColumns='repeat(12, 1fr)' gap={15}>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Thiết bị</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.facility?.name}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Mã cán bộ</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>#{currentRequest.employee?.identity}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Cán bộ yêu cầu</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.employee?.name}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Phòng</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>
+                        {currentRequest.employee?.room?.floor?.building?.name} /
+                        {currentRequest.employee?.room?.name}
+                      </Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Vấn đề</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <Text>{currentRequest.problem}</Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={5}>
+                      <Text textStyle='bold-sm'>Trạng thái</Text>
+                    </GridItem>
+                    <GridItem colStart={5} colEnd={12}>
+                      <HStack spacing={4}>
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='yellow'>
+                          Đang chờ
+                        </Tag>
+                      </HStack>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={12}>
+                      <Divider />
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={12}>
+                      <Field name='repairmanId' validate={validateRepairmanId}>
+                        {({ field, form }: { field: any; form: any }) => (
+                          <FormControl
+                            isRequired
+                            isInvalid={
+                              form.errors.repairmanId &&
+                              form.touched.repairmanId
+                            }>
+                            <FormLabel fontWeight='bold' htmlFor='repairmanId'>
+                              Kỹ thuật viên
+                            </FormLabel>
+                            <Select
+                              placeholder='Chọn kỹ thuật viên'
+                              textStyle='normal'
+                              id='repairmanId'
+                              value={currentRepairman.id}
+                              {...field}
+                              onChange={(event) => {
+                                onChangeRepairman(parseInt(event.target.value))
+                              }}>
+                              {suitableRepairman.map(
+                                (repairman: REPAIRMAN, index: number) => (
+                                  <option key={index} value={repairman.id}>
+                                    {repairman.name}
+                                  </option>
+                                )
+                              )}
+                            </Select>
+                            <FormErrorMessage>
+                              {form.errors?.repairmanId}
+                            </FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                    </GridItem>
+                    {currentRepairman.id ? (
+                      <>
+                        <GridItem colStart={2} colEnd={5}>
+                          <Text textStyle='bold-sm'>Mã nhân viên</Text>
+                        </GridItem>
+                        <GridItem colStart={5} colEnd={12}>
+                          <Text>#{currentRepairman.identity}</Text>
+                        </GridItem>
+                        <GridItem colStart={2} colEnd={5}>
+                          <Text textStyle='bold-sm'>Đơn vị</Text>
+                        </GridItem>
+                        <GridItem colStart={5} colEnd={12}>
+                          <Text>{currentRepairman.unit}</Text>
+                        </GridItem>
+                        <GridItem colStart={2} colEnd={5}>
+                          <Text textStyle='bold-sm'>Chuyên môn</Text>
+                        </GridItem>
+                        <GridItem colStart={5} colEnd={12}>
+                          {currentRepairman.specializes?.map(
+                            (specialize, index_) => {
+                              switch (specialize.facilityType?.name) {
+                                case 'computer':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={RiComputerLine}
+                                      fontSize='1.2em'
+                                    />
+                                  )
+                                case 'fax':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={FaFax}
+                                      fontSize='1em'
+                                    />
+                                  )
+                                case 'printer':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={BiPrinter}
+                                      fontSize='1.2em'
+                                    />
+                                  )
+                                case 'node':
+                                  return (
+                                    <Icon
+                                      key={index_}
+                                      as={GiWifiRouter}
+                                      fontSize='1.2em'
+                                    />
+                                  )
+                                default:
+                                  break
+                              }
+                            }
+                          )}
+                        </GridItem>
+                      </>
+                    ) : null}
+                  </Grid>
+                </ModalBody>
 
-          <ModalFooter>
-            <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
-              Đóng
-            </Button>
-            <Button size='sm' colorScheme='red' mr={3} onClick={onOpenReject}>
-              Từ chối
-            </Button>
-            <Button
-              size='sm'
-              colorScheme='teal'
-              mr={3}
-              onClick={() => onAssignRequest(currentRequest.id)}>
-              Chấp nhận
-            </Button>
-          </ModalFooter>
+                <ModalFooter>
+                  <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
+                    Đóng
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='red'
+                    mr={3}
+                    onClick={onOpenReject}>
+                    Từ chối
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Chấp nhận
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
 
       <Modal isOpen={isOpenReject} onClose={onCloseReject}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Từ chối yêu cầu</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Textarea
-              placeholder='Lý do từ chối'
-              onChange={(event) => setRejectedReason(event.target.value)}
-            />
-          </ModalBody>
+          <Formik
+            initialValues={{ rejectedReason: '' }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await onRejectRequest(currentRequest.id, values.rejectedReason)
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>Từ chối yêu cầu</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Field
+                    name='rejectedReason'
+                    validate={validateRejectedReason}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={
+                          form.errors.rejectedReason &&
+                          form.touched.rejectedReason
+                        }>
+                        <FormLabel htmlFor='rejectedReason'>Lý do</FormLabel>
+                        <Textarea
+                          {...field}
+                          colorScheme='teal'
+                          id='rejectedReason'
+                          placeholder='Lý do'
+                        />
+                        <FormErrorMessage>
+                          {form.errors?.rejectedReason}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </ModalBody>
 
-          <ModalFooter>
-            <Button
-              colorScheme='teal'
-              size='sm'
-              onClick={() => onRejectRequest(currentRequest.id)}>
-              Từ chối
-            </Button>
-          </ModalFooter>
+                <ModalFooter>
+                  <Button
+                    colorScheme='red'
+                    size='sm'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Từ chối
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
     </div>

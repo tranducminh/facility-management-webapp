@@ -1,55 +1,22 @@
 export type BUILDING = {
   id?: number
   name?: string
-  floors?: [
-    {
-      id?: number
-      name?: string
-      rooms?: [
-        {
-          id?: number
-          name?: string
-        }
-      ]
-    }
-  ]
+  floors?: FLOOR[]
 }
 
 export type FLOOR = {
   id?: number
   name?: string
-  building?: {
-    name?: string
-  }
-  rooms?: [
-    {
-      id?: number
-      name?: string
-    }
-  ]
+  building?: BUILDING
+  rooms?: ROOM[]
 }
 
 export type ROOM = {
   id?: number
   name?: string
-  building?: {
-    id?: number
-    name?: string
-  }
-  floor?: {
-    id?: number
-    name?: string
-    building?: {
-      id?: number
-      name?: string
-    }
-  }
-  employees?: [
-    {
-      id?: number
-      name?: string
-    }
-  ]
+  building?: BUILDING
+  floor?: FLOOR
+  employees?: EMPLOYEE[]
 }
 
 export type EMPLOYEE = {
@@ -63,18 +30,7 @@ export type EMPLOYEE = {
   hasRoom?: string
   avatar?: string
   facilities?: []
-  room?: {
-    id?: number
-    name?: string
-    floor?: {
-      id?: number
-      name?: number
-      building?: {
-        id?: number
-        name?: string
-      }
-    }
-  }
+  room?: ROOM
 }
 
 export type REPAIRMAN = {
@@ -85,22 +41,21 @@ export type REPAIRMAN = {
   phone?: string
   email?: string
   avatar?: string
-  specializes?: [
-    {
-      description?: string
-      facilityType?: {
-        name?: string
-      }
-    }
-  ]
+  dateOfBirth?: Date
+  specializes?: SPECIALIZE[]
   histories?: HISTORY[]
 }
 
 export type SPECIALIZE = {
+  id: number
+  isActive?: boolean
   description?: string
-  facilityType?: {
-    name?: string
-  }
+  facilityType?: FACILITY_TYPE
+}
+
+export type FACILITY_TYPE = {
+  id?: number
+  name?: string
 }
 
 export type FACILITY = {
@@ -110,15 +65,8 @@ export type FACILITY = {
   price?: number
   status?: string
   configuration?: CONFIGURATION
-  employee?: {
-    id?: number
-    identity?: string
-    name?: string
-  }
-  facilityType?: {
-    id?: number
-    name?: string
-  }
+  employee?: EMPLOYEE
+  facilityType?: FACILITY_TYPE
 }
 
 export type CONFIGURATION = {
@@ -154,50 +102,9 @@ export type REQUEST = {
   status?: string
   uncompletedReason?: string
   rejectedReason?: string
-  repairman?: {
-    id?: number
-    name?: string
-    identity?: string
-    unit?: string
-    specializes?: [
-      {
-        facilityType?: {
-          name?: string
-        }
-      }
-    ]
-  }
-  facility?: {
-    id?: number
-    name?: string
-    facilityType?: {
-      id?: number
-      name?: string
-    }
-  }
-  employee?: {
-    id?: number
-    identity?: string
-    name?: string
-    dateOfBirth?: Date
-    phone?: string
-    email?: string
-    unit?: string
-    hasRoom?: string
-    facilities?: []
-    room?: {
-      id?: number
-      name?: string
-      floor?: {
-        id?: number
-        name?: number
-        building?: {
-          id?: number
-          name?: string
-        }
-      }
-    }
-  }
+  repairman?: REPAIRMAN
+  facility?: FACILITY
+  employee?: EMPLOYEE
   replacements?: REPLACEMENT[]
 }
 

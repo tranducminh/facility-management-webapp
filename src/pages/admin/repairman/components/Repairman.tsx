@@ -1,5 +1,4 @@
 /* eslint-disable array-callback-return */
-/* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react'
 import {
   Table,
@@ -28,19 +27,25 @@ import {
   FormLabel,
   Icon,
   Checkbox,
+  FormErrorMessage,
+  IconButton,
   useDisclosure,
 } from '@chakra-ui/react'
-import {
-  Search2Icon,
-  ArrowRightIcon,
-} from '@chakra-ui/icons'
+import { Search2Icon, ArrowRightIcon, ViewIcon } from '@chakra-ui/icons'
+import { MdDelete } from 'react-icons/md'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
+import { Formik, Form, Field } from 'formik'
 import { Link } from '../../../../../i18n'
 import axios from '../../../../utils/axios'
-import { REPAIRMAN } from '../../../../types'
+import { REPAIRMAN, SPECIALIZE } from '../../../../types'
 
+type FormData = {
+  identity?: string
+  name?: string
+  unit?: string
+}
 export default function RepairmanComponent() {
   const {
     isOpen: isOpenUser,
@@ -51,11 +56,7 @@ export default function RepairmanComponent() {
 
   const allChecked = checkedItems.every(Boolean)
   const isIndeterminate = checkedItems.some(Boolean) && !allChecked
-
   const [repairman, setRepairman] = useState<REPAIRMAN[]>([])
-  const [identity, setIdentity] = useState<string>('')
-  const [name, setName] = useState<string>('')
-  const [unit, setUnit] = useState<string>('')
 
   const refreshData = () => {
     axios
@@ -68,24 +69,53 @@ export default function RepairmanComponent() {
       })
   }
 
-  const createNewRepairman = () => {
+  const createNewRepairman = async (data: FormData) => {
     const facilityTypes = []
     if (checkedItems[0]) facilityTypes.push('computer')
     if (checkedItems[1]) facilityTypes.push('printer')
     if (checkedItems[2]) facilityTypes.push('fax')
     if (checkedItems[3]) facilityTypes.push('node')
-    axios.post('/repairman', {
-      identity, name, unit, facilityTypes
-    }).then(() => {
-      refreshData()
-      onCloseUser()
-    }).catch((error) => {
-      console.log(error)
-    })
+    await axios
+      .post('/repairman', {
+        ...data,
+        facilityTypes,
+      })
+      .then(() => {
+        refreshData()
+        onCloseUser()
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
   useEffect(() => {
     refreshData()
   }, [])
+
+  function validateIdentity(value: string) {
+    let error
+    if (!value) {
+      error = 'Mã nhân viên không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateName(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên nhân viên không được bỏ trống'
+    }
+    return error
+  }
+
+  function validateUnit(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên đơn vị không được bỏ trống'
+    }
+    return error
+  }
+
   return (
     <div>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -124,20 +154,36 @@ export default function RepairmanComponent() {
                 <Td>{item.name}</Td>
                 <Td>{item.unit}</Td>
                 <Td>
-                  {item.specializes?.map((specialize, index_) => {
-                    switch (specialize.facilityType?.name) {
-                      case 'computer':
-                        return (<Icon key={index_} as={RiComputerLine} fontSize='1.2em' />)
-                      case 'fax':
-                        return <Icon key={index_} as={FaFax} fontSize='1em' />
-                      case 'printer':
-                        return <Icon key={index_} as={BiPrinter} fontSize='1.2em' />
-                      // case 'node':
-                      //   return <Icon key={index_} as={GiWifiRouter} fontSize='1.2em' />
-                      default:
-                        break
+                  {item.specializes?.map(
+                    (specialize: SPECIALIZE, index_: number) => {
+                      if (specialize.isActive) {
+                        switch (specialize.facilityType?.name) {
+                          case 'computer':
+                            return (
+                              <Icon
+                                key={index_}
+                                as={RiComputerLine}
+                                fontSize='1.2em'
+                              />
+                            )
+                          case 'fax':
+                            return (
+                              <Icon key={index_} as={FaFax} fontSize='1em' />
+                            )
+                          case 'printer':
+                            return (
+                              <Icon
+                                key={index_}
+                                as={BiPrinter}
+                                fontSize='1.2em'
+                              />
+                            )
+                          default:
+                            break
+                        }
+                      }
                     }
-                  })}
+                  )}
                 </Td>
                 <Td>
                   <HStack spacing={4}>
@@ -151,10 +197,22 @@ export default function RepairmanComponent() {
                   </HStack>
                 </Td>
                 <Td isNumeric>
+                  <IconButton
+                    colorScheme='red'
+                    aria-label='Remove employee'
+                    variant='outline'
+                    size='sm'
+                    icon={<MdDelete />}
+                    mr='2'
+                  />
                   <Link href={`/admin/repairman/${item.identity}`}>
-                    <Button colorScheme='teal' variant='ghost' size='sm'>
-                      Chi tiết
-                      </Button>
+                    <IconButton
+                      colorScheme='teal'
+                      aria-label='View Employee'
+                      variant='outline'
+                      size='sm'
+                      icon={<ViewIcon />}
+                    />
                   </Link>
                 </Td>
               </Tr>
@@ -192,113 +250,144 @@ export default function RepairmanComponent() {
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Tạo kỹ thuật viên mới</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl isRequired>
-              <FormLabel>Mã nhân viên</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Identity'
-                onChange={(event) => setIdentity(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mt='3' isRequired>
-              <FormLabel>Tên</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Name'
-                onChange={(event) => setName(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mt='3' isRequired>
-              <FormLabel>Đơn vị</FormLabel>
-              <Input
-                colorScheme='teal'
-                placeholder='Unit'
-                onChange={(event) => setUnit(event.target.value)}
-              />
-            </FormControl>
-            <FormControl mt='3' isRequired>
-              <FormLabel>Chuyên môn</FormLabel>
-              <Checkbox
-                isChecked={allChecked}
-                isIndeterminate={isIndeterminate}
-                onChange={(e) => {
-                  setCheckedItems([
-                    e.target.checked,
-                    e.target.checked,
-                    e.target.checked,
-                    e.target.checked,
-                  ])
-                }}
-                colorScheme='teal'>
-                Tất cả
-              </Checkbox>
-              <Flex pl={6} mt={1} spacing={1} justifyContent='space-around'>
-                <Checkbox
-                  isChecked={checkedItems[0]}
-                  onChange={(e) => {
-                    setCheckedItems([
-                      e.target.checked,
-                      checkedItems[1],
-                      checkedItems[2],
-                      checkedItems[3],
-                    ])
-                  }}
-                  colorScheme='teal'>
-                  Máy tính
-                </Checkbox>
-                <Checkbox
-                  isChecked={checkedItems[1]}
-                  onChange={(e) => {
-                    setCheckedItems([
-                      checkedItems[0],
-                      e.target.checked,
-                      checkedItems[2],
-                      checkedItems[3],
-                    ])
-                  }}
-                  colorScheme='teal'>
-                  Máy in
-                </Checkbox>
-                <Checkbox
-                  isChecked={checkedItems[2]}
-                  onChange={(e) => {
-                    setCheckedItems([
-                      checkedItems[0],
-                      checkedItems[1],
-                      e.target.checked,
-                      checkedItems[3],
-                    ])
-                  }}
-                  colorScheme='teal'>
-                  Máy fax
-                </Checkbox>
-                {/* <Checkbox
-                  isChecked={checkedItems[3]}
-                  onChange={(e) => {
-                    setCheckedItems([
-                      checkedItems[0],
-                      checkedItems[1],
-                      checkedItems[2],
-                      e.target.checked,
-                    ])
-                  }}
-                  colorScheme='teal'>
-                  Node
-                </Checkbox> */}
-              </Flex>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button size='sm' onClick={onCloseUser} mr={3}>
-              Hủy
-            </Button>
-            <Button size='sm' colorScheme='teal' onClick={createNewRepairman}>
-              Tạo mới
-            </Button>
-          </ModalFooter>
+          <Formik
+            initialValues={{ identity: '', name: '', unit: '' }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await createNewRepairman(values)
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>Tạo kỹ thuật viên mới</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <Field name='identity' validate={validateIdentity}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={
+                          form.errors.identity && form.touched.identity
+                        }>
+                        <FormLabel>Mã nhân viên</FormLabel>
+                        <Input
+                          {...field}
+                          colorScheme='teal'
+                          placeholder='Mã nhân viên'
+                        />
+                        <FormErrorMessage>
+                          {form.errors?.identity}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name='name' validate={validateName} mt='3'>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.name && form.touched.name}>
+                        <FormLabel>Tên</FormLabel>
+                        <Input
+                          {...field}
+                          colorScheme='teal'
+                          placeholder='Tên'
+                        />
+                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name='unit' validate={validateUnit} mt='3'>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.unit && form.touched.unit}>
+                        <FormLabel>Đơn vị</FormLabel>
+                        <Input
+                          {...field}
+                          colorScheme='teal'
+                          placeholder='Đơn vị'
+                        />
+                        <FormErrorMessage>{form.errors?.unit}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <FormControl mt='3'>
+                    <FormLabel>Chuyên môn</FormLabel>
+                    <Checkbox
+                      isChecked={allChecked}
+                      isIndeterminate={isIndeterminate}
+                      onChange={(e) => {
+                        setCheckedItems([
+                          e.target.checked,
+                          e.target.checked,
+                          e.target.checked,
+                          e.target.checked,
+                        ])
+                      }}
+                      colorScheme='teal'>
+                      Tất cả
+                    </Checkbox>
+                    <Flex
+                      pl={6}
+                      mt={1}
+                      spacing={1}
+                      justifyContent='space-around'>
+                      <Checkbox
+                        isChecked={checkedItems[0]}
+                        onChange={(e) => {
+                          setCheckedItems([
+                            e.target.checked,
+                            checkedItems[1],
+                            checkedItems[2],
+                            checkedItems[3],
+                          ])
+                        }}
+                        colorScheme='teal'>
+                        Máy tính
+                      </Checkbox>
+                      <Checkbox
+                        isChecked={checkedItems[1]}
+                        onChange={(e) => {
+                          setCheckedItems([
+                            checkedItems[0],
+                            e.target.checked,
+                            checkedItems[2],
+                            checkedItems[3],
+                          ])
+                        }}
+                        colorScheme='teal'>
+                        Máy in
+                      </Checkbox>
+                      <Checkbox
+                        isChecked={checkedItems[2]}
+                        onChange={(e) => {
+                          setCheckedItems([
+                            checkedItems[0],
+                            checkedItems[1],
+                            e.target.checked,
+                            checkedItems[3],
+                          ])
+                        }}
+                        colorScheme='teal'>
+                        Máy fax
+                      </Checkbox>
+                    </Flex>
+                  </FormControl>
+                </ModalBody>
+                <ModalFooter>
+                  <Button size='sm' onClick={onCloseUser} mr={3}>
+                    Hủy
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Tạo mới
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
         </ModalContent>
       </Modal>
     </div>

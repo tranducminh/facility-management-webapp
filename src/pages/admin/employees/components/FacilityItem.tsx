@@ -5,7 +5,6 @@ import {
   Badge,
   Grid,
   GridItem,
-  HStack,
   Tag,
   Button,
   Modal,
@@ -20,6 +19,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { ViewIcon } from '@chakra-ui/icons'
+import Link from 'next/link'
 import { FACILITY } from '../../../../types'
 
 export default function FacilityItem({ facility }: { facility: FACILITY }) {
@@ -148,15 +148,27 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
                 <Text textStyle='bold-md'>Tình trạng</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <HStack spacing={4}>
+                {facility.status === 'ready' ? (
                   <Tag
                     size='sm'
                     key='status'
                     variant='solid'
                     colorScheme='teal'>
-                    {facility.status}
+                    Sẵn sàng
                   </Tag>
-                </HStack>
+                ) : facility.status === 'error' ? (
+                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                    Đang hỏng
+                  </Tag>
+                ) : facility.status === 'repairing' ? (
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='blue'>
+                    Đang sửa chữa
+                  </Tag>
+                ) : null}
               </GridItem>
               <GridItem colStart={1} colEnd={13}>
                 <Divider colorScheme='teal' />
@@ -346,6 +358,11 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
               Đóng
             </Button>
+            <Link href={`/admin/facilities/${facility.id}`}>
+              <Button size='sm' colorScheme='teal' mr={3}>
+                Chi tiết
+              </Button>
+            </Link>
           </ModalFooter>
         </ModalContent>
       </Modal>

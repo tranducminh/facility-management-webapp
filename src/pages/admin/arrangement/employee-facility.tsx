@@ -17,9 +17,9 @@ import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import AdminDashboard from '../../../layouts/AdminDashboard'
 import { Link } from '../../../../i18n'
-import RoomEmployeeMode from './components/RoomEmployeeMode'
+import EmployeeFacilityMode from './components/EmployeeFacilityMode'
 
-function Arrangement() {
+function ArrangementEmployeeFacility() {
   const router = useRouter()
   return (
     <AdminDashboard isArrangement>
@@ -39,21 +39,19 @@ function Arrangement() {
           </Text>
           <Menu>
             <MenuButton size='sm' as={Button} rightIcon={<ChevronDownIcon />}>
-              <Text textStyle='bold-sm'>Phòng - Cán bộ</Text>
+              <Text textStyle='bold-sm'>Cán bộ - Thiết bị</Text>
             </MenuButton>
             <MenuList>
               <MenuOptionGroup
-                defaultValue='room-employee'
+                defaultValue='employee-facility'
                 title='Chế độ'
                 type='radio'>
-                <MenuItemOption value='room-employee'>
+                <MenuItemOption
+                  value='room-employee'
+                  onClick={() => router.push('/admin/arrangement')}>
                   <Text textStyle='bold-sm'>Phòng - Cán bộ</Text>
                 </MenuItemOption>
-                <MenuItemOption
-                  value='employee-facility'
-                  onClick={() => {
-                    router.push('/admin/arrangement/employee-facility')
-                  }}>
+                <MenuItemOption value='employee-facility'>
                   <Text textStyle='bold-sm'>Cán bộ - Thiết bị</Text>
                 </MenuItemOption>
               </MenuOptionGroup>
@@ -61,9 +59,9 @@ function Arrangement() {
           </Menu>
         </Flex>
       </Flex>
-      <RoomEmployeeMode />
+      <EmployeeFacilityMode />
     </AdminDashboard>
   )
 }
 
-export default Arrangement
+export default ArrangementEmployeeFacility
