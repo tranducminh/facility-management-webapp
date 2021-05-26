@@ -17,9 +17,15 @@ import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
 import axios from '../../../../utils/axios'
 import { getBase64 } from '../../../../utils/file'
 import { EMPLOYEE } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   identity?: string
@@ -38,6 +44,7 @@ export default function EmployeeDetail({
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment(new Date(employee.dateOfBirth || new Date()))
   )
+  const dispatch = useDispatch()
 
   const [email, setEmail] = useState(employee.email)
   const [phone, setPhone] = useState(employee.phone)
@@ -54,12 +61,27 @@ export default function EmployeeDetail({
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
           avatar: await getBase64(avatar),
         })
-        .then(() => {
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
           router.push(`/admin/employees/${data.identity}`)
           refresh(data.identity)
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     } else {
       await axios
@@ -69,12 +91,27 @@ export default function EmployeeDetail({
           phone,
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
         })
-        .then(() => {
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
           router.push(`/admin/employees/${data.identity}`)
           refresh(data.identity)
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     }
   }

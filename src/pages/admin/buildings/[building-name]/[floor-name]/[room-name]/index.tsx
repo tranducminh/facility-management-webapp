@@ -74,12 +74,13 @@ export default function Room() {
         `/buildings/${buildingName.split('-')[1]}/floors/${floorName.split('-')[1]
         }/rooms/${roomName.split('-')[1]}`
       )
-      .then((response) => {
-        setBuilding(response.data.room.floor.building)
-        setFloor(response.data.room.floor)
-        setEmployees(response.data.room.employees)
-        setRoom(response.data.room)
-        setCurrentEmployee(response.data.room.employees[0] || {})
+      .then((res) => {
+        setBuilding(res.data.room.floor.building)
+        setFloor(res.data.room.floor)
+        setEmployees(res.data.room.employees)
+        setRoom(res.data.room)
+        setCurrentEmployee(res.data.room.employees[0] || {})
+        setCurrentFacilities(res.data.room.employees[0]?.facilities)
       })
       .catch((error) => {
         console.log(error)
@@ -138,21 +139,23 @@ export default function Room() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1'>
+            <Link href={`/admin/buildings/building-${building.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Tòa nhà {building.name}</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1/floor-1'>
+            <Link
+              href={`/admin/buildings/building-${building.name}/floor-${floor.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Tầng {floor.name}</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1/floor-1/room-101'>
+            <Link
+              href={`/admin/buildings/building-${building.name}/floor-${floor.name}/room-${room.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Phòng {room.name}</Text>
               </BreadcrumbLink>

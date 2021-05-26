@@ -17,12 +17,19 @@ import {
 import { EditIcon } from '@chakra-ui/icons'
 import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
+import { useDispatch } from 'react-redux'
 import EmployeeDashboard from '../../../layouts/EmployeeDashboard'
 import axios from '../../../utils/axios'
 import { EMPLOYEE } from '../../../types'
 import { getBase64 } from '../../../utils/file'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../redux/actions/notification.action'
+import { NotificationStatus } from '../../../redux/types/notification.type'
 
 export default function Profile() {
+  const dispatch = useDispatch()
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment()
@@ -60,11 +67,25 @@ export default function Profile() {
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
           avatar: await getBase64(avatar),
         })
-        .then(() => {
-          alert('success')
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     } else {
       axios
@@ -73,11 +94,25 @@ export default function Profile() {
           phone,
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
         })
-        .then(() => {
-          alert('success')
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     }
   }

@@ -22,20 +22,26 @@ import {
 import { Formik, Form, Field } from 'formik'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import AdminDashboard from '../../../layouts/AdminDashboard'
 import { Link } from '../../../../i18n'
 import BuildingItem from './components/BuildingItem'
 import axios from '../../../utils/axios'
-import { BUILDING, FLOOR } from '../../../types'
+import { BUILDING, EMPLOYEE, FLOOR, REQUEST, ROOM } from '../../../types'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../redux/actions/notification.action'
+import { NotificationStatus } from '../../../redux/types/notification.type'
 
 type FormData = {
   name: string
 }
 export default function Building() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
+  const dispatch = useDispatch()
   const [buildings, setBuildings] = useState<BUILDING[]>([{}])
-  useEffect(() => {
+  const refresh = () => {
     axios
       .get('/buildings')
       .then((result) => {
@@ -44,18 +50,36 @@ export default function Building() {
       .catch((error) => {
         console.log(error)
       })
+  }
+  useEffect(() => {
+    refresh()
   }, [])
 
   const createBuilding = async (data: FormData) => {
     await axios
       .post('/buildings', data)
-      .then((result) => {
-        const building_ = result.data.building as BUILDING
+      .then((res) => {
+        const building_ = res.data.building as BUILDING
         setBuildings([...buildings, building_])
         onClose()
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -65,6 +89,32 @@ export default function Building() {
       roomQuantity += floor?.rooms?.length || 0
     })
     return roomQuantity
+  }
+
+  const calculateRequestQuantity = (building: BUILDING): number => {
+    let requestQuantity = 0
+    building.floors?.forEach((floor: FLOOR) => {
+      floor.rooms?.forEach((room: ROOM) => {
+        room.employees?.forEach((employee: EMPLOYEE) => {
+          employee.requests?.forEach((request: REQUEST) => {
+            if (request.status === 'pending') {
+              requestQuantity += 1
+            }
+          })
+        })
+      })
+    })
+    return requestQuantity
+  }
+
+  const calculateEmployeeQuantity = (building: BUILDING): number => {
+    let employeeQuantity = 0
+    building.floors?.forEach((floor: FLOOR) => {
+      floor.rooms?.forEach((room: ROOM) => {
+        employeeQuantity += room.employees?.length || 0
+      })
+    })
+    return employeeQuantity
   }
 
   function validateBuildingName(value: string) {
@@ -100,10 +150,13 @@ export default function Building() {
         {buildings.map((building, index) => (
           <BuildingItem
             key={index}
+            buildingId={building.id}
             buildingName={building.name}
             totalFloor={building?.floors?.length || 0}
             totalRoom={calculateRoomQuantity(building?.floors)}
-            totalRequest={0}
+            totalRequest={calculateRequestQuantity(building)}
+            totalEmployee={calculateEmployeeQuantity(building)}
+            refresh={refresh}
           />
         ))}
       </Grid>

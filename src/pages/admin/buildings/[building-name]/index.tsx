@@ -22,10 +22,16 @@ import { ArrowRightIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
+import { useDispatch } from 'react-redux'
 import { Link } from '../../../../../i18n'
 import AdminDashboard from '../../../../layouts/AdminDashboard'
 import axios from '../../../../utils/axios'
 import { BUILDING } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   name: string
@@ -34,6 +40,7 @@ type FormData = {
 export default function Building() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const router = useRouter()
+  const dispatch = useDispatch()
   const [building, setBuilding] = useState<BUILDING>({})
   useEffect(() => {
     const buildingName = router.query['building-name'] as string
@@ -57,14 +64,29 @@ export default function Building() {
   const createNewFloor = async (data: FormData) => {
     await axios
       .post('/floors', { ...data, buildingId: building.id })
-      .then((response) => {
-        const floor_ = response.data.floor
+      .then((res) => {
+        const floor_ = res.data.floor
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         router.push(
           `/admin/buildings/building-${building.name}/floor-${floor_.name}`
         )
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -88,7 +110,7 @@ export default function Building() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1'>
+            <Link href={`/admin/buildings/building-${building.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Tòa nhà {building?.name}</Text>
               </BreadcrumbLink>

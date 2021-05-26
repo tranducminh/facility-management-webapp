@@ -2,6 +2,11 @@ import { all, fork, put, takeLatest } from 'redux-saga/effects'
 import axios from '../../utils/axios'
 import { AuthType } from '../types/auth.type'
 import { loginSuccess, fetchMeSuccess } from '../actions/auth.action'
+import { NotificationStatus } from '../types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../actions/notification.action'
 
 function* loginEmployeeSaga(action: any) {
   try {
@@ -16,10 +21,24 @@ function* loginEmployeeSaga(action: any) {
           user: result.data.data.employee,
         })
       )
-      debugger
+      yield put(
+        pushNotification({
+          title: result.data.message,
+          description: result.data.description,
+          status: NotificationStatus.SUCCESS,
+        })
+      )
+      yield put(resetNotification())
     }
   } catch (error) {
-    console.log(error)
+    yield put(
+      pushNotification({
+        title: error.response.data.message,
+        description: error.response.data.description,
+        status: NotificationStatus.ERROR,
+      })
+    )
+    yield put(resetNotification())
   }
 }
 
@@ -36,10 +55,24 @@ function* loginAdminSaga(action: any) {
           user: result.data.data.admin,
         })
       )
-      debugger
+      yield put(
+        pushNotification({
+          title: result.data.message,
+          description: result.data.description,
+          status: NotificationStatus.SUCCESS,
+        })
+      )
+      yield put(resetNotification())
     }
   } catch (error) {
-    console.log(error)
+    yield put(
+      pushNotification({
+        title: error.response.data.message,
+        description: error.response.data.description,
+        status: NotificationStatus.ERROR,
+      })
+    )
+    yield put(resetNotification())
   }
 }
 
@@ -56,10 +89,24 @@ function* loginRepairmanSaga(action: any) {
           user: result.data.data.repairman,
         })
       )
-      debugger
+      yield put(
+        pushNotification({
+          title: result.data.message,
+          description: result.data.description,
+          status: NotificationStatus.SUCCESS,
+        })
+      )
+      yield put(resetNotification())
     }
   } catch (error) {
-    console.log(error)
+    yield put(
+      pushNotification({
+        title: error.response.data.message,
+        description: error.response.data.description,
+        status: NotificationStatus.ERROR,
+      })
+    )
+    yield put(resetNotification())
   }
 }
 

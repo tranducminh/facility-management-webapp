@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable array-callback-return */
 import { useState, useEffect } from 'react'
 import {
@@ -30,6 +31,14 @@ import {
   FormErrorMessage,
   IconButton,
   useDisclosure,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
 } from '@chakra-ui/react'
 import { Search2Icon, ArrowRightIcon, ViewIcon } from '@chakra-ui/icons'
 import { MdDelete } from 'react-icons/md'
@@ -37,9 +46,15 @@ import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { Formik, Form, Field } from 'formik'
+import { useDispatch } from 'react-redux'
 import { Link } from '../../../../../i18n'
 import axios from '../../../../utils/axios'
 import { REPAIRMAN, SPECIALIZE } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   identity?: string
@@ -47,6 +62,7 @@ type FormData = {
   unit?: string
 }
 export default function RepairmanComponent() {
+  const dispatch = useDispatch()
   const {
     isOpen: isOpenUser,
     onOpen: onOpenUser,
@@ -61,8 +77,8 @@ export default function RepairmanComponent() {
   const refreshData = () => {
     axios
       .get('/repairman')
-      .then((response) => {
-        setRepairman(response.data.repairman)
+      .then((res) => {
+        setRepairman(res.data.repairman)
       })
       .catch((error) => {
         console.log(error)
@@ -80,12 +96,53 @@ export default function RepairmanComponent() {
         ...data,
         facilityTypes,
       })
-      .then(() => {
+      .then((res) => {
         refreshData()
         onCloseUser()
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
+      })
+  }
+
+  const onRemove = (id?: number) => {
+    axios
+      .delete(`/repairman/${id}`)
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+        refreshData()
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
   useEffect(() => {
@@ -156,7 +213,7 @@ export default function RepairmanComponent() {
                 <Td>
                   {item.specializes?.map(
                     (specialize: SPECIALIZE, index_: number) => {
-                      if (specialize.isActive) {
+                      if (specialize.active) {
                         switch (specialize.facilityType?.name) {
                           case 'computer':
                             return (
@@ -197,14 +254,44 @@ export default function RepairmanComponent() {
                   </HStack>
                 </Td>
                 <Td isNumeric>
-                  <IconButton
-                    colorScheme='red'
-                    aria-label='Remove employee'
-                    variant='outline'
-                    size='sm'
-                    icon={<MdDelete />}
-                    mr='2'
-                  />
+                  <Popover size='md'>
+                    <PopoverTrigger>
+                      <IconButton
+                        colorScheme='red'
+                        aria-label='Remove employee'
+                        variant='outline'
+                        size='sm'
+                        icon={<MdDelete />}
+                        mr='2'
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverHeader mt='2' fontWeight='bold' border='0'>
+                        <Text textAlign='left'>Xóa tài khoản</Text>
+                      </PopoverHeader>
+                      <PopoverArrow />
+                      <PopoverCloseButton mt='2' />
+                      <PopoverBody>
+                        <Text textAlign='left'>
+                          Bạn có chắc muốn xóa tài khoản của{' '}
+                          <b>{item.name}</b>
+                        </Text>
+                      </PopoverBody>
+                      <PopoverFooter
+                        border='0'
+                        d='flex'
+                        alignItems='center'
+                        justifyContent='flex-end'
+                        pb={4}>
+                        <Button
+                          size='xs'
+                          colorScheme='green'
+                          onClick={() => onRemove(item.id)}>
+                          Đồng ý
+                          </Button>
+                      </PopoverFooter>
+                    </PopoverContent>
+                  </Popover>
                   <Link href={`/admin/repairman/${item.identity}`}>
                     <IconButton
                       colorScheme='teal'

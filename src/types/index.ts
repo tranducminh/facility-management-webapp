@@ -31,6 +31,7 @@ export type EMPLOYEE = {
   avatar?: string
   facilities?: []
   room?: ROOM
+  requests?: REQUEST[]
 }
 
 export type REPAIRMAN = {
@@ -48,7 +49,7 @@ export type REPAIRMAN = {
 
 export type SPECIALIZE = {
   id: number
-  isActive?: boolean
+  active?: boolean
   description?: string
   facilityType?: FACILITY_TYPE
 }

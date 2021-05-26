@@ -20,13 +20,20 @@ import {
 import { EditIcon } from '@chakra-ui/icons'
 import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
+import { useDispatch } from 'react-redux'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import { Link } from '../../../../i18n'
 import axios from '../../../utils/axios'
 import { REPAIRMAN, SPECIALIZE } from '../../../types'
 import { getBase64 } from '../../../utils/file'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../redux/actions/notification.action'
+import { NotificationStatus } from '../../../redux/types/notification.type'
 
 export default function RepairmanDetail() {
+  const dispatch = useDispatch()
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment()
@@ -55,45 +62,71 @@ export default function RepairmanDetail() {
       specializes: [
         {
           id: computerId,
-          isActive: isCheckComputer,
+          active: isCheckComputer,
           description: computerDescription,
         },
         {
           id: printerId,
-          isActive: isCheckPrinter,
+          active: isCheckPrinter,
           description: printerDescription,
         },
         {
           id: faxId,
-          isActive: isCheckFax,
+          active: isCheckFax,
           description: faxDescription,
         },
       ],
     }
-    console.log(data)
-    debugger
     if (avatar) {
       axios
         .put(`/repairman/me`, {
           ...data,
           avatar: await getBase64(avatar),
         })
-        .then(() => {
-          alert('success')
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     } else {
       axios
         .put(`/repairman/me`, {
           ...data,
         })
-        .then(() => {
-          alert('success')
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     }
   }
@@ -102,17 +135,17 @@ export default function RepairmanDetail() {
     repairman.specializes?.forEach((specialize: SPECIALIZE) => {
       switch (specialize.facilityType?.name) {
         case 'computer':
-          setIsCheckComputer(specialize.isActive || false)
+          setIsCheckComputer(specialize.active || false)
           setComputerDescription(specialize.description || '')
           setComputerId(specialize.id)
           break
         case 'printer':
-          setIsCheckPrinter(specialize.isActive || false)
+          setIsCheckPrinter(specialize.active || false)
           setPrinterDescription(specialize.description || '')
           setPrinterId(specialize.id)
           break
         case 'fax':
-          setIsCheckFax(specialize.isActive || false)
+          setIsCheckFax(specialize.active || false)
           setFaxDescription(specialize.description || '')
           setFaxId(specialize.id)
           break

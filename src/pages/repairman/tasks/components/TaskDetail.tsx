@@ -22,8 +22,14 @@ import {
 } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { EMPLOYEE, FACILITY, REQUEST } from '../../../../types'
 import axios from '../../../../utils/axios'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 export default function TaskDetail({
   request = {},
@@ -32,6 +38,7 @@ export default function TaskDetail({
   request?: REQUEST
   refresh: Function
 }) {
+  const dispatch = useDispatch()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenReason,
@@ -54,33 +61,84 @@ export default function TaskDetail({
   const processRequest = () => {
     axios
       .put(`/requests/${request.id}/process`)
-      .then(() => {
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         refresh()
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
   const completeRequest = () => {
     axios
       .put(`/requests/${request.id}/complete`, { solution })
-      .then(() => {
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         refresh()
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
     options.forEach((option: string | number) => {
       const configuration = facility.configuration as { [name: string]: string }
       if (configuration[option.toString()] && replacement[option.toString()]) {
-        axios.post('/replacements', {
-          facilityId: facility.id,
-          requestId: request.id,
-          component: option,
-          source: configuration[option.toString()],
-          target: replacement[option.toString()],
-        })
+        axios
+          .post('/replacements', {
+            facilityId: facility.id,
+            requestId: request.id,
+            component: option,
+            source: configuration[option.toString()],
+            target: replacement[option.toString()],
+          })
+          .then((res) => {
+            dispatch(
+              pushNotification({
+                title: res.data.message,
+                description: res.data.description,
+                status: NotificationStatus.SUCCESS,
+              })
+            )
+            dispatch(resetNotification())
+          })
+          .catch((error) => {
+            dispatch(
+              pushNotification({
+                title: error.response.data.message,
+                description: error.response.data.description,
+                status: NotificationStatus.ERROR,
+              })
+            )
+            dispatch(resetNotification())
+          })
       }
     })
   }
@@ -88,11 +146,26 @@ export default function TaskDetail({
   const unCompleteRequest = () => {
     axios
       .put(`/requests/${request.id}/uncomplete`, { uncompletedReason: reason })
-      .then(() => {
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         refresh()
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 

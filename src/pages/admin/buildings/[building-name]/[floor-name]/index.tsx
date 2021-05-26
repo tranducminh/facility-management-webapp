@@ -6,7 +6,6 @@ import {
   BreadcrumbLink,
   Grid,
   Flex,
-  Box,
   Button,
   GridItem,
   Modal,
@@ -27,15 +26,22 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Formik, Form, Field } from 'formik'
+
+import { useDispatch } from 'react-redux'
 import AdminDashboard from '../../../../../layouts/AdminDashboard'
-import { useColor } from '../../../../../theme/useColorMode'
 import RoomList from '../../components/RoomList'
 import axios from '../../../../../utils/axios'
 import { BUILDING, FLOOR, ROOM } from '../../../../../types'
+import FloorItem from '../../components/FloorItem'
+import { NotificationStatus } from '../../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../../redux/actions/notification.action'
 
 export default function BuildingDetail() {
   const router = useRouter()
-  const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
+  const dispatch = useDispatch()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenNewRoom,
@@ -58,7 +64,6 @@ export default function BuildingDetail() {
       .get(`/buildings/${buildingName.split('-')[1]}`)
       .then((response) => {
         setBuilding(response.data.building)
-        debugger
         const { floors } = response.data.building
         setFloor(
           floors.filter(
@@ -75,26 +80,57 @@ export default function BuildingDetail() {
         console.log(error)
       })
   }
+
   const createNewFloor = (data: FormData) => {
     axios
       .post('/floors', { ...data, buildingId: building.id })
-      .then(() => {
+      .then((res) => {
         refreshData()
         onClose()
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
   const createNewRoom = (data: FormData) => {
     axios
       .post('/rooms', { ...data, floorId: floor.id })
-      .then(() => {
+      .then((res) => {
         refreshData()
         onCloseNewRoom()
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
   useEffect(() => {
@@ -158,7 +194,12 @@ export default function BuildingDetail() {
       </Flex>
       <Grid templateColumns='repeat(14, 1fr)' gap={4}>
         <GridItem colSpan={12}>
-          <RoomList rooms={rooms} building={building} floor={floor} />
+          <RoomList
+            rooms={rooms}
+            building={building}
+            floor={floor}
+            refresh={refreshData}
+          />
           <Button
             rightIcon={<ArrowRightIcon fontSize='xs' />}
             colorScheme='teal'
@@ -182,27 +223,7 @@ export default function BuildingDetail() {
           {!building.floors
             ? null
             : building.floors.map((item: FLOOR, index: number) => (
-              <Link
-                href={`/admin/buildings/building-${building?.name}/floor-${item.name}`}
-                replace>
-                <Box
-                  key={index}
-                  p={1.5}
-                  mb={4}
-                  cursor='pointer'
-                  color={item.id === floor.id ? hoverTextColor : ''}
-                  backgroundColor={item.id === floor.id ? selectBgColor : ''}
-                  borderRadius='0.5em'
-                  _hover={{
-                    color: hoverTextColor,
-                    backgroundColor: hoverBgColor,
-                    borderRadius: '0.5em',
-                  }}>
-                  <Text textAlign='center' textStyle='bold-sm'>
-                    Tầng {item.name}
-                  </Text>
-                </Box>
-              </Link>
+              <FloorItem floor={item} key={index} currentFloor={floor} building={building} refresh={refreshData} />
             ))}
         </GridItem>
       </Grid>
@@ -304,6 +325,6 @@ export default function BuildingDetail() {
           </Formik>
         </ModalContent>
       </Modal>
-    </AdminDashboard>
+    </AdminDashboard >
   )
 }

@@ -37,10 +37,14 @@ export default function Facility() {
     })
   }, [])
 
-  useEffect(() => {
+  const refresh = () => {
     axios.get(`/facilities?type=${mode}&status=${status}`).then((response) => {
       setCurrentFacilities(response.data.facilities)
     })
+  }
+
+  useEffect(() => {
+    refresh()
   }, [mode, status])
   return (
     <AdminDashboard isFacility>
@@ -139,7 +143,7 @@ export default function Facility() {
           <Input type='text' placeholder='Search request id' />
         </InputGroup>
       </Flex>
-      <FacilityList facilities={currentFacilities} />
+      <FacilityList facilities={currentFacilities} refresh={refresh} />
     </AdminDashboard>
   )
 }

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { SiGoogleclassroom } from 'react-icons/si'
+import { GoGitPullRequest } from 'react-icons/go'
+import { FiUsers } from 'react-icons/fi'
+import { BsTools } from 'react-icons/bs'
 import {
-  GridItem,
-  Icon,
-  Text,
-  Flex,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -12,8 +12,7 @@ import {
   PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
-  Button,
-  Grid,
+  Icon,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,18 +20,19 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   Box,
+  Text,
+  Grid,
+  GridItem,
+  Flex,
+  Button,
+  useDisclosure,
 } from '@chakra-ui/react'
-import { WarningTwoIcon } from '@chakra-ui/icons'
-import { BsBuilding } from 'react-icons/bs'
-import { SiGoogleclassroom } from 'react-icons/si'
-import { GoGitPullRequest } from 'react-icons/go'
-import { FiUsers } from 'react-icons/fi'
+import Link from 'next/link'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { BUILDING, FLOOR, ROOM, EMPLOYEE, REQUEST } from '../../../../types'
 import { useColor } from '../../../../theme/useColorMode'
-import { Link } from '../../../../../i18n'
 import axios from '../../../../utils/axios'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
 import {
@@ -40,34 +40,32 @@ import {
   resetNotification,
 } from '../../../../redux/actions/notification.action'
 
-export default function BuildingItem({
-  buildingId,
-  buildingName,
-  totalRequest = 0,
-  totalRoom = 0,
-  totalFloor = 0,
-  totalEmployee = 0,
+export default function FloorItem({
+  building,
+  floor,
+  currentFloor,
   refresh,
 }: {
-  buildingId?: number
-  buildingName?: string
-  totalRequest?: number
-  totalRoom?: number
-  totalFloor?: number
-  totalEmployee?: number
+  building: BUILDING
+  floor: FLOOR
+  currentFloor: FLOOR
   refresh: Function
 }) {
-  const { hoverTextColor, hoverBgColor } = useColor()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch()
-  const onRemove = () => {
+  const {
+    isOpen: isOpenRemoveFloor,
+    onOpen: onOpenRemoveFloor,
+    onClose: onCloseRemoveFloor,
+  } = useDisclosure()
+  const onRemove = (floorId?: number) => {
     setIsLoading(true)
     axios
-      .delete(`/buildings/${buildingId}`)
+      .delete(`/floors/${floorId}`)
       .then((res) => {
         setIsLoading(false)
-        onClose()
+        onCloseRemoveFloor()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -89,40 +87,69 @@ export default function BuildingItem({
         dispatch(resetNotification())
       })
   }
+  const calculateRequestQuantity = (floor_: FLOOR): number => {
+    let requestQuantity = 0
+    floor_.rooms?.forEach((room_: ROOM) => {
+      room_.employees?.forEach((employee: EMPLOYEE) => {
+        employee.requests?.forEach((request: REQUEST) => {
+          if (request.status === 'pending') {
+            requestQuantity += 1
+          }
+        })
+      })
+    })
+    return requestQuantity
+  }
+
+  const calculateFacilityQuantity = (floor_: FLOOR): number => {
+    let facilityQuantity = 0
+    floor_.rooms?.forEach((room_: ROOM) => {
+      room_.employees?.forEach((employee: EMPLOYEE) => {
+        facilityQuantity += employee.facilities?.length || 0
+      })
+    })
+    return facilityQuantity
+  }
+
+  const calculateEmployeeQuantity = (floor_: FLOOR): number => {
+    let employeeQuantity = 0
+    floor_.rooms?.forEach((room_: ROOM) => {
+      employeeQuantity += room_.employees?.length || 0
+    })
+    return employeeQuantity
+  }
   return (
     <>
       <Popover trigger='hover' size='xl'>
         <PopoverTrigger>
-          <GridItem colSpan={1} position='relative'>
-            <Link href={`/admin/buildings/building-${buildingName}`}>
-              <Flex
-                borderWidth='2px'
-                borderRadius='lg'
-                flexDirection='column'
-                alignItems='center'
-                p={4}
+          <Box>
+            <Link
+              href={`/admin/buildings/building-${building?.name}/floor-${floor.name}`}
+              replace>
+              <Box
+                p={1.5}
+                mb={4}
                 cursor='pointer'
+                color={currentFloor.id === floor.id ? hoverTextColor : ''}
+                backgroundColor={
+                  currentFloor.id === floor.id ? selectBgColor : ''
+                }
+                borderRadius='0.5em'
                 _hover={{
                   color: hoverTextColor,
                   backgroundColor: hoverBgColor,
-                  borderColor: hoverBgColor,
+                  borderRadius: '0.5em',
                 }}>
-                <Icon as={BsBuilding} fontSize='5xl' />
-                <Text textAlign='center' textStyle='bold-md'>
-                  Tòa nhà {buildingName}
+                <Text textAlign='center' textStyle='bold-sm'>
+                  Tầng {floor.name}
                 </Text>
-              </Flex>
-            </Link>
-            {totalRequest > 0 ? (
-              <Box position='absolute' right='3' top='3'>
-                <WarningTwoIcon color='red.400' w={5} h={5} />
               </Box>
-            ) : null}
-          </GridItem>
+            </Link>
+          </Box>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverHeader mt='2' fontWeight='bold' border='0'>
-            Tòa nhà {buildingName}
+            Tầng {floor.name}
           </PopoverHeader>
           <PopoverArrow />
           <PopoverCloseButton mt='2' />
@@ -131,10 +158,10 @@ export default function BuildingItem({
               <GridItem colSpan={5}>
                 <Flex alignItems='center'>
                   <Text textStyle='bold-md' mr='2'>
-                    Số tầng:
+                    Số phòng:
                   </Text>
                   <Text mt='0.5' mr='2' textStyle='bold-md'>
-                    {totalFloor}
+                    {floor.rooms?.length || 0}
                   </Text>
                   <Icon as={SiGoogleclassroom} fontSize='1.2em' />
                 </Flex>
@@ -142,23 +169,23 @@ export default function BuildingItem({
               <GridItem colSpan={5}>
                 <Flex alignItems='center'>
                   <Text textStyle='bold-md' mr='2'>
-                    Số phòng:
-                  </Text>
-                  <Text mt='0.5' mr='2' textStyle='bold-md'>
-                    {totalRoom}
-                  </Text>
-                  <Icon as={SiGoogleclassroom} fontSize='1.2em' />
-                </Flex>
-              </GridItem>
-              <GridItem colSpan={10}>
-                <Flex alignItems='center'>
-                  <Text textStyle='bold-md' mr='2'>
                     Số cán bộ:
                   </Text>
                   <Text mt='0.5' mr='2' textStyle='bold-md'>
-                    {totalEmployee}
+                    {calculateEmployeeQuantity(floor)}
                   </Text>
                   <Icon as={FiUsers} fontSize='1.2em' />
+                </Flex>
+              </GridItem>
+              <GridItem colSpan={5}>
+                <Flex alignItems='center'>
+                  <Text textStyle='bold-md' mr='2'>
+                    Số thiết bị:
+                  </Text>
+                  <Text mt='0.5' mr='2' textStyle='bold-md'>
+                    {calculateFacilityQuantity(floor)}
+                  </Text>
+                  <Icon as={BsTools} fontSize='1.2em' />
                 </Flex>
               </GridItem>
               <GridItem colSpan={10}>
@@ -167,7 +194,7 @@ export default function BuildingItem({
                     Số yêu cầu chưa xử lý:
                   </Text>
                   <Text mt='0.5' mr='2' textStyle='bold-md'>
-                    {totalRequest}
+                    {calculateRequestQuantity(floor)}
                   </Text>
                   <Icon as={GoGitPullRequest} fontSize='1.2em' />
                 </Flex>
@@ -180,17 +207,22 @@ export default function BuildingItem({
             alignItems='center'
             justifyContent='flex-end'
             pb={4}>
-            {totalRequest > 0 ? (
+            {calculateRequestQuantity(floor) > 0 ? (
               <Link href='/admin/requests?type=pending'>
                 <Button size='xs' colorScheme='yellow' mr='3'>
                   Xử lý yêu cầu
                 </Button>
               </Link>
             ) : null}
-            <Button size='xs' colorScheme='red' onClick={onOpen} mr='3'>
+            <Button
+              size='xs'
+              colorScheme='red'
+              onClick={onOpenRemoveFloor}
+              mr='3'>
               Xóa tòa nhà
             </Button>
-            <Link href={`/admin/buildings/building-${buildingName}`}>
+            <Link
+              href={`/admin/buildings/building-${building?.name}/floor-${floor.name}`}>
               <Button size='xs' colorScheme='green'>
                 Chi tiết
               </Button>
@@ -199,26 +231,24 @@ export default function BuildingItem({
         </PopoverContent>
       </Popover>
       <Modal
-        onClose={onClose}
+        onClose={onCloseRemoveFloor}
         size='sm'
         isCentered
         colorScheme='teal'
-        isOpen={isOpen}>
+        isOpen={isOpenRemoveFloor}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Xóa tòa nhà {buildingName}</ModalHeader>
+          <ModalHeader>Xóa tầng {floor.name}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            Các cán bộ trực thuộc tòa nhà sẽ trở về phòng chờ
-          </ModalBody>
+          <ModalBody>Các cán bộ trực thuộc tầng sẽ trở về phòng chờ</ModalBody>
           <ModalFooter>
-            <Button size='sm' onClick={onClose} mr='3'>
+            <Button size='sm' onClick={onCloseRemoveFloor} mr='3'>
               Hủy
             </Button>
             <Button
               size='sm'
               colorScheme='teal'
-              onClick={onRemove}
+              onClick={() => onRemove(floor.id)}
               isLoading={isLoading}>
               Đồng ý
             </Button>

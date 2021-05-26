@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react'
 import {
   Grid,
@@ -19,9 +20,15 @@ import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
 import { REPAIRMAN } from '../../../../types'
 import axios from '../../../../utils/axios'
 import { getBase64 } from '../../../../utils/file'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   identity?: string
@@ -36,6 +43,7 @@ export default function RepairmanDetail({
   repairman: REPAIRMAN
   refresh: Function
 }) {
+  const dispatch = useDispatch()
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
     moment(moment(new Date(repairman.dateOfBirth || new Date())))
@@ -65,17 +73,17 @@ export default function RepairmanDetail({
       specializes: [
         {
           id: computerId,
-          isActive: isCheckComputer,
+          active: isCheckComputer,
           description: computerDescription,
         },
         {
           id: printerId,
-          isActive: isCheckPrinter,
+          active: isCheckPrinter,
           description: printerDescription,
         },
         {
           id: faxId,
-          isActive: isCheckFax,
+          active: isCheckFax,
           description: faxDescription,
         },
       ],
@@ -86,24 +94,54 @@ export default function RepairmanDetail({
           ...data,
           avatar: await getBase64(avatar),
         })
-        .then(() => {
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
           router.push(`/admin/repairman/${values.identity}`)
           refresh(values.identity)
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     } else {
       await axios
         .put(`/repairman/${repairman.id}`, {
           ...data,
         })
-        .then(() => {
+        .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
           router.push(`/admin/repairman/${values.identity}`)
           refresh(values.identity)
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     }
   }
@@ -112,17 +150,17 @@ export default function RepairmanDetail({
     repairman.specializes?.forEach((specialize) => {
       switch (specialize.facilityType?.name) {
         case 'computer':
-          setIsCheckComputer(specialize.isActive || false)
+          setIsCheckComputer(specialize.active || false)
           setComputerDescription(specialize.description || '')
           setComputerId(specialize.id)
           break
         case 'printer':
-          setIsCheckPrinter(specialize.isActive || false)
+          setIsCheckPrinter(specialize.active || false)
           setPrinterDescription(specialize.description || '')
           setPrinterId(specialize.id)
           break
         case 'fax':
-          setIsCheckFax(specialize.isActive || false)
+          setIsCheckFax(specialize.active || false)
           setFaxDescription(specialize.description || '')
           setFaxId(specialize.id)
           break

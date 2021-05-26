@@ -1,9 +1,9 @@
 /* eslint-disable radix */
 /* eslint-disable no-nested-ternary */
 import { RiCommunityLine } from 'react-icons/ri'
-import { FaBirthdayCake } from 'react-icons/fa'
+import { SiGoogleclassroom, SiOrigin } from 'react-icons/si'
 import { IoMdPricetag } from 'react-icons/io'
-import { SiOrigin } from 'react-icons/si'
+
 import {
   Box,
   Grid,
@@ -38,9 +38,13 @@ export default function EmployeeFacilityMode() {
 
   useEffect(() => {
     chooseEmployee(arrangement.currentEmployeeId)
-  }, [arrangement, employees])
+  }, [arrangement])
 
   useEffect(() => {
+    chooseEmployee(activeEmployee?.id)
+  }, [employees])
+
+  const refreshEmployee = () => {
     axios
       .get('/employees')
       .then((response) => {
@@ -49,6 +53,8 @@ export default function EmployeeFacilityMode() {
       .catch((error) => {
         console.log(error)
       })
+  }
+  const refreshFacility = () => {
     axios
       .get('/facilities/employee/null')
       .then((response) => {
@@ -57,6 +63,10 @@ export default function EmployeeFacilityMode() {
       .catch((error) => {
         console.log(error)
       })
+  }
+  useEffect(() => {
+    refreshEmployee()
+    refreshFacility()
   }, [])
 
   const chooseEmployee = (id?: number) => {
@@ -75,15 +85,17 @@ export default function EmployeeFacilityMode() {
 
   function dropEmployee(ev: any) {
     ev.preventDefault()
-    document
-      .querySelector('#facilities')
-      ?.appendChild(document?.getElementById(currentFacility) as Node)
+    // document
+    //   .querySelector('#facilities')
+    //   ?.appendChild(document?.getElementById(currentFacility) as Node)
 
     axios
       .put(`/facilities/${currentFacility}/owner`, {
         employeeId: activeEmployee?.id,
       })
       .then((res) => {
+        refreshEmployee()
+        refreshFacility()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -94,19 +106,28 @@ export default function EmployeeFacilityMode() {
         dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
   function dropRevertFacility(ev: any) {
     ev.preventDefault()
-    document
-      .querySelector('#pending-facilities')
-      ?.appendChild(document?.getElementById(currentFacility) as Node)
+    // document
+    //   .querySelector('#pending-facilities')
+    //   ?.appendChild(document?.getElementById(currentFacility) as Node)
 
     axios
       .delete(`/facilities/${currentFacility}/owner`)
       .then((res) => {
+        refreshEmployee()
+        refreshFacility()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -117,7 +138,14 @@ export default function EmployeeFacilityMode() {
         dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -167,15 +195,21 @@ export default function EmployeeFacilityMode() {
                 <Text ml='2'>{employee.unit}</Text>
               </Flex>
               <Flex alignItems='center' mt='2'>
-                <FaBirthdayCake />
-                {employee.dateOfBirth ? (
+                <SiGoogleclassroom />
+                {employee.hasRoom === 'true' ? (
                   <Text ml='2'>
-                    {new Date(employee.dateOfBirth).getDate()}/
-                    {new Date(employee.dateOfBirth).getMonth() + 1}/
-                    {new Date(employee.dateOfBirth).getFullYear()}
+                    {employee?.room?.floor?.building?.name} /
+                    {employee?.room?.name}
                   </Text>
                 ) : (
-                  <Text ml='2'>Chưa cập nhật</Text>
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='yellow'
+                    ml='2'>
+                    Chưa có phòng
+                  </Tag>
                 )}
               </Flex>
             </Box>

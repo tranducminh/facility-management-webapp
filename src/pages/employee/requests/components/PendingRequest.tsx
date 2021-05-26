@@ -24,6 +24,9 @@ import {
   ModalCloseButton,
   Grid,
   GridItem,
+  FormControl,
+  FormLabel,
+  Textarea,
   useDisclosure,
 } from '@chakra-ui/react'
 import {
@@ -33,16 +36,79 @@ import {
 } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { REQUEST } from '../../../../types'
+import axios from '../../../../utils/axios'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure()
+  const dispatch = useDispatch()
 
+  const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
+  const [updatedProblem, setUpdatedProblem] = useState<string>('')
   const onOpenRequest = (id?: number) => {
     onOpen()
     const request = requests.filter((item: REQUEST) => item.id === id)[0] || {}
     setCurrentRequest(request)
+    setUpdatedProblem(request.problem || '')
+  }
+  const updateRequest = (id?: number) => {
+    axios
+      .put(`/requests/${id}`, { problem: updatedProblem })
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
+      })
+  }
+  const deleteRequest = (id?: number) => {
+    axios
+      .put(`/requests/${id}/delete`)
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
+      })
   }
 
   return (
@@ -165,11 +231,61 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button size='sm' colorScheme='red' mr={3} onClick={onClose}>
+            <Button size='sm' colorScheme='blue' mr={3} onClick={onOpenEdit}>
+              Chỉnh sửa
+            </Button>
+            <Button
+              size='sm'
+              colorScheme='red'
+              mr={3}
+              onClick={() => deleteRequest(currentRequest.id)}>
               Hủy yêu cầu
             </Button>
-            <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
-              Đóng
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isOpenEdit} onClose={onCloseEdit}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Cập nhật yêu cầu</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <Box
+              fontWeight='semibold'
+              as='h2'
+              lineHeight='tight'
+              isTruncated
+              fontSize='md'>
+              #{currentRequest.facility?.id}
+            </Box>
+            <Box
+              fontWeight='semibold'
+              as='h2'
+              lineHeight='tight'
+              isTruncated
+              fontSize='xl'>
+              <Text textStyle='bold-md'>{currentRequest.facility?.name}</Text>
+            </Box>
+            <FormControl mt={4}>
+              <FormLabel>Vấn đề gặp phải</FormLabel>
+              <Textarea
+                defaultValue={updatedProblem}
+                placeholder='Vấn đề gặp phải'
+                onChange={(event) => setUpdatedProblem(event.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button size='sm' onClick={onCloseEdit} mr={3}>
+              Hủy
+            </Button>
+            <Button
+              size='sm'
+              colorScheme='teal'
+              onClick={() => updateRequest(currentRequest.id)}>
+              Cập nhật yêu cầu
             </Button>
           </ModalFooter>
         </ModalContent>

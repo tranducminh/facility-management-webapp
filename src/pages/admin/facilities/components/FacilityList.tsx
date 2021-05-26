@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-nested-ternary */
 import {
   Table,
@@ -11,6 +12,15 @@ import {
   Box,
   Text,
   IconButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  Button,
 } from '@chakra-ui/react'
 import {
   ChevronLeftIcon,
@@ -21,13 +31,48 @@ import {
 import ReactPaginate from 'react-paginate'
 import Link from 'next/link'
 import { MdDelete } from 'react-icons/md'
+import { useDispatch } from 'react-redux'
 import { FACILITY } from '../../../../types'
+import axios from '../../../../utils/axios'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 export default function FacilityList({
   facilities,
+  refresh,
 }: {
   facilities: FACILITY[]
+  refresh: Function
 }) {
+  const dispatch = useDispatch()
+  const removeFacility = (id?: number) => {
+    axios
+      .delete(`/facilities/${id}`)
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+        refresh()
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
+      })
+  }
   return (
     <div>
       <Table variant='simple'>
@@ -86,14 +131,43 @@ export default function FacilityList({
                 ) : null}
               </Td>
               <Td isNumeric>
-                <IconButton
-                  colorScheme='red'
-                  aria-label='Remove facility'
-                  variant='outline'
-                  size='sm'
-                  icon={<MdDelete />}
-                  mr='2'
-                />
+                <Popover size='md'>
+                  <PopoverTrigger>
+                    <IconButton
+                      colorScheme='red'
+                      aria-label='Remove employee'
+                      variant='outline'
+                      size='sm'
+                      icon={<MdDelete />}
+                      mr='2'
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverHeader mt='2' fontWeight='bold' border='0'>
+                      <Text textAlign='left'>Xóa thiết bị</Text>
+                    </PopoverHeader>
+                    <PopoverArrow />
+                    <PopoverCloseButton mt='2' />
+                    <PopoverBody>
+                      <Text textAlign='left'>
+                        Bạn có chắc muốn xóa thiết bị <b>{facility.name}</b>
+                      </Text>
+                    </PopoverBody>
+                    <PopoverFooter
+                      border='0'
+                      d='flex'
+                      alignItems='center'
+                      justifyContent='flex-end'
+                      pb={4}>
+                      <Button
+                        size='xs'
+                        colorScheme='green'
+                        onClick={() => removeFacility(facility.id)}>
+                        Đồng ý
+                      </Button>
+                    </PopoverFooter>
+                  </PopoverContent>
+                </Popover>
                 <Link href={`/admin/facilities/${facility?.id}/edit`}>
                   <IconButton
                     colorScheme='yellow'

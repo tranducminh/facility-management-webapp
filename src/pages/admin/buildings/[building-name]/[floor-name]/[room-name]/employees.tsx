@@ -66,21 +66,23 @@ export default function Room() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1'>
+            <Link href={`/admin/buildings/building-${building.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Tòa nhà {building.name}</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1/floor-1'>
+            <Link
+              href={`/admin/buildings/building-${building.name}/floor-${floor.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Tầng {floor.name}</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href='/admin/buildings/building-a1/floor-1/room-101'>
+            <Link
+              href={`/admin/buildings/building-${building.name}/floor-${floor.name}/room-${room.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Phòng {room.name}</Text>
               </BreadcrumbLink>

@@ -23,11 +23,18 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { WarningTwoIcon, ViewIcon } from '@chakra-ui/icons'
+import { useDispatch } from 'react-redux'
 import { FACILITY } from '../../../../types'
 import axios from '../../../../utils/axios'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 export default function FacilityItem({ facility }: { facility: FACILITY }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const dispatch = useDispatch()
   const {
     isOpen: isOpenReport,
     onOpen: onOpenReport,
@@ -38,11 +45,26 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
     if (facility.status === 'ready') {
       axios
         .post('/requests', { problem, facilityId: facility.id })
-        .then(() => {
+        .then((res) => {
           onCloseReport()
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     }
   }

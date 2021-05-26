@@ -34,6 +34,7 @@ import Link from 'next/link'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { Formik, Form, Field } from 'formik'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
 import AdminDashboard from '../../../../layouts/AdminDashboard'
 import axios from '../../../../utils/axios'
 import {
@@ -43,6 +44,11 @@ import {
   ROOM,
   CONFIGURATION,
 } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   name: string
@@ -52,6 +58,7 @@ type FormData = {
 
 export default function NewFacility() {
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const [modeName, setModeName] = useState('Máy tính')
   const [mode, setMode] = useState('computer')
@@ -118,10 +125,25 @@ export default function NewFacility() {
         employeeId: currentEmployeeId,
       })
       .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         router.push(`/admin/facilities/${res.data.facility.id}`)
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 

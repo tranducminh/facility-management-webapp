@@ -27,6 +27,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Formik, Form, Field } from 'formik'
+import { useDispatch } from 'react-redux'
 import AdminDashboard from '../../../../layouts/AdminDashboard'
 import axios from '../../../../utils/axios'
 import {
@@ -37,6 +38,11 @@ import {
   CONFIGURATION,
   FACILITY,
 } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   name?: string
@@ -46,6 +52,7 @@ type FormData = {
 
 export default function NewFacility() {
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const [modeName, setModeName] = useState('Máy tính')
   const [mode, setMode] = useState('computer')
@@ -153,10 +160,25 @@ export default function NewFacility() {
           employeeId: currentEmployeeId,
         })
         .then((res) => {
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
           router.push(`/admin/facilities/${facility.id}`)
         })
         .catch((error) => {
-          console.log(error)
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
         })
     }
   }

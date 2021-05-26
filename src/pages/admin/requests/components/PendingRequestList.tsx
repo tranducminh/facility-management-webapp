@@ -43,8 +43,14 @@ import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
 import { Formik, Form, Field } from 'formik'
+import { useDispatch } from 'react-redux'
 import axios from '../../../../utils/axios'
 import { REPAIRMAN, REQUEST } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   rejectedReason?: string
@@ -59,6 +65,7 @@ export default function PendingRequestList({
   refresh: Function
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const dispatch = useDispatch()
   const {
     isOpen: isOpenReject,
     onOpen: onOpenReject,
@@ -93,13 +100,28 @@ export default function PendingRequestList({
       .put(`/requests/${currentRequest.id}/assign`, {
         repairmanId: currentRepairman.id,
       })
-      .then(() => {
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         refresh()
         onClose()
         onCloseReject()
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -111,13 +133,28 @@ export default function PendingRequestList({
       .put(`/requests/${requestId}/reject`, {
         rejectedReason,
       })
-      .then(() => {
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         refresh()
         onClose()
         onCloseReject()
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -237,6 +274,7 @@ export default function PendingRequestList({
           <Formik
             initialValues={{ repairmanId: 1 }}
             onSubmit={async (values: FormData, actions: any) => {
+              console.log(values)
               await onAssignRequest()
               actions.setSubmitting(false)
             }}>

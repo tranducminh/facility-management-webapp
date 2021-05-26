@@ -28,6 +28,14 @@ import {
   useDisclosure,
   FormErrorMessage,
   IconButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
 } from '@chakra-ui/react'
 import {
   ChevronLeftIcon,
@@ -41,8 +49,14 @@ import { useEffect, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { MdDelete } from 'react-icons/md'
 import Link from 'next/link'
+import { useDispatch } from 'react-redux'
 import axios from '../../../../utils/axios'
 import { BUILDING, EMPLOYEE, FLOOR, ROOM } from '../../../../types'
+import { NotificationStatus } from '../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../redux/actions/notification.action'
 
 type FormData = {
   identity: string
@@ -55,6 +69,7 @@ export default function EmployeeComponent() {
     onOpen: onOpenUser,
     onClose: onCloseUser,
   } = useDisclosure()
+  const dispatch = useDispatch()
 
   const [employees, setEmployees] = useState<EMPLOYEE[]>([{}])
   const [buildings, setBuildings] = useState<BUILDING[]>([{}])
@@ -64,16 +79,27 @@ export default function EmployeeComponent() {
 
   const [currentBuilding, setCurrentBuilding] = useState<BUILDING>({})
   const [currentFloor, setCurrentFloor] = useState<FLOOR>({})
+
   const refreshEmployee = () => {
-    axios.get('/employees').then((result) => {
-      setEmployees(result.data.employees)
-    })
+    axios
+      .get('/employees')
+      .then((res) => {
+        setEmployees(res.data.employees)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
   useEffect(() => {
     refreshEmployee()
-    axios.get('/buildings').then((result) => {
-      setBuildings(result.data.buildings)
-    })
+    axios
+      .get('/buildings')
+      .then((result) => {
+        setBuildings(result.data.buildings)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }, [])
 
   useEffect(() => {
@@ -98,12 +124,53 @@ export default function EmployeeComponent() {
         ...data,
         roomId: parseInt(newEmployeeRoom),
       })
-      .then(() => {
+      .then((res) => {
         refreshEmployee()
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
         onCloseUser()
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
+      })
+  }
+
+  const removeEmployee = (id?: number) => {
+    axios
+      .delete(`/employees/${id}`)
+      .then((res) => {
+        refreshEmployee()
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -198,14 +265,47 @@ export default function EmployeeComponent() {
                 )}
               </Td>
               <Td isNumeric>
-                <IconButton
-                  colorScheme='red'
-                  aria-label='Remove employee'
-                  variant='outline'
-                  size='sm'
-                  icon={<MdDelete />}
-                  mr='2'
-                />
+                <Popover size='md'>
+                  <PopoverTrigger>
+                    <IconButton
+                      colorScheme='red'
+                      aria-label='Remove employee'
+                      variant='outline'
+                      size='sm'
+                      icon={<MdDelete />}
+                      mr='2'
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverHeader mt='2' fontWeight='bold' border='0'>
+                      <Text textAlign='left'>Xóa tài khoản</Text>
+                    </PopoverHeader>
+                    <PopoverArrow />
+                    <PopoverCloseButton mt='2' />
+                    <PopoverBody>
+                      <Text textAlign='left'>
+                        Bạn có chắc muốn xóa tài khoản của{' '}
+                        <b>{employee.name}</b>
+                      </Text>
+                      <Text textAlign='left' mt='2'>
+                        Các thiết bị của các bộ sẽ trở về trạng thái chờ
+                      </Text>
+                    </PopoverBody>
+                    <PopoverFooter
+                      border='0'
+                      d='flex'
+                      alignItems='center'
+                      justifyContent='flex-end'
+                      pb={4}>
+                      <Button
+                        size='xs'
+                        colorScheme='green'
+                        onClick={() => removeEmployee(employee.id)}>
+                        Đồng ý
+                      </Button>
+                    </PopoverFooter>
+                  </PopoverContent>
+                </Popover>
                 <Link href={`/admin/employees/${employee.identity}`}>
                   <IconButton
                     colorScheme='teal'

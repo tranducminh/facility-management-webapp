@@ -59,9 +59,14 @@ export default function RoomEmployeeMode() {
   }, [])
 
   useEffect(() => {
-    chooseRoom(arrangement.currentRoomId)
-    debugger
-  }, [arrangement, rooms])
+    if (arrangement.currentRoomId) {
+      chooseRoom(arrangement.currentRoomId)
+    }
+  }, [arrangement])
+
+  useEffect(() => {
+    chooseRoom(activeRoom?.id)
+  }, [rooms])
 
   const chooseRoom = (id?: number) => {
     setActiveRoom(rooms.filter((room: ROOM) => room.id === id)[0])
@@ -96,7 +101,14 @@ export default function RoomEmployeeMode() {
         dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -121,7 +133,14 @@ export default function RoomEmployeeMode() {
         dispatch(resetNotification())
       })
       .catch((error) => {
-        console.log(error)
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 

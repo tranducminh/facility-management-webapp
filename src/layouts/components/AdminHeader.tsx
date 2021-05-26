@@ -64,7 +64,6 @@ function AdminHeader() {
       .get('/notifications/unread')
       .then((res) => {
         setUnReadNotification(res.data.total)
-        debugger
       })
       .catch((error) => {
         console.log(error)
@@ -76,7 +75,6 @@ function AdminHeader() {
       .get('/notifications')
       .then((res) => {
         setNotifications(res.data.notifications)
-        debugger
       })
       .catch((error) => {
         console.log(error)
@@ -94,7 +92,6 @@ function AdminHeader() {
           id: data.notification.id,
         })
       )
-      debugger
       dispatch(resetNotification())
       refreshUnReadNotificationTotal()
       channel.unbind('common')
@@ -102,14 +99,9 @@ function AdminHeader() {
   }, [newNotifications])
 
   const onHandleNotification = (notificationId?: number) => {
-    axios
-      .put(`/notifications/${notificationId}/read`)
-      .then(() => {
-        console.log('aaaa')
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    axios.put(`/notifications/${notificationId}/read`).catch((error) => {
+      console.log(error)
+    })
     const notificationTemp =
       notifications.filter((item) => item.id === notificationId)[0] ||
       newNotifications.filter((item) => item.id === notificationId)[0]
