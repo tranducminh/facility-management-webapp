@@ -1,9 +1,29 @@
-import { Box, Container } from '@chakra-ui/react'
+import { Box, Container, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
+import { useSelector, RootStateOrAny } from 'react-redux'
+import { useEffect } from 'react'
 import RepairmanHeader from './components/RepairmanHeader'
 
 /* eslint-disable react/destructuring-assignment */
 export default function RepairmanLayout(props: any) {
+  const notification = useSelector(
+    (state: RootStateOrAny) => state.notification
+  )
+  const toast = useToast()
+
+  useEffect(() => {
+    if (notification.isEnabled) {
+      toast({
+        title: notification.title,
+        description: notification.description,
+        status: notification.status,
+        position: 'bottom-left',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
+  }, [notification])
+
   return (
     <Box>
       <Head>

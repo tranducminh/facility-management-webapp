@@ -44,7 +44,6 @@ function* loginEmployeeSaga(action: any) {
 
 function* loginAdminSaga(action: any) {
   try {
-    debugger
     const result = yield axios.post('/admins/login', { ...action.payload })
     if (result.data) {
       localStorage.setItem('token', result.data.data.token)

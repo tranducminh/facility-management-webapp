@@ -1,9 +1,28 @@
-import { Box, Container } from '@chakra-ui/react'
+import { Box, Container, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
+import { useSelector, RootStateOrAny } from 'react-redux'
+import { useEffect } from 'react'
 import AdminHeader from './components/AdminHeader'
 
 /* eslint-disable react/destructuring-assignment */
-export default function EmployeeLayout(props: any) {
+export default function AdminLayout(props: any) {
+  const toast = useToast()
+  const notification = useSelector(
+    (state: RootStateOrAny) => state.notification
+  )
+
+  useEffect(() => {
+    if (notification.isEnabled) {
+      toast({
+        title: notification.title,
+        description: notification.description,
+        status: notification.status,
+        position: 'bottom-left',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }, [notification])
   return (
     <Box>
       <Head>

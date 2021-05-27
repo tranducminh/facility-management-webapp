@@ -97,7 +97,6 @@ function EmployeeHeader() {
           id: data.notification.id,
         })
       )
-      debugger
       dispatch(resetNotification())
       refreshUnReadNotificationTotal()
       channel.unbind('common')
