@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: `${process.env.DOMAIN_NAME}/api`,
 })
 
 instance.interceptors.request.use(
