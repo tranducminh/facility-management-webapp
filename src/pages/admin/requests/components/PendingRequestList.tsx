@@ -336,7 +336,7 @@ export default function PendingRequestList({
                     </GridItem>
                     <GridItem colStart={2} colEnd={12}>
                       <Field name='repairmanId' validate={validateRepairmanId}>
-                        {({ field, form }: { field: any; form: any }) => (
+                        {({ form }: { form: any }) => (
                           <FormControl
                             isRequired
                             isInvalid={
@@ -351,7 +351,6 @@ export default function PendingRequestList({
                               textStyle='normal'
                               id='repairmanId'
                               value={currentRepairman.id}
-                              {...field}
                               onChange={(event) => {
                                 onChangeRepairman(parseInt(event.target.value))
                               }}>

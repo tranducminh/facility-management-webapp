@@ -5,7 +5,6 @@ import { Provider } from 'react-redux'
 import withRedux from 'next-redux-wrapper'
 import store from '../redux/store'
 import theme from '../theme'
-import { appWithTranslation } from '../../i18n'
 import '../styles/pagination.css'
 import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
@@ -34,4 +33,4 @@ MyApp.getInitialProps = async (appContext: AppContext) => ({
   ...(await App.getInitialProps(appContext)),
 })
 const makeStore = () => store
-export default withRedux(makeStore)(appWithTranslation(MyApp))
+export default withRedux(makeStore)(MyApp)

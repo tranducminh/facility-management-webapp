@@ -33,7 +33,7 @@ import { logout } from '../../redux/actions/auth.action'
 import { NOTIFICATION, NotificationType } from '../../types'
 import axios from '../../utils/axios'
 import {
-  pushNotification,
+  pushRealtimeNotification,
   resetNotification,
 } from '../../redux/actions/notification.action'
 
@@ -86,7 +86,7 @@ function RepairmanHeader() {
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
       setNewNotifications([data.notification, ...newNotifications])
       dispatch(
-        pushNotification({
+        pushRealtimeNotification({
           title: data.notification.content,
           id: data.notification.id,
         })

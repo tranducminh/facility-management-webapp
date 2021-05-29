@@ -1,4 +1,9 @@
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Text,
   Breadcrumb,
   BreadcrumbItem,
@@ -17,12 +22,35 @@ import {
   AlertIcon,
   AlertDescription,
   AlertTitle,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormErrorMessage,
+  Input,
+  FormControl,
+  FormLabel,
+  IconButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react'
+import { MdDelete } from 'react-icons/md'
 import { useEffect, useState } from 'react'
 import { ChevronDownIcon, ArrowRightIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
-import { Link } from '../../../../../../../i18n'
+import Link from 'next/link'
+import { Formik, Form, Field } from 'formik'
 import AdminDashboard from '../../../../../../layouts/AdminDashboard'
 import { useColor } from '../../../../../../theme/useColorMode'
 import FacilityList from '../../../components/FacilityList'
@@ -35,6 +63,15 @@ import {
   ROOM,
 } from '../../../../../../types'
 import { setCurrentRoom } from '../../../../../../redux/actions/arrangement.action'
+import { NotificationStatus } from '../../../../../../redux/types/notification.type'
+import {
+  pushNotification,
+  resetNotification,
+} from '../../../../../../redux/actions/notification.action'
+
+type FormData = {
+  name: string
+}
 
 export default function Room() {
   const [groupByText, setGroupByText] = useState('Cán bộ')
@@ -45,6 +82,7 @@ export default function Room() {
   const [room, setRoom] = useState<ROOM>({})
   const [employees, setEmployees] = useState<EMPLOYEE[]>([])
   const router = useRouter()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [currentEmployee, setCurrentEmployee] = useState<EMPLOYEE>({})
   const [currentFacilityType, setCurrentFacilityType] = useState<string>(
@@ -84,6 +122,62 @@ export default function Room() {
       })
       .catch((error) => {
         console.log(error)
+      })
+  }
+
+  const createNewNode = async (values: FormData) => {
+    await axios
+      .post('/room-facilities', {
+        name: values.name,
+        roomId: room.id,
+      })
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+        onClose()
+        refreshData()
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
+      })
+  }
+
+  const removeNode = (id?: number) => {
+    axios
+      .delete(`/room-facilities/${id}`)
+      .then((res) => {
+        dispatch(
+          pushNotification({
+            title: res.data.message,
+            description: res.data.description,
+            status: NotificationStatus.SUCCESS,
+          })
+        )
+        dispatch(resetNotification())
+        refreshData()
+      })
+      .catch((error) => {
+        dispatch(
+          pushNotification({
+            title: error.response.data.message,
+            description: error.response.data.description,
+            status: NotificationStatus.ERROR,
+          })
+        )
+        dispatch(resetNotification())
       })
   }
 
@@ -127,6 +221,14 @@ export default function Room() {
     }
   }, [currentFacilityType])
 
+  function validateNodeName(value: string) {
+    let error
+    if (!value) {
+      error = 'Tên nút mạng không được bỏ trống'
+    }
+    return error
+  }
+
   return (
     <AdminDashboard isBuilding>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -139,9 +241,9 @@ export default function Room() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href={`/admin/buildings/building-${building.name}`}>
+            <Link href={`/admin/buildings/building-${building?.name}`}>
               <BreadcrumbLink>
-                <Text textStyle='bold-md'>Tòa nhà {building.name}</Text>
+                <Text textStyle='bold-md'>Tòa nhà {building?.name}</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
@@ -215,46 +317,112 @@ export default function Room() {
 
       <Grid templateColumns='repeat(15, 1fr)' gap={4}>
         <GridItem colSpan={groupBy === 'user' ? 12 : 13}>
-          {currentEmployee?.id ? (
-            <>
-              <Text textStyle='bold-md' mb='5'>
-                {groupBy === 'user'
-                  ? `#${currentEmployee.identity} - ${currentEmployee.name}`
-                  : currentFacilityTypeText}
-              </Text>
-              <FacilityList
-                employee={currentEmployee}
-                facilities={currentFacilities}
-              />
-            </>
-          ) : (
-            <Alert
-              status='info'
-              variant='subtle'
-              flexDirection='column'
-              alignItems='center'
-              justifyContent='center'
-              textAlign='center'
-              height='200px'>
-              <AlertIcon boxSize='40px' mr={0} />
-              <AlertTitle mt={4} mb={1} fontSize='lg'>
-                Phòng {room.name} chưa có cán bộ nào
-              </AlertTitle>
-              <AlertDescription maxWidth='sm'>
-                <Button
-                  rightIcon={<ArrowRightIcon fontSize='xs' />}
-                  colorScheme='teal'
-                  variant='ghost'
-                  size='sm'
-                  onClick={handoverFacility}
-                  mt='5'>
-                  <Text textStyle='bold-sm' mt='0.1rem'>
-                    Phân bổ cán bộ ngay
-                  </Text>
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
+          <Accordion defaultIndex={[0]} allowMultiple>
+            <AccordionItem>
+              <AccordionButton>
+                <Flex
+                  justifyContent='space-between'
+                  alignItems='center'
+                  w='100%'>
+                  <Text textStyle='bold-md'>Danh sách thiết bị</Text>
+                  <AccordionIcon />
+                </Flex>
+              </AccordionButton>
+              <AccordionPanel py={5}>
+                {currentEmployee?.id ? (
+                  <>
+                    <Text textStyle='bold-md' mb='5'>
+                      {groupBy === 'user'
+                        ? `#${currentEmployee.identity} - ${currentEmployee.name}`
+                        : currentFacilityTypeText}
+                    </Text>
+                    <FacilityList
+                      employee={currentEmployee}
+                      facilities={currentFacilities}
+                    />
+                  </>
+                ) : (
+                  <Alert
+                    status='info'
+                    variant='subtle'
+                    flexDirection='column'
+                    alignItems='center'
+                    justifyContent='center'
+                    textAlign='center'
+                    height='200px'>
+                    <AlertIcon boxSize='40px' mr={0} />
+                    <AlertTitle mt={4} mb={1} fontSize='lg'>
+                      Phòng {room.name} chưa có cán bộ nào
+                    </AlertTitle>
+                    <AlertDescription maxWidth='sm'>
+                      <Button
+                        rightIcon={<ArrowRightIcon fontSize='xs' />}
+                        colorScheme='teal'
+                        variant='ghost'
+                        size='sm'
+                        onClick={handoverFacility}
+                        mt='5'>
+                        <Text textStyle='bold-sm' mt='0.1rem'>
+                          Phân bổ cán bộ ngay
+                        </Text>
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </AccordionPanel>
+            </AccordionItem>
+
+            <AccordionItem maxW='100%'>
+              <AccordionButton>
+                <Flex
+                  justifyContent='space-between'
+                  alignItems='center'
+                  w='100%'>
+                  <Text textStyle='bold-md'>Nút mạng</Text>
+                  <AccordionIcon />
+                </Flex>
+              </AccordionButton>
+              <AccordionPanel py={5} maxW='100%'>
+                <Flex justifyContent='flex-end' w='100%'>
+                  <Button
+                    rightIcon={<ArrowRightIcon fontSize='xs' />}
+                    colorScheme='teal'
+                    variant='ghost'
+                    size='sm'
+                    onClick={onOpen}
+                    mb='3'>
+                    <Text textStyle='bold-sm' mt='0.1rem'>
+                      Thêm nút mạng
+                    </Text>
+                  </Button>
+                </Flex>
+                <Grid templateColumns='repeat(3, 1fr)' gap={6} zIndex='1000'>
+                  {room.roomFacilities?.map((roomFacility) => (
+                    <GridItem
+                      colSpan={1}
+                      borderWidth='2px'
+                      borderRadius='lg'
+                      position='relative'>
+                      <Text textStyle='bold-sm' textAlign='center' p='2'>
+                        {roomFacility.name}
+                      </Text>
+                      <IconButton
+                        colorScheme='red'
+                        aria-label='Remove employee'
+                        variant='ghost'
+                        size='sm'
+                        position='absolute'
+                        top='1'
+                        right='1'
+                        icon={<MdDelete />}
+                        onClick={() => removeNode(roomFacility.id)}
+                      />
+                    </GridItem>
+                  ))}
+                </Grid>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </GridItem>
         {groupBy === 'user' ? (
           <GridItem
@@ -376,6 +544,55 @@ export default function Room() {
           </GridItem>
         )}
       </Grid>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <Formik
+            initialValues={{ name: '' }}
+            onSubmit={async (values: FormData, actions: any) => {
+              await createNewNode(values)
+              actions.setSubmitting(false)
+            }}>
+            {(props) => (
+              <Form>
+                <ModalHeader>Thêm nút mạng</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <Field name='name' validate={validateNodeName}>
+                    {({ field, form }: { field: any; form: any }) => (
+                      <FormControl
+                        isRequired
+                        isInvalid={form.errors.name && form.touched.name}>
+                        <FormLabel>Nút mạng</FormLabel>
+                        <Input
+                          {...field}
+                          id='name'
+                          colorScheme='teal'
+                          placeholder='Nút mạng'
+                        />
+                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </ModalBody>
+                <ModalFooter>
+                  <Button size='sm' onClick={onClose} mr={3}>
+                    Hủy
+                  </Button>
+                  <Button
+                    size='sm'
+                    colorScheme='teal'
+                    type='submit'
+                    isLoading={props.isSubmitting}>
+                    Tạo mới
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalContent>
+      </Modal>
     </AdminDashboard>
   )
 }

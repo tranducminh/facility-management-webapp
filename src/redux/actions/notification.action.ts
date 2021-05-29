@@ -6,6 +6,11 @@ export const pushNotification = (payload: PushNotificationPayload) => ({
   payload,
 })
 
+export const pushRealtimeNotification = (payload: PushNotificationPayload) => ({
+  type: NotificationType.PUSH_REALTIME_NOTIFICATION,
+  payload,
+})
+
 export const resetNotification = () => ({
   type: NotificationType.RESET_NOTIFICATION,
 })

@@ -15,8 +15,8 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import AdminDashboard from '../../../layouts/AdminDashboard'
-import { Link } from '../../../../i18n'
 import RoomEmployeeMode from './components/RoomEmployeeMode'
 
 function Arrangement() {

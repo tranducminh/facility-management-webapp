@@ -1,15 +1,10 @@
 import { Image, Flex, Spacer, Box, Button } from '@chakra-ui/react'
-import Head from 'next/head'
-import { TFunction } from 'next-i18next'
-import { withTranslation, Link } from '../../../i18n'
+import Link from 'next/link'
 import EmployeeLayout from '../../layouts/EmployeeLayout'
 
-function Home({ t }: { readonly t: TFunction }) {
+function Home() {
   return (
     <EmployeeLayout>
-      <Head>
-        <title>{t('homepage')}</title>
-      </Head>
       <Flex justify='space-between' align='center'>
         <Box maxW='50%'>
           <Box fontSize='xxx-large' fontWeight='bold'>
@@ -39,8 +34,4 @@ function Home({ t }: { readonly t: TFunction }) {
   )
 }
 
-Home.getInitialProps = async () => ({
-  namespacesRequired: ['user-index'],
-})
-
-export default withTranslation('user-index')(Home)
+export default Home

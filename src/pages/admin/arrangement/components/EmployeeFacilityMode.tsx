@@ -85,68 +85,72 @@ export default function EmployeeFacilityMode() {
 
   function dropEmployee(ev: any) {
     ev.preventDefault()
-    // document
-    //   .querySelector('#facilities')
-    //   ?.appendChild(document?.getElementById(currentFacility) as Node)
-
-    axios
-      .put(`/facilities/${currentFacility}/owner`, {
-        employeeId: activeEmployee?.id,
-      })
-      .then((res) => {
-        refreshEmployee()
-        refreshFacility()
-        dispatch(
-          pushNotification({
-            title: res.data.message,
-            description: res.data.description,
-            status: NotificationStatus.SUCCESS,
-          })
-        )
-        dispatch(resetNotification())
-      })
-      .catch((error) => {
-        dispatch(
-          pushNotification({
-            title: error.response.data.message,
-            description: error.response.data.description,
-            status: NotificationStatus.ERROR,
-          })
-        )
-        dispatch(resetNotification())
-      })
+    if (
+      activeEmployee?.facilities?.filter(
+        (facility) => facility.id?.toString() === currentFacility
+      ).length === 0
+    ) {
+      axios
+        .put(`/facilities/${currentFacility}/owner`, {
+          employeeId: activeEmployee?.id,
+        })
+        .then((res) => {
+          refreshEmployee()
+          refreshFacility()
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
+        })
+        .catch((error) => {
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
+        })
+    }
   }
 
   function dropRevertFacility(ev: any) {
     ev.preventDefault()
-    // document
-    //   .querySelector('#pending-facilities')
-    //   ?.appendChild(document?.getElementById(currentFacility) as Node)
-
-    axios
-      .delete(`/facilities/${currentFacility}/owner`)
-      .then((res) => {
-        refreshEmployee()
-        refreshFacility()
-        dispatch(
-          pushNotification({
-            title: res.data.message,
-            description: res.data.description,
-            status: NotificationStatus.SUCCESS,
-          })
-        )
-        dispatch(resetNotification())
-      })
-      .catch((error) => {
-        dispatch(
-          pushNotification({
-            title: error.response.data.message,
-            description: error.response.data.description,
-            status: NotificationStatus.ERROR,
-          })
-        )
-        dispatch(resetNotification())
-      })
+    if (
+      facilities?.filter(
+        (facility) => facility.id?.toString() === currentFacility
+      ).length === 0
+    ) {
+      axios
+        .delete(`/facilities/${currentFacility}/owner`)
+        .then((res) => {
+          refreshEmployee()
+          refreshFacility()
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
+        })
+        .catch((error) => {
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
+        })
+    }
   }
 
   const generateFacilityTypeName = (facilityType?: string) => {

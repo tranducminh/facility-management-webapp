@@ -80,11 +80,16 @@ export default function EmployeeComponent() {
   const [currentBuilding, setCurrentBuilding] = useState<BUILDING>({})
   const [currentFloor, setCurrentFloor] = useState<FLOOR>({})
 
-  const refreshEmployee = () => {
+  const [pageCount, setPageCount] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
+  const refreshEmployee = (page?: number) => {
+    if (page) setCurrentPage(page)
     axios
-      .get('/employees')
+      .get(`/employees?offset=${page || currentPage}`)
       .then((res) => {
         setEmployees(res.data.employees)
+        setPageCount(res.data.totalPage)
       })
       .catch((error) => {
         console.log(error)
@@ -329,24 +334,25 @@ export default function EmployeeComponent() {
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
-
+      {pageCount > 1 ? (
+        <Box maxW='50%' mt={5} float='right'>
+          <ReactPaginate
+            previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
+            nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
+            breakLabel='...'
+            breakClassName='break-me'
+            pageCount={pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={2}
+            onPageChange={({ selected }) => {
+              refreshEmployee(selected + 1)
+            }}
+            containerClassName='pagination'
+            // subContainerClassName='pages pagination'
+            activeClassName='active'
+          />
+        </Box>
+      ) : null}
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>

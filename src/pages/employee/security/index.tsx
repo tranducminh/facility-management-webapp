@@ -60,7 +60,7 @@ export default function Security() {
 
   return (
     <EmployeeDashboard isSecurity>
-      <Title title='Change password' />
+      <Title title='Đổi mật khẩu' />
       <Box w='50%'>
         <Formik
           initialValues={{

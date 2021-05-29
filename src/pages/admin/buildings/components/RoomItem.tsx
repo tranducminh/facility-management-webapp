@@ -246,7 +246,7 @@ export default function RoomItem({
               Xóa phòng
             </Button>
             <Link
-              href={`/admin/buildings/building-${building.name}/room-${room.name}`}>
+              href={`/admin/buildings/building-${building.name}/floor-${floor.name}/room-${room.name}`}>
               <Button size='xs' colorScheme='green'>
                 Chi tiết
               </Button>

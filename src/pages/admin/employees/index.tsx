@@ -5,9 +5,9 @@ import {
   BreadcrumbLink,
   Text,
 } from '@chakra-ui/react'
+import Link from 'next/link'
 import AdminDashboard from '../../../layouts/AdminDashboard'
 import EmployeeList from './components/EmployeeList'
-import { Link } from '../../../../i18n'
 
 export default function User() {
   return (

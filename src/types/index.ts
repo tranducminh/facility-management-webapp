@@ -11,12 +11,18 @@ export type FLOOR = {
   rooms?: ROOM[]
 }
 
+export type ROOM_FACILITY = {
+  id?: number
+  name?: string
+}
+
 export type ROOM = {
   id?: number
   name?: string
   building?: BUILDING
   floor?: FLOOR
   employees?: EMPLOYEE[]
+  roomFacilities?: ROOM_FACILITY[]
 }
 
 export type EMPLOYEE = {
@@ -29,7 +35,7 @@ export type EMPLOYEE = {
   unit?: string
   hasRoom?: string
   avatar?: string
-  facilities?: []
+  facilities?: FACILITY[]
   room?: ROOM
   requests?: REQUEST[]
 }

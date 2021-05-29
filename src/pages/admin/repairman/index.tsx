@@ -5,9 +5,9 @@ import {
   BreadcrumbLink,
   Text,
 } from '@chakra-ui/react'
+import Link from 'next/link'
 import AdminDashboard from '../../../layouts/AdminDashboard'
 import RepairmanComponent from './components/Repairman'
-import { Link } from '../../../../i18n'
 
 export default function Repairman() {
   return (

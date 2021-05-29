@@ -86,62 +86,69 @@ export default function RoomEmployeeMode() {
     //   .querySelector('#employees')
     //   ?.appendChild(document?.getElementById(currentEmployee) as Node)
 
-    axios
-      .put(`/employees/${currentEmployee}/room`, { roomId: activeRoom?.id })
-      .then((res) => {
-        refreshRoom()
-        refreshEmployee()
-        dispatch(
-          pushNotification({
-            title: res.data.message,
-            description: res.data.description,
-            status: NotificationStatus.SUCCESS,
-          })
-        )
-        dispatch(resetNotification())
-      })
-      .catch((error) => {
-        dispatch(
-          pushNotification({
-            title: error.response.data.message,
-            description: error.response.data.description,
-            status: NotificationStatus.ERROR,
-          })
-        )
-        dispatch(resetNotification())
-      })
+    if (
+      activeRoom?.employees?.filter(
+        (employee) => employee.identity === currentEmployee
+      ).length === 0
+    ) {
+      axios
+        .put(`/employees/${currentEmployee}/room`, { roomId: activeRoom?.id })
+        .then((res) => {
+          refreshRoom()
+          refreshEmployee()
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
+        })
+        .catch((error) => {
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
+        })
+    }
   }
 
   function dropRevertEmployee(ev: any) {
     ev.preventDefault()
-    // document
-    //   .querySelector('#pending-employee')
-    //   ?.appendChild(document?.getElementById(currentEmployee) as Node)
-
-    axios
-      .delete(`/employees/${currentEmployee}/room`)
-      .then((res) => {
-        refreshRoom()
-        refreshEmployee()
-        dispatch(
-          pushNotification({
-            title: res.data.message,
-            description: res.data.description,
-            status: NotificationStatus.SUCCESS,
-          })
-        )
-        dispatch(resetNotification())
-      })
-      .catch((error) => {
-        dispatch(
-          pushNotification({
-            title: error.response.data.message,
-            description: error.response.data.description,
-            status: NotificationStatus.ERROR,
-          })
-        )
-        dispatch(resetNotification())
-      })
+    if (
+      employees?.filter((employee) => employee.identity === currentEmployee)
+        .length === 0
+    ) {
+      axios
+        .delete(`/employees/${currentEmployee}/room`)
+        .then((res) => {
+          refreshRoom()
+          refreshEmployee()
+          dispatch(
+            pushNotification({
+              title: res.data.message,
+              description: res.data.description,
+              status: NotificationStatus.SUCCESS,
+            })
+          )
+          dispatch(resetNotification())
+        })
+        .catch((error) => {
+          dispatch(
+            pushNotification({
+              title: error.response.data.message,
+              description: error.response.data.description,
+              status: NotificationStatus.ERROR,
+            })
+          )
+          dispatch(resetNotification())
+        })
+    }
   }
 
   return (

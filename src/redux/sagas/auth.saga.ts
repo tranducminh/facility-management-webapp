@@ -11,7 +11,7 @@ import {
 function* loginEmployeeSaga(action: any) {
   try {
     const result = yield axios.post('/employees/login', { ...action.payload })
-
+    debugger
     if (result.data) {
       localStorage.setItem('token', result.data.data.token)
       yield put(

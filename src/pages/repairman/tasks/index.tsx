@@ -14,9 +14,9 @@ import {
   HStack,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import TaskDetail from './components/TaskDetail'
-import { Link } from '../../../../i18n'
 import axios from '../../../utils/axios'
 import { REQUEST } from '../../../types'
 

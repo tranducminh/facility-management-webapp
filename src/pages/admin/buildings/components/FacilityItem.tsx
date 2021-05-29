@@ -85,11 +85,19 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             Tình trạng:
           </GridItem>
           <GridItem colSpan={2} margin='auto 0'>
-            <HStack spacing={4}>
+            {facility.status === 'ready' ? (
               <Tag size='sm' key='status' variant='solid' colorScheme='teal'>
                 Sẵn sàng
               </Tag>
-            </HStack>
+            ) : facility.status === 'repairing' ? (
+              <Tag size='sm' key='status' variant='solid' colorScheme='blue'>
+                Đang sửa chữa
+              </Tag>
+            ) : facility.status === 'error' ? (
+              <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                Đang hỏng
+              </Tag>
+            ) : null}
           </GridItem>
         </Grid>
 
@@ -120,52 +128,59 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
       <Modal isOpen={isOpen} size='xl' onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            #{facility.id}
-            <Tag colorScheme='teal' size='sm' mr='5'>
-              {facility.status}
-            </Tag>
-          </ModalHeader>
+          <ModalHeader>#{facility.id}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Grid templateColumns='repeat(12, 1fr)' gap={15}>
               <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-md'>Name</Text>
+                <Text textStyle='bold-md'>Tên thiết bị</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <Text>Dell vostro 3568</Text>
+                <Text>{facility.name}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-md'>Origin</Text>
+                <Text textStyle='bold-md'>Nguồn gốc</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <Text>Viet nam</Text>
+                <Text>{facility.origin}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-md'>Price</Text>
+                <Text textStyle='bold-md'>Giá trị</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <Text>20.000.000 VND</Text>
+                <Text>{facility.price} VND</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-md'>Ngay cap</Text>
+                <Text textStyle='bold-md'>Ngày cấp</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
                 <Text>21/11/2022</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={5}>
-                <Text textStyle='bold-md'>Status</Text>
+                <Text textStyle='bold-md'>Trạng thái</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <HStack spacing={4}>
+                {facility.status === 'ready' ? (
                   <Tag
                     size='sm'
                     key='status'
                     variant='solid'
                     colorScheme='teal'>
-                    Ready
+                    Sẵn sàng
                   </Tag>
-                </HStack>
+                ) : facility.status === 'repairing' ? (
+                  <Tag
+                    size='sm'
+                    key='status'
+                    variant='solid'
+                    colorScheme='blue'>
+                    Đang sửa chữa
+                  </Tag>
+                ) : facility.status === 'error' ? (
+                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                    Đang hỏng
+                  </Tag>
+                ) : null}
               </GridItem>
               <GridItem colStart={1} colEnd={13}>
                 <Divider colorScheme='teal' />
@@ -185,61 +200,61 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
                     <Text>{facility.configuration?.mainboard}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Hard drive</Text>
+                    <Text textStyle='bold-md'>Ổ đĩa</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.hardDrive}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>RAM</Text>
+                    <Text textStyle='bold-md'>Bộ nhớ</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.ram}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>VGA</Text>
+                    <Text textStyle='bold-md'>Card màn hình</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.vga}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>PSU</Text>
+                    <Text textStyle='bold-md'>Nguồn</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.psu}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Monitor</Text>
+                    <Text textStyle='bold-md'>Màn hình</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.monitor}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Keyboard</Text>
+                    <Text textStyle='bold-md'>Bàn phím</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.keyboard}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Mouse</Text>
+                    <Text textStyle='bold-md'>Chuột</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.mouse}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Headphone</Text>
+                    <Text textStyle='bold-md'>Tai nghe</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.headPhone}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Speaker</Text>
+                    <Text textStyle='bold-md'>Micro</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text />
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Fan case</Text>
+                    <Text textStyle='bold-md'>Tản nhiệt</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.fanCase}</Text>
@@ -251,7 +266,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
                     <Text>{facility.configuration?.webcam}</Text>
                   </GridItem>
                   <GridItem colStart={2} colEnd={5}>
-                    <Text textStyle='bold-md'>Card reader</Text>
+                    <Text textStyle='bold-md'>Đầu đọc thẻ</Text>
                   </GridItem>
                   <GridItem colStart={5} colEnd={12}>
                     <Text>{facility.configuration?.cardReader}</Text>
@@ -353,7 +368,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
 
           <ModalFooter>
             <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
-              Close
+              Đóng
             </Button>
           </ModalFooter>
         </ModalContent>

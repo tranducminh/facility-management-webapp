@@ -18,8 +18,9 @@ const defaultState: {
 
 export const NotificationReducer = (state = defaultState, action: any) => {
   switch (action.type) {
-    case NotificationType.PUSH_NOTIFICATION:
-      if (state.id !== action.payload.id || !state.id) {
+    case NotificationType.PUSH_REALTIME_NOTIFICATION:
+      debugger
+      if (state.id !== action.payload.id) {
         debugger
         return {
           ...defaultState,
@@ -27,10 +28,15 @@ export const NotificationReducer = (state = defaultState, action: any) => {
           ...action.payload,
         }
       }
-      debugger
       return defaultState
+    case NotificationType.PUSH_NOTIFICATION:
+      return {
+        ...defaultState,
+        isEnabled: true,
+        ...action.payload,
+      }
     case NotificationType.RESET_NOTIFICATION:
-      return defaultState
+      return { ...defaultState, id: state.id }
     default:
       return state
   }

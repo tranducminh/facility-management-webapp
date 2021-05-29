@@ -36,7 +36,7 @@ import AdminLogo from '../../components/AdminLogo'
 import { logout } from '../../redux/actions/auth.action'
 import { NOTIFICATION, NotificationType } from '../../types'
 import {
-  pushNotification,
+  pushRealtimeNotification,
   resetNotification,
 } from '../../redux/actions/notification.action'
 import axios from '../../utils/axios'
@@ -87,7 +87,7 @@ function AdminHeader() {
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
       setNewNotifications([data.notification, ...newNotifications])
       dispatch(
-        pushNotification({
+        pushRealtimeNotification({
           title: data.notification.content,
           id: data.notification.id,
         })

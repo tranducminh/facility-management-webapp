@@ -19,5 +19,5 @@
     "target": "esnext"
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx", "i18n.js", "src/pages/admin/arrangement/indexjtsx", "src/pages/admin/arrangement/index.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "src/pages/admin/arrangement/indexjtsx", "src/pages/admin/arrangement/index.tsx"]
 }

@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { Link } from '../../i18n'
+import Link from 'next/link'
 
 export default function AdminLogo() {
   return (

@@ -95,6 +95,7 @@ export default function RepairmanDetail({
           avatar: await getBase64(avatar),
         })
         .then((res) => {
+          setAvatar(null)
           dispatch(
             pushNotification({
               title: res.data.message,

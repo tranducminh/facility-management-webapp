@@ -37,7 +37,7 @@ import { useColor } from '../../theme/useColorMode'
 import Logo from '../../components/Logo'
 import { logout } from '../../redux/actions/auth.action'
 import {
-  pushNotification,
+  pushRealtimeNotification,
   resetNotification,
 } from '../../redux/actions/notification.action'
 import { NOTIFICATION, NotificationType } from '../../types'
@@ -92,7 +92,7 @@ function EmployeeHeader() {
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
       setNewNotifications([data.notification, ...newNotifications])
       dispatch(
-        pushNotification({
+        pushRealtimeNotification({
           title: data.notification.content,
           id: data.notification.id,
         })

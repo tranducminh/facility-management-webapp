@@ -14,9 +14,9 @@ import {
   HStack,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import HistoryDetail from './components/HistoryDetail'
-import { Link } from '../../../../i18n'
 import axios from '../../../utils/axios'
 import { HISTORY } from '../../../types'
 
@@ -67,59 +67,63 @@ export default function Task() {
       </Flex>
 
       <Accordion allowMultiple>
-        {histories.map((history: HISTORY, index: number) => (
-          <AccordionItem key={index}>
-            <AccordionButton>
-              <Flex justifyContent='space-between' alignItems='center' w='100%'>
-                <Flex alignItems='center'>
-                  <Text textStyle='bold-md'>
-                    #{history.id} - {history.request?.facility?.name}
-                  </Text>
-                  <HStack spacing={4} ml='4'>
-                    <Badge borderRadius='full' colorScheme='teal'>
-                      {convertFacilityName(
-                        history.request?.facility?.facilityType?.name
+        {histories &&
+          histories.map((history: HISTORY, index: number) => (
+            <AccordionItem key={index}>
+              <AccordionButton>
+                <Flex
+                  justifyContent='space-between'
+                  alignItems='center'
+                  w='100%'>
+                  <Flex alignItems='center'>
+                    <Text textStyle='bold-md'>
+                      #{history.id} - {history.request?.facility?.name}
+                    </Text>
+                    <HStack spacing={4} ml='4'>
+                      <Badge borderRadius='full' colorScheme='teal'>
+                        {convertFacilityName(
+                          history.request?.facility?.facilityType?.name
+                        )}
+                      </Badge>
+                      {history.request?.status === 'completed' ? (
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='green'>
+                          Hoàn thành
+                        </Tag>
+                      ) : (
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='red'>
+                          Không hoàn thành
+                        </Tag>
                       )}
-                    </Badge>
-                    {history.request?.status === 'completed' ? (
-                      <Tag
-                        size='sm'
-                        key='status'
-                        variant='solid'
-                        colorScheme='green'>
-                        Hoàn thành
-                      </Tag>
-                    ) : (
-                      <Tag
-                        size='sm'
-                        key='status'
-                        variant='solid'
-                        colorScheme='red'>
-                        Không hoàn thành
-                      </Tag>
-                    )}
-                    {history.createdAt ? (
-                      <Tag
-                        size='sm'
-                        key='status'
-                        variant='solid'
-                        colorScheme='gray'>
-                        {`
+                      {history.createdAt ? (
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='gray'>
+                          {`
                         ${new Date(history.createdAt).getDate()}
                         - ${new Date(history.createdAt).getMonth() + 1}
                         - ${new Date(history.createdAt).getFullYear()}`}
-                      </Tag>
-                    ) : null}
-                  </HStack>
+                        </Tag>
+                      ) : null}
+                    </HStack>
+                  </Flex>
                 </Flex>
-              </Flex>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel py={5}>
-              <HistoryDetail history={history} />
-            </AccordionPanel>
-          </AccordionItem>
-        ))}
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel py={5}>
+                <HistoryDetail history={history} />
+              </AccordionPanel>
+            </AccordionItem>
+          ))}
       </Accordion>
     </RepairmanDashboard>
   )

@@ -31,11 +31,11 @@ export default function Facility() {
   const [status, setStatus] = useState('ready')
 
   const [currentFacilities, setCurrentFacilities] = useState<FACILITY[]>([{}])
-  useEffect(() => {
-    axios.get('/facilities').then((response) => {
-      setCurrentFacilities(response.data.facilities || [])
-    })
-  }, [])
+  // useEffect(() => {
+  //   axios.get('/facilities').then((response) => {
+  //     setCurrentFacilities(response.data.facilities || [])
+  //   })
+  // }, [])
 
   const refresh = () => {
     axios.get(`/facilities?type=${mode}&status=${status}`).then((response) => {

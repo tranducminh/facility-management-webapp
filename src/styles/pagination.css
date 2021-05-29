@@ -10,6 +10,7 @@
 }
 .pagination li {
   list-style: none;
+  margin: 0 0.5rem;
 }
 .pagination a {
   border: none;

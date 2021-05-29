@@ -39,15 +39,23 @@ import {
   PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
+  Box,
 } from '@chakra-ui/react'
-import { Search2Icon, ArrowRightIcon, ViewIcon } from '@chakra-ui/icons'
+import {
+  Search2Icon,
+  ArrowRightIcon,
+  ViewIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@chakra-ui/icons'
+import ReactPaginate from 'react-paginate'
 import { MdDelete } from 'react-icons/md'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { Formik, Form, Field } from 'formik'
 import { useDispatch } from 'react-redux'
-import { Link } from '../../../../../i18n'
+import Link from 'next/link'
 import axios from '../../../../utils/axios'
 import { REPAIRMAN, SPECIALIZE } from '../../../../types'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
@@ -74,11 +82,16 @@ export default function RepairmanComponent() {
   const isIndeterminate = checkedItems.some(Boolean) && !allChecked
   const [repairman, setRepairman] = useState<REPAIRMAN[]>([])
 
-  const refreshData = () => {
+  const [pageCount, setPageCount] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
+  const refreshData = (page?: number) => {
+    if (page) setCurrentPage(page)
     axios
-      .get('/repairman')
+      .get(`/repairman?offset=${page || currentPage}`)
       .then((res) => {
         setRepairman(res.data.repairman)
+        setPageCount(res.data.totalPage)
       })
       .catch((error) => {
         console.log(error)
@@ -316,24 +329,25 @@ export default function RepairmanComponent() {
           </Tr>
         </Tfoot>
       </Table>
-      {/* <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box> */}
-
+      {pageCount > 1 ? (
+        <Box maxW='50%' mt={5} float='right'>
+          <ReactPaginate
+            previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
+            nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
+            breakLabel='...'
+            breakClassName='break-me'
+            pageCount={pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={2}
+            onPageChange={({ selected }) => {
+              refreshData(selected + 1)
+            }}
+            containerClassName='pagination'
+            // subContainerClassName='pages pagination'
+            activeClassName='active'
+          />
+        </Box>
+      ) : null}
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>
