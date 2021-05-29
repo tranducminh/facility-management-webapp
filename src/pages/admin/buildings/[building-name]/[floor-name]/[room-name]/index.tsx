@@ -34,14 +34,6 @@ import {
   FormControl,
   FormLabel,
   IconButton,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
   useDisclosure,
 } from '@chakra-ui/react'
 import { MdDelete } from 'react-icons/md'
