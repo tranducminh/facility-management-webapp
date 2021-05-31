@@ -10,7 +10,6 @@ import {
   Flex,
   Spacer,
   Text,
-  Checkbox,
   FormErrorMessage,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
@@ -129,11 +128,6 @@ function Login() {
                     </FormControl>
                   )}
                 </Field>
-                <Checkbox size='md' colorScheme='teal' defaultChecked mt={5}>
-                  <Text fontSize='sm' fontWeight='medium'>
-                    Ghi nhớ tài khoản
-                  </Text>
-                </Checkbox>
                 <Button
                   w='100%'
                   variant='solid'

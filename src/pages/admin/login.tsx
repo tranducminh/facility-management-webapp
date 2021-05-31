@@ -10,7 +10,6 @@ import {
   Flex,
   Spacer,
   Text,
-  Checkbox,
   FormErrorMessage,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
