@@ -30,7 +30,6 @@ export default function FacilityDetail() {
     axios
       .get(`/facilities/${facilityId}`)
       .then((response) => {
-        debugger
         setFacility(response.data.facility)
         setEmployee(response.data.facility.employee)
         setRoom(response.data.facility.employee.room)
@@ -41,7 +40,7 @@ export default function FacilityDetail() {
       })
   }, [])
   return (
-    <AdminDashboard isFacility>
+    <AdminDashboard isFacility title={facility?.name || 'Thiết bị'}>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

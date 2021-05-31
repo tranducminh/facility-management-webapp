@@ -53,7 +53,7 @@ export default function Task() {
   }
 
   return (
-    <RepairmanDashboard isHistory>
+    <RepairmanDashboard isHistory title='Lịch sử làm viêc'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

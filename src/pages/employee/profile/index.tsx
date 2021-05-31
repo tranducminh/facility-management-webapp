@@ -118,7 +118,7 @@ export default function Profile() {
   }
 
   return (
-    <EmployeeDashboard isProfile>
+    <EmployeeDashboard isProfile title={employee?.name || 'Trang cá nhân'}>
       <Text textStyle='bold-xl'>Thông tin phòng</Text>
       <Grid templateColumns='repeat(5, 1fr)' gap={4} mt='5'>
         <GridItem colSpan={3}>

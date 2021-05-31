@@ -167,7 +167,7 @@ export default function RepairmanDetail() {
   }, [])
 
   return (
-    <RepairmanDashboard isProfile>
+    <RepairmanDashboard isProfile title={repairman?.name || 'Trang cá nhân'}>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

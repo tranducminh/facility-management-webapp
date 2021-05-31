@@ -11,7 +11,7 @@ import RepairmanComponent from './components/Repairman'
 
 export default function Repairman() {
   return (
-    <AdminDashboard isRepairman>
+    <AdminDashboard isRepairman title='Kỹ thuật viên'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

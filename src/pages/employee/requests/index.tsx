@@ -55,7 +55,6 @@ export default function Request() {
   }
   useEffect(() => {
     const type = router.query.type || 'pending'
-    debugger
     switch (type) {
       case 'pending':
         setDefaultTab(0)
@@ -82,7 +81,7 @@ export default function Request() {
     refresh()
   }, [])
   return (
-    <EmployeeDashboard isRequest>
+    <EmployeeDashboard isRequest title='Yêu cầu'>
       <Tabs
         size='md'
         variant='enclosed'

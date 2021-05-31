@@ -175,7 +175,7 @@ export default function NewFacility() {
   }
 
   return (
-    <AdminDashboard isFacility>
+    <AdminDashboard isFacility title='Tạo mới thiết bị'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

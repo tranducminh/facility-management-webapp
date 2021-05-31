@@ -60,7 +60,7 @@ function Login() {
   }
 
   return (
-    <EmployeeLayout>
+    <EmployeeLayout title='Cán bộ | Đăng nhập'>
       <Flex align='flex-end'>
         <Image src='/assets/images/login_img_1.svg' maxW='30%' />
         <Spacer />

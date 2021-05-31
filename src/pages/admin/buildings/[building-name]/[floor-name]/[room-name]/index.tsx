@@ -222,7 +222,9 @@ export default function Room() {
   }
 
   return (
-    <AdminDashboard isBuilding>
+    <AdminDashboard
+      isBuilding
+      title={`Thiết bị | Phòng ${building?.name}/${room?.name}`}>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

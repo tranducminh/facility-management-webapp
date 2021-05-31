@@ -13,21 +13,16 @@ const defaultState: any = {
 
 export const AuthReducer = (state = defaultState, action: any) => {
   switch (action.type) {
-    case AuthType.LOGIN_EMPLOYEE:
-      return {
-        ...state,
-        isLoading: true,
-      }
     case AuthType.LOGIN_SUCCESS:
-      debugger
       return {
         ...state,
         ...action.payload,
         isLoading: false,
         isAuth: true,
       }
+    case AuthType.LOGIN_FAIL:
+      return defaultState
     case AuthType.FETCH_ME_SUCCESS:
-      debugger
       return {
         ...state,
         ...action.payload,

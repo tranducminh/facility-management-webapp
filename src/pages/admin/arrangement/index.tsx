@@ -22,7 +22,7 @@ import RoomEmployeeMode from './components/RoomEmployeeMode'
 function Arrangement() {
   const router = useRouter()
   return (
-    <AdminDashboard isArrangement>
+    <AdminDashboard isArrangement title='Phân bổ cán bộ'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

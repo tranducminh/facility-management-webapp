@@ -59,7 +59,7 @@ export default function Security() {
   }
 
   return (
-    <RepairmanDashboard isSecurity>
+    <RepairmanDashboard isSecurity title='Bảo mật'>
       <Title title='Đổi mật khẩu' />
       <Box w='50%'>
         <Formik

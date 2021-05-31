@@ -58,7 +58,7 @@ export default function Task() {
   }
 
   return (
-    <RepairmanDashboard isTask>
+    <RepairmanDashboard isTask title='Nhiệm vụ'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

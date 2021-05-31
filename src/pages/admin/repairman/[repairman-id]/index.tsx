@@ -48,7 +48,6 @@ export default function RepairmanDetail() {
         console.log(router.query['repairman-id'])
         if (error.response.status === 404) {
           setIsError(true)
-          debugger
         }
       })
   }
@@ -74,7 +73,7 @@ export default function RepairmanDetail() {
 
   if (isError) {
     return (
-      <AdminDashboard isRepairman>
+      <AdminDashboard isRepairman title={repairman?.name || 'Kỹ thuật viên'}>
         <Alert
           status='error'
           variant='subtle'

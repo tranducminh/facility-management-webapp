@@ -47,7 +47,7 @@ export default function Facility() {
     refresh()
   }, [mode, status])
   return (
-    <AdminDashboard isFacility>
+    <AdminDashboard isFacility title='Thiết bị'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

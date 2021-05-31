@@ -31,6 +31,9 @@ export default function RepairmanDashboard(props: any) {
     (state: RootStateOrAny) => state.notification
   )
   const toast = useToast()
+  const title = props?.title
+    ? `${props.title} | Hệ thống quản lý thiết bị Học viện Quốc gia Hồ Chí Minh`
+    : `Kỹ thuật viên | Hệ thống quản lý thiết bị Học viện Quốc gia Hồ Chí Minh`
 
   useEffect(() => {
     if (auth.role === 'admin') {
@@ -70,10 +73,10 @@ export default function RepairmanDashboard(props: any) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <meta charSet='utf-8' />
         <meta name='description' content={props?.description} />
-        <title>
-          {props?.title ||
-            'Hệ thống quản lý cơ sở vật chất Học viện Quốc gia Hồ Chí Minh'}
-        </title>
+        <meta property='og:title' content={title} />
+        <meta property='og:image' content='/assets/images/poster.png' />
+        <meta property='og:image' content={props?.description} />
+        <title>{title}</title>
       </Head>
       <RepairmanHeader />
       <Container maxW='100%' centerContent py={8}>

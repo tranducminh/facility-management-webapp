@@ -60,7 +60,7 @@ function AdminLogin() {
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout title='Quản lý | Đăng nhập'>
       <Flex align='flex-end'>
         <Image src='/assets/images/login_img_1.svg' maxW='30%' />
         <Spacer />
@@ -90,7 +90,7 @@ function AdminLogin() {
                       mt='5'>
                       <FormLabel fontSize='sm'>Email</FormLabel>
                       <Input
-                        placeholder='email'
+                        placeholder='Email'
                         fontSize='sm'
                         fontWeight='bold'
                         {...field}
@@ -127,11 +127,6 @@ function AdminLogin() {
                     </FormControl>
                   )}
                 </Field>
-                <Checkbox size='md' colorScheme='teal' defaultChecked mt={5}>
-                  <Text fontSize='sm' fontWeight='medium'>
-                    Ghi nhớ tài khoản
-                  </Text>
-                </Checkbox>
                 <Button
                   w='100%'
                   variant='solid'

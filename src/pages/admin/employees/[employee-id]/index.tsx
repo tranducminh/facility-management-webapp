@@ -53,7 +53,7 @@ export default function UserDetail() {
 
   if (isError) {
     return (
-      <AdminDashboard isUser>
+      <AdminDashboard isUser title={employee?.name || 'Nhân viên'}>
         <Alert
           status='error'
           variant='subtle'

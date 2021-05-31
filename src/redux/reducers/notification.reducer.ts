@@ -19,7 +19,6 @@ const defaultState: {
 export const NotificationReducer = (state = defaultState, action: any) => {
   switch (action.type) {
     case NotificationType.PUSH_REALTIME_NOTIFICATION:
-      debugger
       if (state.id !== action.payload.id) {
         debugger
         return {

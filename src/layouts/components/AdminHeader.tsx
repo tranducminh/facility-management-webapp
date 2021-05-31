@@ -157,52 +157,88 @@ function AdminHeader() {
           variant='ghost'
           onClick={toggleColorMode}
         />
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label='Options'
-            position='relative'
-            size='md'
-            variant='ghost'
-            mr='5'
-            outline='none'>
-            <IconButton
-              aria-label='Color mode'
+        {auth.isAuth ? (
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              aria-label='Options'
+              position='relative'
               size='md'
-              color={buttonColorMode}
-              icon={<BellIcon fontSize='1.2em' />}
               variant='ghost'
-            />
-            {unReadNotification > 0 ? (
-              <Box
-                w='1.25rem'
-                h='1.25rem'
-                lineHeight='1.25rem'
-                backgroundColor='red.600'
-                borderRadius='0.2rem'
-                position='absolute'
-                right='0'
-                top='0'>
-                <Text fontSize='xs' textAlign='center' color='white'>
-                  {unReadNotification}
-                </Text>
-              </Box>
-            ) : null}
-          </MenuButton>
+              mr='5'
+              outline='none'>
+              <IconButton
+                aria-label='Color mode'
+                size='md'
+                color={buttonColorMode}
+                icon={<BellIcon fontSize='1.2em' />}
+                variant='ghost'
+              />
+              {unReadNotification > 0 ? (
+                <Box
+                  w='1.25rem'
+                  h='1.25rem'
+                  lineHeight='1.25rem'
+                  backgroundColor='red.600'
+                  borderRadius='0.2rem'
+                  position='absolute'
+                  right='0'
+                  top='0'>
+                  <Text fontSize='xs' textAlign='center' color='white'>
+                    {unReadNotification}
+                  </Text>
+                </Box>
+              ) : null}
+            </MenuButton>
 
-          <MenuList maxH='20rem' overflow='auto'>
-            <Text textStyle='bold-xl' py='1' px='4'>
-              Thông báo
-            </Text>
-            {newNotifications.length <= 0 && notifications.length <= 0 ? (
-              <Text textStyle='md' py='1' px='4'>
-                Không có thông báo nào
+            <MenuList maxH='20rem' overflow='auto'>
+              <Text textStyle='bold-xl' py='1' px='4'>
+                Thông báo
               </Text>
-            ) : null}
-            {newNotifications.length > 0 ? (
-              <>
-                <MenuGroup title='Mới'>
-                  {newNotifications.map((notification, index) => (
+              {newNotifications.length <= 0 && notifications.length <= 0 ? (
+                <Text textStyle='md' py='1' px='4'>
+                  Không có thông báo nào
+                </Text>
+              ) : null}
+              {newNotifications.length > 0 ? (
+                <>
+                  <MenuGroup title='Mới'>
+                    {newNotifications.map((notification, index) => (
+                      <MenuItem
+                        position='relative'
+                        cursor='pointer'
+                        key={index}
+                        icon={generateNotificationIcon(notification.type)}
+                        maxW='18rem'
+                        h='3.6rem'
+                        onClick={() => onHandleNotification(notification.id)}>
+                        <Text
+                          pr='0.3rem'
+                          fontWeight='semibold'
+                          noOfLines={2}
+                          w='100%'>
+                          {notification.content}
+                        </Text>
+                        {!notification.isRead ? (
+                          <Box
+                            w='0.6rem'
+                            h='0.6rem'
+                            borderRadius='0.3rem'
+                            backgroundColor='green.500'
+                            position='absolute'
+                            right='0.6rem'
+                            top='1.5rem'
+                          />
+                        ) : null}
+                      </MenuItem>
+                    ))}
+                  </MenuGroup>
+                  <MenuDivider />
+                </>
+              ) : null}
+              {notifications.length > 0 ? (
+                <MenuGroup title='Cũ hơn'>
+                  {notifications.map((notification, index) => (
                     <MenuItem
                       position='relative'
                       cursor='pointer'
@@ -232,44 +268,10 @@ function AdminHeader() {
                     </MenuItem>
                   ))}
                 </MenuGroup>
-                <MenuDivider />
-              </>
-            ) : null}
-            {notifications.length > 0 ? (
-              <MenuGroup title='Cũ hơn'>
-                {notifications.map((notification, index) => (
-                  <MenuItem
-                    position='relative'
-                    cursor='pointer'
-                    key={index}
-                    icon={generateNotificationIcon(notification.type)}
-                    maxW='18rem'
-                    h='3.6rem'
-                    onClick={() => onHandleNotification(notification.id)}>
-                    <Text
-                      pr='0.3rem'
-                      fontWeight='semibold'
-                      noOfLines={2}
-                      w='100%'>
-                      {notification.content}
-                    </Text>
-                    {!notification.isRead ? (
-                      <Box
-                        w='0.6rem'
-                        h='0.6rem'
-                        borderRadius='0.3rem'
-                        backgroundColor='green.500'
-                        position='absolute'
-                        right='0.6rem'
-                        top='1.5rem'
-                      />
-                    ) : null}
-                  </MenuItem>
-                ))}
-              </MenuGroup>
-            ) : null}
-          </MenuList>
-        </Menu>
+              ) : null}
+            </MenuList>
+          </Menu>
+        ) : null}
         {!auth.isAuth ? (
           <Button
             leftIcon={<UnlockIcon fontSize='14px' />}

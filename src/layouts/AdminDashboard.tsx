@@ -27,6 +27,10 @@ import { fetchMe } from '../redux/actions/auth.action'
 export default function AdminDashboard(props: any) {
   const router = useRouter()
   const toast = useToast()
+  const title = props?.title
+    ? `${props.title} | Hệ thống quản lý thiết bị Học viện Quốc gia Hồ Chí Minh`
+    : `Quản lý | Hệ thống quản lý thiết bị Học viện Quốc gia Hồ Chí Minh`
+
   const auth = useSelector((state: RootStateOrAny) => state.auth)
   const notification = useSelector(
     (state: RootStateOrAny) => state.notification
@@ -72,10 +76,10 @@ export default function AdminDashboard(props: any) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <meta charSet='utf-8' />
         <meta name='description' content={props?.description} />
-        <title>
-          {props?.title ||
-            'Hệ thống quản lý cơ sở vật chất Học viện Quốc gia Hồ Chí Minh'}
-        </title>
+        <meta property='og:title' content={title} />
+        <meta property='og:image' content='/assets/images/poster.png' />
+        <meta property='og:image' content={props?.description} />
+        <title>{title}</title>
       </Head>
       <AdminHeader />
       <Container maxW='100%' centerContent py={8}>

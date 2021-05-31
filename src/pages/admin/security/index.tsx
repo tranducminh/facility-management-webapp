@@ -59,7 +59,7 @@ export default function Security() {
   }
 
   return (
-    <AdminDashboard isSecurity>
+    <AdminDashboard isSecurity title='Bảo mật'>
       <Title title='Đổi mật khẩu' />
       <Box w='50%'>
         <Formik

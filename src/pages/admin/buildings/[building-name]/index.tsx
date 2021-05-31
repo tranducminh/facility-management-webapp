@@ -99,7 +99,7 @@ export default function Building() {
   }
 
   return (
-    <AdminDashboard isBuilding>
+    <AdminDashboard isBuilding title={`Tòa nhà ${building?.name}`}>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

@@ -11,7 +11,7 @@ import EmployeeList from './components/EmployeeList'
 
 export default function User() {
   return (
-    <AdminDashboard isUser>
+    <AdminDashboard isUser title='Nhân viên'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

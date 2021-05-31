@@ -211,7 +211,9 @@ export default function NewFacility() {
   }
 
   return (
-    <AdminDashboard isFacility>
+    <AdminDashboard
+      isFacility
+      title={`${facility?.name || 'Thiết bị'} | Chỉnh sửa`}>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

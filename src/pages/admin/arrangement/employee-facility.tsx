@@ -22,7 +22,7 @@ import EmployeeFacilityMode from './components/EmployeeFacilityMode'
 function ArrangementEmployeeFacility() {
   const router = useRouter()
   return (
-    <AdminDashboard isArrangement>
+    <AdminDashboard isArrangement title='Bàn giao thiết bị'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
         <Breadcrumb>
           <BreadcrumbItem>

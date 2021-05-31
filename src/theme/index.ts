@@ -6,6 +6,9 @@ import textStyles from './foundations/text-style'
 
 const theme = extendTheme({
   ...defaultTheme,
+  config: {
+    initialColorMode: 'dark',
+  },
   styles: {
     global: (props) => ({
       body: {
