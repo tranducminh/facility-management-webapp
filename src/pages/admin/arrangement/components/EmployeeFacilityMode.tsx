@@ -13,6 +13,7 @@ import {
   Text,
   Badge,
   Tag,
+  useColorMode,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
@@ -25,6 +26,7 @@ import {
   resetNotification,
 } from '../../../../redux/actions/notification.action'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
+import { setCurrentEmployee } from '../../../../redux/actions/arrangement.action'
 
 export default function EmployeeFacilityMode() {
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
@@ -35,14 +37,14 @@ export default function EmployeeFacilityMode() {
   const dispatch = useDispatch()
   const useTypedSelector: TypedUseSelectorHook<ReducersType> = useSelector
   const arrangement = useTypedSelector((state) => state.arrangement)
+  const { colorMode } = useColorMode()
 
   useEffect(() => {
-    chooseEmployee(arrangement.currentEmployeeId)
-  }, [arrangement])
-
-  useEffect(() => {
-    chooseEmployee(activeEmployee?.id)
-  }, [employees])
+    if (arrangement.currentEmployeeId && employees.length > 0) {
+      chooseEmployee(arrangement.currentEmployeeId)
+      dispatch(setCurrentEmployee({ employeeId: undefined }))
+    }
+  }, [arrangement, employees])
 
   const refreshEmployee = () => {
     axios
@@ -222,7 +224,7 @@ export default function EmployeeFacilityMode() {
       <GridItem
         colSpan={5}
         borderRadius='lg'
-        backgroundColor='#1c2531'
+        backgroundColor={colorMode === 'dark' ? '#1c2531' : '#fbfbfb'}
         p='3'
         h='100vh'
         overflow='auto'>

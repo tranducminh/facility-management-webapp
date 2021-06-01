@@ -5,16 +5,13 @@ import {
   BreadcrumbLink,
   Text,
   Button,
-  InputGroup,
-  InputLeftElement,
-  Input,
   Menu,
   MenuButton,
   MenuList,
   MenuOptionGroup,
   MenuItemOption,
 } from '@chakra-ui/react'
-import { Search2Icon, ArrowRightIcon, ChevronDownIcon } from '@chakra-ui/icons'
+import { ArrowRightIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 
 import { useState, useEffect } from 'react'
@@ -31,11 +28,6 @@ export default function Facility() {
   const [status, setStatus] = useState('ready')
 
   const [currentFacilities, setCurrentFacilities] = useState<FACILITY[]>([{}])
-  // useEffect(() => {
-  //   axios.get('/facilities').then((response) => {
-  //     setCurrentFacilities(response.data.facilities || [])
-  //   })
-  // }, [])
 
   const refresh = () => {
     axios.get(`/facilities?type=${mode}&status=${status}`).then((response) => {
@@ -68,7 +60,7 @@ export default function Facility() {
           </Button>
         </Link>
       </Flex>
-      <Flex justifyContent='space-between' mb={5}>
+      <Flex justifyContent='flex-start' mb={5}>
         <Flex>
           <Menu>
             <MenuButton
@@ -98,11 +90,6 @@ export default function Facility() {
                   value='fax'
                   onClick={() => setModeName('Máy fax')}>
                   <Text textStyle='bold-sm'>Máy fax</Text>
-                </MenuItemOption>
-                <MenuItemOption
-                  value='node'
-                  onClick={() => setModeName('Nút mạng')}>
-                  <Text textStyle='bold-sm'>Nút mạng</Text>
                 </MenuItemOption>
               </MenuOptionGroup>
             </MenuList>
@@ -136,12 +123,6 @@ export default function Facility() {
             </MenuList>
           </Menu>
         </Flex>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
       </Flex>
       <FacilityList facilities={currentFacilities} refresh={refresh} />
     </AdminDashboard>

@@ -10,7 +10,6 @@ import {
   Td,
   Tag,
   Button,
-  Box,
   HStack,
   Text,
   Modal,
@@ -20,22 +19,14 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
+  Box,
   Grid,
   GridItem,
   useDisclosure,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Search2Icon,
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
 import { useState } from 'react'
 import { REQUEST } from '../../../../types'
+import Empty from '../../../../components/Empty'
 
 export default function UnCompletedRequest({
   requests,
@@ -50,16 +41,11 @@ export default function UnCompletedRequest({
     const request = requests.filter((item: REQUEST) => item.id === id)[0] || {}
     setCurrentRequest(request)
   }
+
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+
   return (
-    <div>
-      <Flex justifyContent='flex-end' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
-      </Flex>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
@@ -75,10 +61,16 @@ export default function UnCompletedRequest({
           {requests.map((request: REQUEST, index: number) => (
             <Tr key={index}>
               <Td>{request.id}</Td>
-              <Td>{request.facility?.name}</Td>
-              <Td>{request.problem}</Td>
-              <Td>{request.repairman?.name}</Td>
-              <Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.facility?.name}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.problem}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.repairman?.name}</Text>
+              </Td>
+              <Td minW='11rem'>
                 <Tag size='sm' key='status' variant='solid' colorScheme='red'>
                   Không hoàn thành
                 </Tag>
@@ -106,23 +98,6 @@ export default function UnCompletedRequest({
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
 
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
@@ -176,6 +151,6 @@ export default function UnCompletedRequest({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   )
 }

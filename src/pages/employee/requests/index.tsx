@@ -8,7 +8,7 @@ import {
   Badge,
   Text,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import EmployeeDashboard from '../../../layouts/EmployeeDashboard'
 import axios from '../../../utils/axios'
@@ -17,6 +17,7 @@ import PendingRequest from './components/PendingRequest'
 import InProcessRequest from './components/InProcessRequest'
 import CompletedRequest from './components/CompletedRequest'
 import UnCompletedRequest from './components/UnCompletedRequest'
+import RejectRequest from './components/RejectRequest'
 import { REQUEST } from '../../../types'
 
 export default function Request() {
@@ -141,7 +142,7 @@ export default function Request() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <PendingRequest requests={pendingRequest} />
+            <PendingRequest refresh={refresh} requests={pendingRequest} />
           </TabPanel>
           <TabPanel>
             <AssignRequest requests={assignedRequest} />
@@ -154,6 +155,9 @@ export default function Request() {
           </TabPanel>
           <TabPanel>
             <UnCompletedRequest requests={unCompletedRequest} />
+          </TabPanel>
+          <TabPanel>
+            <RejectRequest requests={rejectedRequest} />
           </TabPanel>
         </TabPanels>
       </Tabs>

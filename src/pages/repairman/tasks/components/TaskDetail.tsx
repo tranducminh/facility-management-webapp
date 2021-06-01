@@ -18,6 +18,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  FormControl,
   useDisclosure,
 } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
@@ -85,6 +86,8 @@ export default function TaskDetail({
   }
 
   const completeRequest = () => {
+    if (!solution || solution === '') return
+
     axios
       .put(`/requests/${request.id}/complete`, { solution })
       .then((res) => {
@@ -147,6 +150,7 @@ export default function TaskDetail({
     axios
       .put(`/requests/${request.id}/uncomplete`, { uncompletedReason: reason })
       .then((res) => {
+        onCloseReason()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -527,11 +531,16 @@ export default function TaskDetail({
                 <Text textStyle='bold-sm'>Mô tả: </Text>
               </GridItem>
               <GridItem colSpan={8}>
-                <Textarea
-                  mt='1'
-                  placeholder='Giải pháp'
-                  onChange={(event) => setSolution(event.target.value)}
-                />
+                <FormControl
+                  isRequired
+                  isInvalid={!solution || solution === ''}>
+                  <Textarea
+                    mt='1'
+                    required
+                    placeholder='Giải pháp'
+                    onChange={(event) => setSolution(event.target.value)}
+                  />
+                </FormControl>
               </GridItem>
               <GridItem colSpan={1}>
                 <Text textStyle='bold-sm'>Thay thế linh kiện: </Text>

@@ -18,8 +18,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  InputGroup,
-  InputLeftElement,
   Input,
   Flex,
   FormControl,
@@ -40,7 +38,6 @@ import {
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  Search2Icon,
   ArrowRightIcon,
   ViewIcon,
 } from '@chakra-ui/icons'
@@ -221,13 +218,7 @@ export default function EmployeeComponent() {
 
   return (
     <div>
-      <Flex justifyContent='space-between' alignItems='center' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Nhập mã nhân viên' />
-        </InputGroup>
+      <Flex justifyContent='flex-end' alignItems='center' mb={5}>
         <Button
           rightIcon={<ArrowRightIcon fontSize='xs' />}
           colorScheme='teal'

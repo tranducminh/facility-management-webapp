@@ -16,9 +16,11 @@ import FacilityItem from './FacilityItem'
 import { setCurrentEmployee } from '../../../../redux/actions/arrangement.action'
 
 export default function FacilityList({
+  groupBy,
   facilities = [],
   employee,
 }: {
+  groupBy: string
   facilities?: FACILITY[]
   employee?: EMPLOYEE
 }) {
@@ -39,22 +41,30 @@ export default function FacilityList({
         textAlign='center'
         height='200px'>
         <AlertIcon boxSize='40px' mr={0} />
-        <AlertTitle mt={4} mb={1} fontSize='lg'>
-          {employee.name} chưa được bàn giao thiết bị
-        </AlertTitle>
-        <AlertDescription maxWidth='sm'>
-          <Button
-            rightIcon={<ArrowRightIcon fontSize='xs' />}
-            colorScheme='teal'
-            variant='ghost'
-            size='sm'
-            onClick={handoverFacility}
-            mt='5'>
-            <Text textStyle='bold-sm' mt='0.1rem'>
-              Bàn giao thiết bị ngay
-            </Text>
-          </Button>
-        </AlertDescription>
+        {groupBy === 'user' ? (
+          <>
+            <AlertTitle mt={4} mb={1} fontSize='lg'>
+              {employee.name} chưa được bàn giao thiết bị
+            </AlertTitle>
+            <AlertDescription maxWidth='sm'>
+              <Button
+                rightIcon={<ArrowRightIcon fontSize='xs' />}
+                colorScheme='teal'
+                variant='ghost'
+                size='sm'
+                onClick={handoverFacility}
+                mt='5'>
+                <Text textStyle='bold-sm' mt='0.1rem'>
+                  Bàn giao thiết bị ngay
+                </Text>
+              </Button>
+            </AlertDescription>
+          </>
+        ) : (
+          <AlertTitle mt={4} mb={1} fontSize='lg'>
+            Không có thiết bị nào
+          </AlertTitle>
+        )}
       </Alert>
     )
   }

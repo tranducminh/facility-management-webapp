@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/ban-types */
 import {
@@ -11,7 +10,6 @@ import {
   Td,
   Tag,
   Button,
-  Box,
   HStack,
   Text,
   Modal,
@@ -21,29 +19,21 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
+  Box,
   Grid,
   GridItem,
   Divider,
   Icon,
   useDisclosure,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Search2Icon,
-  ArrowRightIcon
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
+import { ArrowRightIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
 import { REQUEST, REPLACEMENT } from '../../../../types'
+import Empty from '../../../../components/Empty'
 
 export default function CompletedRequest({
   requests,
@@ -102,16 +92,11 @@ export default function CompletedRequest({
         break
     }
   }
+
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+
   return (
-    <div>
-      <Flex justifyContent='flex-end' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
-      </Flex>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
@@ -127,15 +112,17 @@ export default function CompletedRequest({
           {requests.map((request, index) => (
             <Tr key={index}>
               <Td>{request.id}</Td>
-              <Td w='20%'>{request.facility?.name}</Td>
-              <Td w='20%'>{request.problem}</Td>
-              <Td>{request.repairman?.name}</Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.facility?.name}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.problem}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.repairman?.name}</Text>
+              </Td>
               <Td>
-                <Tag
-                  size='sm'
-                  key='status'
-                  variant='solid'
-                  colorScheme='green'>
+                <Tag size='sm' key='status' variant='solid' colorScheme='green'>
                   Hoàn thành
                 </Tag>
               </Td>
@@ -162,23 +149,6 @@ export default function CompletedRequest({
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
 
       <Modal
         isOpen={isOpen}
@@ -229,26 +199,24 @@ export default function CompletedRequest({
               )}
               {!replacements
                 ? null
-                : replacements.map(
-                  (replacement: REPLACEMENT) => (
-                    <>
-                      <GridItem colStart={2} colEnd={12} pl='5'>
-                        <Text textStyle='bold-sm'>
-                          {convertName(replacement?.component)}
-                        </Text>
-                      </GridItem>
-                      <GridItem colStart={2} colEnd={7} pl='10'>
-                        <Text textStyle='normal'>{replacement.source}</Text>
-                      </GridItem>
-                      <GridItem colStart={7} colEnd={8}>
-                        <ArrowRightIcon />
-                      </GridItem>
-                      <GridItem colStart={8} colEnd={12}>
-                        <Text textStyle='normal'>{replacement.target}</Text>
-                      </GridItem>
-                    </>
-                  )
-                )}
+                : replacements.map((replacement: REPLACEMENT) => (
+                  <>
+                    <GridItem colStart={2} colEnd={12} pl='5'>
+                      <Text textStyle='bold-sm'>
+                        {convertName(replacement?.component)}
+                      </Text>
+                    </GridItem>
+                    <GridItem colStart={2} colEnd={7} pl='10'>
+                      <Text textStyle='normal'>{replacement.source}</Text>
+                    </GridItem>
+                    <GridItem colStart={7} colEnd={8}>
+                      <ArrowRightIcon />
+                    </GridItem>
+                    <GridItem colStart={8} colEnd={12}>
+                      <Text textStyle='normal'>{replacement.target}</Text>
+                    </GridItem>
+                  </>
+                ))}
               <GridItem colStart={2} colEnd={12}>
                 <Divider />
               </GridItem>
@@ -313,10 +281,9 @@ export default function CompletedRequest({
             <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
               Đóng
             </Button>
-
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   )
 }

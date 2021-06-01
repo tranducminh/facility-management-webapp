@@ -196,9 +196,6 @@ export default function Room() {
         case 'fax':
           setCurrentFacilityTypeText('Máy fax')
           break
-        case 'node':
-          setCurrentFacilityTypeText('Nút mạng')
-          break
         default:
           break
       }
@@ -210,8 +207,10 @@ export default function Room() {
         .catch((error) => {
           console.log(error)
         })
+    } else {
+      onChangeEmployee(currentEmployee.id)
     }
-  }, [currentFacilityType])
+  }, [currentFacilityType, groupBy])
 
   function validateNodeName(value: string) {
     let error
@@ -331,6 +330,7 @@ export default function Room() {
                         : currentFacilityTypeText}
                     </Text>
                     <FacilityList
+                      groupBy={groupBy}
                       employee={currentEmployee}
                       facilities={currentFacilities}
                     />
@@ -514,25 +514,6 @@ export default function Room() {
               onClick={() => setCurrentFacilityType('fax')}>
               <Text textAlign='center' textStyle='bold-sm' noOfLines={1}>
                 Máy fax
-              </Text>
-            </Box>
-            <Box
-              p={2}
-              mb={4}
-              cursor='pointer'
-              color={currentFacilityType === 'node' ? hoverTextColor : ''}
-              backgroundColor={
-                currentFacilityType === 'node' ? selectBgColor : ''
-              }
-              borderRadius='0.5em'
-              _hover={{
-                color: hoverTextColor,
-                backgroundColor: hoverBgColor,
-                borderRadius: '0.5em',
-              }}
-              onClick={() => setCurrentFacilityType('node')}>
-              <Text textAlign='center' textStyle='bold-sm' noOfLines={1}>
-                Nút mạng
               </Text>
             </Box>
           </GridItem>

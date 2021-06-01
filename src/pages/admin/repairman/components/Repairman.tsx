@@ -20,8 +20,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  InputGroup,
-  InputLeftElement,
   Input,
   Flex,
   FormControl,
@@ -42,7 +40,6 @@ import {
   Box,
 } from '@chakra-ui/react'
 import {
-  Search2Icon,
   ArrowRightIcon,
   ViewIcon,
   ChevronLeftIcon,
@@ -188,13 +185,7 @@ export default function RepairmanComponent() {
 
   return (
     <div>
-      <Flex justifyContent='space-between' alignItems='center' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search user id' />
-        </InputGroup>
+      <Flex justifyContent='flex-end' alignItems='center' mb={5}>
         <Button
           rightIcon={<ArrowRightIcon fontSize='xs' />}
           colorScheme='teal'

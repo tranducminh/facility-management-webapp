@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   Table,
   Thead,
@@ -9,12 +10,7 @@ import {
   Tag,
   Button,
   Box,
-  HStack,
   Text,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -29,12 +25,6 @@ import {
   Textarea,
   useDisclosure,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Search2Icon,
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { REQUEST } from '../../../../types'
@@ -44,8 +34,15 @@ import {
   pushNotification,
   resetNotification,
 } from '../../../../redux/actions/notification.action'
+import Empty from '../../../../components/Empty'
 
-export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
+export default function PendingRequest({
+  requests,
+  refresh,
+}: {
+  requests: REQUEST[]
+  refresh: Function
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenEdit,
@@ -66,6 +63,9 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
     axios
       .put(`/requests/${id}`, { problem: updatedProblem })
       .then((res) => {
+        onClose()
+        onCloseEdit()
+        refresh()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -76,6 +76,7 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
         dispatch(resetNotification())
       })
       .catch((error) => {
+        onCloseEdit()
         dispatch(
           pushNotification({
             title: error.response.data.message,
@@ -90,6 +91,8 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
     axios
       .put(`/requests/${id}/delete`)
       .then((res) => {
+        onClose()
+        refresh()
         dispatch(
           pushNotification({
             title: res.data.message,
@@ -100,6 +103,7 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
         dispatch(resetNotification())
       })
       .catch((error) => {
+        onClose()
         dispatch(
           pushNotification({
             title: error.response.data.message,
@@ -111,16 +115,10 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
       })
   }
 
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+
   return (
-    <div>
-      <Flex justifyContent='flex-end' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
-      </Flex>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
@@ -135,26 +133,20 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
           {requests.map((request: REQUEST, index: number) => (
             <Tr key={index}>
               <Td>{request.id}</Td>
-              <Td>
-                <Text minW='7rem' noOfLines={1} isTruncated>
-                  {request.facility?.name}
-                </Text>
+              <Td maxW='15rem'>
+                <Text isTruncated>{request.facility?.name}</Text>
+              </Td>
+              <Td maxW='15rem'>
+                <Text isTruncated>{request.problem}</Text>
               </Td>
               <Td>
-                <Text noOfLines={1} isTruncated>
-                  {request.problem}
-                </Text>
-              </Td>
-              <Td>
-                <HStack spacing={4}>
-                  <Tag
-                    size='sm'
-                    key='status'
-                    variant='solid'
-                    colorScheme='yellow'>
-                    Đang chờ
-                  </Tag>
-                </HStack>
+                <Tag
+                  size='sm'
+                  key='status'
+                  variant='solid'
+                  colorScheme='yellow'>
+                  Đang chờ
+                </Tag>
               </Td>
               <Td isNumeric>
                 <Button
@@ -176,23 +168,6 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
           <Th isNumeric>Hành động</Th>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
 
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
@@ -217,15 +192,13 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
                 <Text textStyle='bold-md'>Tình trạng</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <HStack spacing={4}>
-                  <Tag
-                    size='sm'
-                    key='status'
-                    variant='solid'
-                    colorScheme='yellow'>
-                    Đang chờ
-                  </Tag>
-                </HStack>
+                <Tag
+                  size='sm'
+                  key='status'
+                  variant='solid'
+                  colorScheme='yellow'>
+                  Đang chờ
+                </Tag>
               </GridItem>
             </Grid>
           </ModalBody>
@@ -290,6 +263,6 @@ export default function PendingRequest({ requests }: { requests: REQUEST[] }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   )
 }

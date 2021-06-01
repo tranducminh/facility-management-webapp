@@ -10,7 +10,6 @@ import {
   Td,
   Tag,
   Button,
-  Box,
   HStack,
   Text,
   Modal,
@@ -20,28 +19,20 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
   Grid,
   GridItem,
   Divider,
   Icon,
   useDisclosure,
+  Box,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Search2Icon,
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
 import { useState } from 'react'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
 import { FaFax } from 'react-icons/fa'
 import { GiWifiRouter } from 'react-icons/gi'
 import { REQUEST } from '../../../../types'
+import Empty from '../../../../components/Empty'
 
 export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -52,16 +43,10 @@ export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
     const request = requests.filter((item: REQUEST) => item.id === id)[0] || {}
     setCurrentRequest(request)
   }
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+
   return (
-    <div>
-      <Flex justifyContent='flex-end' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
-      </Flex>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
@@ -77,9 +62,15 @@ export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
           {requests.map((request, index) => (
             <Tr key={index}>
               <Td>{request.id}</Td>
-              <Td w='20%'>{request.facility?.name}</Td>
-              <Td w='20%'>{request.problem}</Td>
-              <Td>{request.repairman?.name}</Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.facility?.name}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.problem}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.repairman?.name}</Text>
+              </Td>
               <Td>
                 <Tag
                   size='sm'
@@ -112,23 +103,6 @@ export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
 
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
@@ -239,6 +213,6 @@ export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   )
 }

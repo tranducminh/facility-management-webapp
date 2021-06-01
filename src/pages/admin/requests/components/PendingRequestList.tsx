@@ -11,13 +11,8 @@ import {
   Td,
   Tag,
   Button,
-  Box,
-  HStack,
   Text,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
+  Box,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -36,7 +31,6 @@ import {
   Textarea,
   FormErrorMessage,
 } from '@chakra-ui/react'
-import { Search2Icon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { RiComputerLine } from 'react-icons/ri'
 import { BiPrinter } from 'react-icons/bi'
@@ -51,6 +45,7 @@ import {
   pushNotification,
   resetNotification,
 } from '../../../../redux/actions/notification.action'
+import Empty from '../../../../components/Empty'
 
 type FormData = {
   rejectedReason?: string
@@ -174,22 +169,16 @@ export default function PendingRequestList({
     return error
   }
 
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+
   return (
-    <div>
-      <Flex justifyContent='flex-end' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
-      </Flex>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
             <Th>ID</Th>
             <Th>Thiết bị</Th>
-            {/* <Th>Cán bộ yêu cầu</Th> */}
+            <Th>Cán bộ yêu cầu</Th>
             <Th>Vấn đề</Th>
             <Th>Trạng thái</Th>
             <Th isNumeric>Hành động</Th>
@@ -199,35 +188,23 @@ export default function PendingRequestList({
           {requests.map((request, index) => (
             <Tr key={index}>
               <Td>{request.id}</Td>
-              <Td>
-                <Box maxW='12rem' isTruncated>
-                  <Text noOfLines={1}>{request.facility?.name}</Text>
-                </Box>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.facility?.name}</Text>
               </Td>
-              {/* <Td>
-                <Box maxW='8rem' isTruncated>
-                  <Text noOfLines={1} isTruncated>
-                    {request.employee?.name}
-                  </Text>
-                </Box>
-              </Td> */}
-              <Td>
-                <Box maxW='12rem' isTruncated>
-                  <Text noOfLines={1} isTruncated>
-                    {request.problem}
-                  </Text>
-                </Box>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.employee?.name}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.problem}</Text>
               </Td>
               <Td>
-                <HStack spacing={4}>
-                  <Tag
-                    size='sm'
-                    key='status'
-                    variant='solid'
-                    colorScheme='yellow'>
-                    Đang chờ
-                  </Tag>
-                </HStack>
+                <Tag
+                  size='sm'
+                  key='status'
+                  variant='solid'
+                  colorScheme='yellow'>
+                  Đang chờ
+                </Tag>
               </Td>
               <Td isNumeric>
                 <Button
@@ -244,29 +221,12 @@ export default function PendingRequestList({
         <Tfoot>
           <Th>ID</Th>
           <Th>Thiết bị</Th>
-          {/* <Th>Cán bộ yêu cầu</Th> */}
+          <Th>Cán bộ yêu cầu</Th>
           <Th>Vấn đề</Th>
           <Th>Trạng thái</Th>
           <Th isNumeric>Hành động</Th>
         </Tfoot>
       </Table>
-      {/* <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box> */}
 
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
@@ -321,15 +281,13 @@ export default function PendingRequestList({
                       <Text textStyle='bold-sm'>Trạng thái</Text>
                     </GridItem>
                     <GridItem colStart={5} colEnd={12}>
-                      <HStack spacing={4}>
-                        <Tag
-                          size='sm'
-                          key='status'
-                          variant='solid'
-                          colorScheme='yellow'>
-                          Đang chờ
-                        </Tag>
-                      </HStack>
+                      <Tag
+                        size='sm'
+                        key='status'
+                        variant='solid'
+                        colorScheme='yellow'>
+                        Đang chờ
+                      </Tag>
                     </GridItem>
                     <GridItem colStart={2} colEnd={12}>
                       <Divider />
@@ -511,6 +469,6 @@ export default function PendingRequestList({
           </Formik>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   )
 }

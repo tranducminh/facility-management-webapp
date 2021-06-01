@@ -22,13 +22,7 @@ import {
   PopoverCloseButton,
   Button,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ViewIcon,
-  EditIcon,
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
+import { ViewIcon, EditIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import { MdDelete } from 'react-icons/md'
 import { useDispatch } from 'react-redux'
@@ -39,6 +33,7 @@ import {
   pushNotification,
   resetNotification,
 } from '../../../../redux/actions/notification.action'
+import Empty from '../../../../components/Empty'
 
 export default function FacilityList({
   facilities,
@@ -73,8 +68,11 @@ export default function FacilityList({
         dispatch(resetNotification())
       })
   }
+
+  if (facilities.length <= 0) return <Empty title='Không có thiết bị nào' />
+
   return (
-    <div>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
@@ -90,12 +88,15 @@ export default function FacilityList({
           {facilities.map((facility: FACILITY, index: number) => (
             <Tr key={index}>
               <Td>{facility.id}</Td>
-              <Td>{facility.name}</Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{facility.name}</Text>
+              </Td>
               <Td
+                maxW='11rem'
                 cursor='pointer'
                 _hover={{ color: 'teal', fontWeight: 'bold' }}>
                 <Link href={`/admin/employees/${facility.employee?.identity}`}>
-                  <Text>{facility.employee?.name}</Text>
+                  <Text isTruncated>{facility.employee?.name}</Text>
                 </Link>
               </Td>
               <Td>
@@ -202,23 +203,6 @@ export default function FacilityList({
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
-    </div>
+    </Box>
   )
 }

@@ -8,13 +8,8 @@ import {
   Td,
   Tag,
   Button,
-  Box,
-  HStack,
   Text,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  Flex,
+  Box,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -26,53 +21,60 @@ import {
   GridItem,
   useDisclosure,
 } from '@chakra-ui/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Search2Icon,
-} from '@chakra-ui/icons'
-import ReactPaginate from 'react-paginate'
+import { useState } from 'react'
+import { REQUEST } from '../../../../types'
+import Empty from '../../../../components/Empty'
 
-export default function RejectRequest() {
+export default function RejectRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [currentRequest, setCurrentRequest] = useState<REQUEST>({})
+
+  const onOpenRequest = (id?: number) => {
+    onOpen()
+    const request = requests.filter((item: REQUEST) => item.id === id)[0] || {}
+    setCurrentRequest(request)
+  }
+
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+
   return (
-    <div>
-      <Flex justifyContent='flex-end' mb={5}>
-        <InputGroup maxW='30%'>
-          <InputLeftElement pointerEvents='none'>
-            <Search2Icon color='gray.300' />
-          </InputLeftElement>
-          <Input type='text' placeholder='Search request id' />
-        </InputGroup>
-      </Flex>
+    <Box>
       <Table variant='simple'>
         <Thead>
           <Tr>
-            <Th>
-              <Text>ID</Text>
-            </Th>
-            <Th>Facility</Th>
-            <Th>Time</Th>
-            <Th>Status</Th>
-            <Th isNumeric>Actions</Th>
+            <Th>ID</Th>
+            <Th>Thiết bị</Th>
+            <Th>Vấn đề</Th>
+            <Th>Lý do từ chối</Th>
+            <Th>Tình trạng</Th>
+            <Th isNumeric>Hành động</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {[...Array(5)].map(() => (
-            <Tr>
-              <Td>211196</Td>
-              <Td>Room A01</Td>
-              <Td>21/11/2021 8:00 - 15:00</Td>
+          {requests.map((request: REQUEST, index: number) => (
+            <Tr key={index}>
+              <Td>{request.id}</Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.facility?.name}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.problem}</Text>
+              </Td>
+              <Td maxW='11rem'>
+                <Text isTruncated>{request.rejectedReason}</Text>
+              </Td>
               <Td>
-                <HStack spacing={4}>
-                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Rejected
-                  </Tag>
-                </HStack>
+                <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                  Từ chối
+                </Tag>
               </Td>
               <Td isNumeric>
-                <Button colorScheme='teal' variant='ghost' onClick={onOpen}>
-                  Show
+                <Button
+                  size='sm'
+                  colorScheme='teal'
+                  variant='ghost'
+                  onClick={() => onOpenRequest(request.id)}>
+                  Chi tiết
                 </Button>
               </Td>
             </Tr>
@@ -80,106 +82,59 @@ export default function RejectRequest() {
         </Tbody>
         <Tfoot>
           <Tr>
-            <Th>
-              <Text>ID</Text>
-            </Th>
-            <Th>Facility</Th>
-            <Th>Time</Th>
-            <Th>Status</Th>
-            <Th isNumeric>Actions</Th>
+            <Th>ID</Th>
+            <Th>Thiết bị</Th>
+            <Th>Vấn đề</Th>
+            <Th>Lý do từ chối</Th>
+            <Th>Tình trạng</Th>
+            <Th isNumeric>Hành động</Th>
           </Tr>
         </Tfoot>
       </Table>
-      <Box w='50%' mt={5} float='right'>
-        <ReactPaginate
-          previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-          nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-          breakLabel='...'
-          breakClassName='break-me'
-          pageCount={20}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={2}
-          onPageChange={({ selected }) => {
-            console.log(selected)
-          }}
-          containerClassName='pagination'
-          // subContainerClassName='pages pagination'
-          activeClassName='active'
-        />
-      </Box>
 
       <Modal isOpen={isOpen} size='lg' onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>#211196</ModalHeader>
+          <ModalHeader>#{currentRequest.id}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Grid templateColumns='repeat(12, 1fr)' gap={15}>
               <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Requester ID</Text>
+                <Text textStyle='bold-md'>Tên thiết bị</Text>
               </GridItem>
               <GridItem colStart={6} colEnd={12}>
-                <Text>#211199</Text>
+                <Text>{currentRequest.facility?.name}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Requester name</Text>
+                <Text textStyle='bold-md'>Vấn đề</Text>
               </GridItem>
               <GridItem colStart={6} colEnd={12}>
-                <Text>Trần Đức Minh</Text>
+                <Text>{currentRequest.problem}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Role</Text>
+                <Text textStyle='bold-md'>Lý do từ chối</Text>
               </GridItem>
               <GridItem colStart={6} colEnd={12}>
-                <Text>Student</Text>
+                <Text>{currentRequest.rejectedReason}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Facility</Text>
+                <Text textStyle='bold-md'>Tình trạng</Text>
               </GridItem>
               <GridItem colStart={6} colEnd={12}>
-                <Text>Room A01</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Time start</Text>
-              </GridItem>
-              <GridItem colStart={6} colEnd={12}>
-                <Text>21/11/2021 8:00</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Time end</Text>
-              </GridItem>
-              <GridItem colStart={6} colEnd={12}>
-                <Text>21/11/2021 15:00</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Reason</Text>
-              </GridItem>
-              <GridItem colStart={6} colEnd={12}>
-                <Text>thich thi muon phong thoi co duoc khoong</Text>
-              </GridItem>
-              <GridItem colStart={2} colEnd={6}>
-                <Text textStyle='bold-md'>Status</Text>
-              </GridItem>
-              <GridItem colStart={6} colEnd={12}>
-                <HStack spacing={4}>
-                  <Tag size='sm' key='status' variant='solid' colorScheme='red'>
-                    Rejected
-                  </Tag>
-                </HStack>
+                <Tag size='sm' key='status' variant='solid' colorScheme='red'>
+                  Từ chối
+                </Tag>
               </GridItem>
             </Grid>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='gray' mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button colorScheme='teal' mr={3} onClick={onClose}>
-              Approve
+            <Button colorScheme='gray' size='sm' onClick={onClose}>
+              Đóng
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   )
 }

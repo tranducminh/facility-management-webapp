@@ -22,8 +22,7 @@ export default function Facility() {
   const [facilities, setFacilities] = useState<FACILITY[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    setIsLoading(true)
+  const refresh = () => {
     axios
       .get('/employees/me/facilities')
       .then((response) => {
@@ -34,6 +33,10 @@ export default function Facility() {
         setIsLoading(false)
         console.log(error)
       })
+  }
+  useEffect(() => {
+    setIsLoading(true)
+    refresh()
   }, [])
   return (
     <EmployeeDashboard isFacility title='Thiết bị'>
@@ -48,20 +51,19 @@ export default function Facility() {
           </Link>
         </Breadcrumb>
       </Flex>
-
-      <Grid templateColumns='repeat(3, 1fr)' gap={6}>
-        {isLoading ? (
-          <Loading />
-        ) : facilities.length > 0 ? (
-          facilities.map((facility: FACILITY, index: number) => (
+      {isLoading ? (
+        <Loading />
+      ) : facilities.length > 0 ? (
+        <Grid templateColumns='repeat(3, 1fr)' gap={6}>
+          {facilities.map((facility: FACILITY, index: number) => (
             <GridItem key={index} colSpan={1} w='100%'>
-              <FacilityItem facility={facility} />
+              <FacilityItem facility={facility} refresh={refresh} />
             </GridItem>
-          ))
-        ) : (
-          <Empty title='Bạn chưa có thiết bị nào' />
-        )}
-      </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Empty title='Bạn chưa có thiết bị nào' />
+      )}
     </EmployeeDashboard>
   )
 }

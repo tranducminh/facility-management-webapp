@@ -20,6 +20,7 @@ import {
 } from '../../../../redux/actions/notification.action'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
 import { ReducersType } from '../../../../redux/reducers'
+import { setCurrentRoom } from '../../../../redux/actions/arrangement.action'
 
 export default function RoomEmployeeMode() {
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
@@ -31,6 +32,7 @@ export default function RoomEmployeeMode() {
   const useTypedSelector: TypedUseSelectorHook<ReducersType> = useSelector
   const arrangement = useTypedSelector((state) => state.arrangement)
   const { colorMode } = useColorMode()
+
   const refreshRoom = () => {
     axios
       .get('/rooms')
@@ -59,14 +61,11 @@ export default function RoomEmployeeMode() {
   }, [])
 
   useEffect(() => {
-    if (arrangement.currentRoomId) {
+    if (arrangement.currentRoomId && rooms.length > 0) {
       chooseRoom(arrangement.currentRoomId)
+      dispatch(setCurrentRoom({ roomId: undefined }))
     }
-  }, [arrangement])
-
-  useEffect(() => {
-    chooseRoom(activeRoom?.id)
-  }, [rooms])
+  }, [arrangement, rooms])
 
   const chooseRoom = (id?: number) => {
     setActiveRoom(rooms.filter((room: ROOM) => room.id === id)[0])
@@ -82,10 +81,6 @@ export default function RoomEmployeeMode() {
 
   function dropEmployee(ev: any) {
     ev.preventDefault()
-    // document
-    //   .querySelector('#employees')
-    //   ?.appendChild(document?.getElementById(currentEmployee) as Node)
-
     if (
       activeRoom?.employees?.filter(
         (employee) => employee.identity === currentEmployee

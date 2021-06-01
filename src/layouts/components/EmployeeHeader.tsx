@@ -62,6 +62,24 @@ function EmployeeHeader() {
     cluster: 'ap1',
   })
 
+  useEffect(() => {
+    if (auth.isAuth === false) {
+      setNotifications([])
+      setNewNotifications([])
+      setUnReadNotification(0)
+    } else {
+      axios
+        .get('/notifications')
+        .then((res) => {
+          setNotifications(res.data.notifications)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      refreshUnReadNotificationTotal()
+    }
+  }, [auth.isAuth])
+
   const refreshUnReadNotificationTotal = () => {
     axios
       .get('/notifications/unread')
@@ -72,18 +90,6 @@ function EmployeeHeader() {
         console.log(error)
       })
   }
-
-  useEffect(() => {
-    axios
-      .get('/notifications')
-      .then((res) => {
-        setNotifications(res.data.notifications)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    refreshUnReadNotificationTotal()
-  }, [])
 
   useEffect(() => {
     const channel = pusher.subscribe(auth.user.channel)
@@ -161,15 +167,15 @@ function EmployeeHeader() {
       case NotificationType.REMOVED_FACILITY_OWNER:
         return <Icon as={BsTools} w={6} h={6} color='red' />
       case NotificationType.UPDATED_FACILITY_INFO:
-        return <Icon as={BsTools} w={6} h={6} color='blue' />
+        return <Icon as={BsTools} w={6} h={6} color='blue.500' />
       case NotificationType.UPDATED_PROFILE:
-        return <Icon as={CgProfile} w={6} h={6} color='blue' />
+        return <Icon as={CgProfile} w={6} h={6} color='blue.500' />
       case NotificationType.APPROVED_REQUEST:
         return <Icon as={GoGitPullRequest} w={6} h={6} color='teal' />
       case NotificationType.REJECTED_REQUEST:
         return <Icon as={GoGitPullRequest} w={6} h={6} color='red' />
       case NotificationType.INPROCESS_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='blue' />
+        return <Icon as={GoGitPullRequest} w={6} h={6} color='blue.500' />
       case NotificationType.COMPLETED_REQUEST:
         return <Icon as={GoGitPullRequest} w={6} h={6} color='green' />
       case NotificationType.UNCOMPLETED_REQUEST:
@@ -203,88 +209,53 @@ function EmployeeHeader() {
           variant='ghost'
           onClick={toggleColorMode}
         />
-        {auth.isAuth ? (
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label='Options'
+
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label='Options'
+            size='md'
+            variant='ghost'
+            mr='5'
+            outline='none'>
+            <IconButton
+              aria-label='Color mode'
               position='relative'
               size='md'
+              color={buttonColorMode}
+              icon={<BellIcon fontSize='1.2em' />}
               variant='ghost'
-              mr='5'
-              outline='none'>
-              <IconButton
-                aria-label='Color mode'
-                size='md'
-                color={buttonColorMode}
-                icon={<BellIcon fontSize='1.2em' />}
-                variant='ghost'
-              />
-              {unReadNotification > 0 ? (
-                <Box
-                  w='1.25rem'
-                  h='1.25rem'
-                  lineHeight='1.25rem'
-                  backgroundColor='red.600'
-                  borderRadius='0.2rem'
-                  position='absolute'
-                  right='0'
-                  top='0'>
-                  <Text fontSize='xs' textAlign='center' color='white'>
-                    {unReadNotification}
-                  </Text>
-                </Box>
-              ) : null}
-            </MenuButton>
-
-            <MenuList maxH='20rem' overflow='auto'>
-              <Text textStyle='bold-xl' py='1' px='4'>
-                Thông báo
-              </Text>
-              {newNotifications.length <= 0 && notifications.length <= 0 ? (
-                <Text textStyle='md' py='1' px='4'>
-                  Không có thông báo nào
+            />
+            {unReadNotification > 0 ? (
+              <Box
+                w='1.25rem'
+                h='1.25rem'
+                lineHeight='1.25rem'
+                backgroundColor='red.600'
+                borderRadius='0.2rem'
+                position='absolute'
+                right='0'
+                top='0'>
+                <Text fontSize='xs' textAlign='center' color='white'>
+                  {unReadNotification}
                 </Text>
-              ) : null}
-              {newNotifications.length > 0 ? (
-                <>
-                  <MenuGroup title='Mới'>
-                    {newNotifications.map((notification, index) => (
-                      <MenuItem
-                        position='relative'
-                        cursor='pointer'
-                        key={index}
-                        icon={generateNotificationIcon(notification.type)}
-                        maxW='18rem'
-                        h='3.6rem'
-                        onClick={() => onHandleNotification(notification.id)}>
-                        <Text
-                          pr='0.3rem'
-                          fontWeight='semibold'
-                          noOfLines={2}
-                          w='100%'>
-                          {notification.content}
-                        </Text>
-                        {!notification.isRead ? (
-                          <Box
-                            w='0.6rem'
-                            h='0.6rem'
-                            borderRadius='0.3rem'
-                            backgroundColor='green.500'
-                            position='absolute'
-                            right='0.6rem'
-                            top='1.5rem'
-                          />
-                        ) : null}
-                      </MenuItem>
-                    ))}
-                  </MenuGroup>
-                  <MenuDivider />
-                </>
-              ) : null}
-              {notifications.length > 0 ? (
-                <MenuGroup title='Cũ hơn'>
-                  {notifications.map((notification, index) => (
+              </Box>
+            ) : null}
+          </MenuButton>
+
+          <MenuList maxH='20rem' overflow='auto'>
+            <Text textStyle='bold-xl' py='1' px='4'>
+              Thông báo
+            </Text>
+            {newNotifications.length <= 0 && notifications.length <= 0 ? (
+              <Text textStyle='md' py='1' px='4'>
+                Không có thông báo nào
+              </Text>
+            ) : null}
+            {newNotifications.length > 0 ? (
+              <>
+                <MenuGroup title='Mới'>
+                  {newNotifications.map((notification, index) => (
                     <MenuItem
                       position='relative'
                       cursor='pointer'
@@ -314,10 +285,45 @@ function EmployeeHeader() {
                     </MenuItem>
                   ))}
                 </MenuGroup>
-              ) : null}
-            </MenuList>
-          </Menu>
-        ) : null}
+                <MenuDivider />
+              </>
+            ) : null}
+            {notifications.length > 0 ? (
+              <MenuGroup title='Cũ hơn'>
+                {notifications.map((notification, index) => (
+                  <MenuItem
+                    position='relative'
+                    cursor='pointer'
+                    key={index}
+                    icon={generateNotificationIcon(notification.type)}
+                    maxW='18rem'
+                    h='3.6rem'
+                    onClick={() => onHandleNotification(notification.id)}>
+                    <Text
+                      pr='0.3rem'
+                      fontWeight='semibold'
+                      noOfLines={2}
+                      w='100%'>
+                      {notification.content}
+                    </Text>
+                    {!notification.isRead ? (
+                      <Box
+                        w='0.6rem'
+                        h='0.6rem'
+                        borderRadius='0.3rem'
+                        backgroundColor='green.500'
+                        position='absolute'
+                        right='0.6rem'
+                        top='1.5rem'
+                      />
+                    ) : null}
+                  </MenuItem>
+                ))}
+              </MenuGroup>
+            ) : null}
+          </MenuList>
+        </Menu>
+
         {!auth.isAuth ? (
           <Button
             leftIcon={<UnlockIcon fontSize='14px' />}

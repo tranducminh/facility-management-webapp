@@ -23,9 +23,8 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Pusher from 'pusher-js'
-import { GoGitPullRequest } from 'react-icons/go'
+import { BiTask } from 'react-icons/bi'
 import { SiGoogleclassroom } from 'react-icons/si'
-import { BsTools } from 'react-icons/bs'
 import { CgProfile } from 'react-icons/cg'
 import { useColor } from '../../theme/useColorMode'
 import RepairmanLogo from '../../components/RepairmanLogo'
@@ -68,16 +67,22 @@ function RepairmanHeader() {
   }
 
   useEffect(() => {
-    axios
-      .get('/notifications')
-      .then((res) => {
-        setNotifications(res.data.notifications)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    refreshUnReadNotificationTotal()
-  }, [])
+    if (auth.isAuth === false) {
+      setNotifications([])
+      setNewNotifications([])
+      setUnReadNotification(0)
+    } else {
+      axios
+        .get('/notifications')
+        .then((res) => {
+          setNotifications(res.data.notifications)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      refreshUnReadNotificationTotal()
+    }
+  }, [auth.isAuth])
 
   useEffect(() => {
     const channel = pusher.subscribe(auth.user.channel)
@@ -109,35 +114,11 @@ function RepairmanHeader() {
       newNotifications.filter((item) => item.id === notificationId)[0]
 
     switch (notificationTemp.type) {
-      case NotificationType.PENDING_ROOM:
-        router.push('/employee/profile')
+      case NotificationType.ASSIGNED_TASK:
+        router.push('/repairman/tasks')
         break
-      case NotificationType.NEW_ROOM:
-        router.push('/employee/profile')
-        break
-      case NotificationType.NEW_FACILITY_OWNER:
-        router.push('/employee/facilities')
-        break
-      case NotificationType.REMOVED_FACILITY_OWNER:
-        router.push('/employee/facilities')
-        break
-      case NotificationType.UPDATED_FACILITY_INFO:
-        router.push(`/employee/facilities/${notificationTemp.facility?.id}`)
-        break
-      case NotificationType.APPROVED_REQUEST:
-        router.push(`/employee/requests?type=approved`)
-        break
-      case NotificationType.REJECTED_REQUEST:
-        router.push(`/employee/requests?type=rejected`)
-        break
-      case NotificationType.INPROCESS_REQUEST:
-        router.push(`/employee/requests?type=inprocess`)
-        break
-      case NotificationType.COMPLETED_REQUEST:
-        router.push(`/employee/requests?type=completed`)
-        break
-      case NotificationType.UNCOMPLETED_REQUEST:
-        router.push(`/employee/requests?type=uncompleted`)
+      case NotificationType.UPDATED_PROFILE:
+        router.push('/repairman/profile')
         break
       default:
         break
@@ -146,28 +127,10 @@ function RepairmanHeader() {
 
   function generateNotificationIcon(type?: NotificationType) {
     switch (type) {
-      case NotificationType.PENDING_ROOM:
-        return <Icon as={SiGoogleclassroom} w={6} h={6} color='yellow.500' />
-      case NotificationType.NEW_ROOM:
-        return <Icon as={SiGoogleclassroom} w={6} h={6} color='teal' />
-      case NotificationType.NEW_FACILITY_OWNER:
-        return <Icon as={BsTools} w={6} h={6} color='teal' />
-      case NotificationType.REMOVED_FACILITY_OWNER:
-        return <Icon as={BsTools} w={6} h={6} color='red' />
-      case NotificationType.UPDATED_FACILITY_INFO:
-        return <Icon as={BsTools} w={6} h={6} color='blue' />
+      case NotificationType.ASSIGNED_TASK:
+        return <Icon as={BiTask} w={6} h={6} color='teal' />
       case NotificationType.UPDATED_PROFILE:
-        return <Icon as={CgProfile} w={6} h={6} color='blue' />
-      case NotificationType.APPROVED_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='teal' />
-      case NotificationType.REJECTED_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='red' />
-      case NotificationType.INPROCESS_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='blue' />
-      case NotificationType.COMPLETED_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='green' />
-      case NotificationType.UNCOMPLETED_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='red' />
+        return <Icon as={CgProfile} w={6} h={6} color='blue.500' />
       default:
         return <Icon as={SiGoogleclassroom} w={6} h={6} color='yellow.500' />
     }
@@ -193,88 +156,53 @@ function RepairmanHeader() {
           variant='ghost'
           onClick={toggleColorMode}
         />
-        {auth.isAuth ?
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label='Options'
-              position='relative'
-              size='md'
-              variant='ghost'
-              mr='5'
-              outline='none'>
-              <IconButton
-                aria-label='Color mode'
-                size='md'
-                color={buttonColorMode}
-                icon={<BellIcon fontSize='1.2em' />}
-                variant='ghost'
-              />
-              {unReadNotification > 0 ? (
-                <Box
-                  w='1.25rem'
-                  h='1.25rem'
-                  lineHeight='1.25rem'
-                  backgroundColor='red.600'
-                  borderRadius='0.2rem'
-                  position='absolute'
-                  right='0'
-                  top='0'>
-                  <Text fontSize='xs' textAlign='center' color='white'>
-                    {unReadNotification}
-                  </Text>
-                </Box>
-              ) : null}
-            </MenuButton>
 
-            <MenuList maxH='20rem' overflow='auto'>
-              <Text textStyle='bold-xl' py='1' px='4'>
-                Thông báo
-            </Text>
-              {newNotifications.length <= 0 && notifications.length <= 0 ? (
-                <Text textStyle='md' py='1' px='4'>
-                  Không có thông báo nào
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label='Options'
+            position='relative'
+            size='md'
+            variant='ghost'
+            mr='5'
+            outline='none'>
+            <IconButton
+              aria-label='Color mode'
+              size='md'
+              color={buttonColorMode}
+              icon={<BellIcon fontSize='1.2em' />}
+              variant='ghost'
+            />
+            {unReadNotification > 0 ? (
+              <Box
+                w='1.25rem'
+                h='1.25rem'
+                lineHeight='1.25rem'
+                backgroundColor='red.600'
+                borderRadius='0.2rem'
+                position='absolute'
+                right='0'
+                top='0'>
+                <Text fontSize='xs' textAlign='center' color='white'>
+                  {unReadNotification}
                 </Text>
-              ) : null}
-              {newNotifications.length > 0 ? (
-                <>
-                  <MenuGroup title='Mới'>
-                    {newNotifications.map((notification, index) => (
-                      <MenuItem
-                        position='relative'
-                        cursor='pointer'
-                        key={index}
-                        icon={generateNotificationIcon(notification.type)}
-                        maxW='18rem'
-                        h='3.6rem'
-                        onClick={() => onHandleNotification(notification.id)}>
-                        <Text
-                          pr='0.3rem'
-                          fontWeight='semibold'
-                          noOfLines={2}
-                          w='100%'>
-                          {notification.content}
-                        </Text>
-                        {!notification.isRead ? (
-                          <Box
-                            w='0.6rem'
-                            h='0.6rem'
-                            borderRadius='0.3rem'
-                            backgroundColor='green.500'
-                            position='absolute'
-                            right='0.6rem'
-                            top='1.5rem'
-                          />
-                        ) : null}
-                      </MenuItem>
-                    ))}
-                  </MenuGroup>
-                  <MenuDivider />
-                </>
-              ) : null}
-              {notifications.length > 0 ? (
-                <MenuGroup title='Cũ hơn'>
-                  {notifications.map((notification, index) => (
+              </Box>
+            ) : null}
+          </MenuButton>
+
+          <MenuList maxH='20rem' overflow='auto'>
+            <Text textStyle='bold-xl' py='1' px='4'>
+              Thông báo
+            </Text>
+            {newNotifications.length <= 0 && notifications.length <= 0 ? (
+              <Text textStyle='md' py='1' px='4'>
+                Không có thông báo nào
+              </Text>
+            ) : null}
+            {newNotifications.length > 0 ? (
+              <>
+                <MenuGroup title='Mới'>
+                  {newNotifications.map((notification, index) => (
                     <MenuItem
                       position='relative'
                       cursor='pointer'
@@ -304,10 +232,45 @@ function RepairmanHeader() {
                     </MenuItem>
                   ))}
                 </MenuGroup>
-              ) : null}
-            </MenuList>
-          </Menu>
-          : null}
+                <MenuDivider />
+              </>
+            ) : null}
+            {notifications.length > 0 ? (
+              <MenuGroup title='Cũ hơn'>
+                {notifications.map((notification, index) => (
+                  <MenuItem
+                    position='relative'
+                    cursor='pointer'
+                    key={index}
+                    icon={generateNotificationIcon(notification.type)}
+                    maxW='18rem'
+                    h='3.6rem'
+                    onClick={() => onHandleNotification(notification.id)}>
+                    <Text
+                      pr='0.3rem'
+                      fontWeight='semibold'
+                      noOfLines={2}
+                      w='100%'>
+                      {notification.content}
+                    </Text>
+                    {!notification.isRead ? (
+                      <Box
+                        w='0.6rem'
+                        h='0.6rem'
+                        borderRadius='0.3rem'
+                        backgroundColor='green.500'
+                        position='absolute'
+                        right='0.6rem'
+                        top='1.5rem'
+                      />
+                    ) : null}
+                  </MenuItem>
+                ))}
+              </MenuGroup>
+            ) : null}
+          </MenuList>
+        </Menu>
+
         {!auth.isAuth ? (
           <Button
             leftIcon={<UnlockIcon fontSize='14px' />}

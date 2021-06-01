@@ -71,6 +71,7 @@ export type FACILITY = {
   origin?: string
   price?: number
   status?: string
+  handoveredDate?: Date
   configuration?: CONFIGURATION
   employee?: EMPLOYEE
   facilityType?: FACILITY_TYPE

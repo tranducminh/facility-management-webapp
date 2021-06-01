@@ -219,11 +219,6 @@ export default function NewFacility() {
                 onClick={() => setModeName('Máy fax')}>
                 <Text textStyle='bold-sm'>Máy fax</Text>
               </MenuItemOption>
-              <MenuItemOption
-                value='node'
-                onClick={() => setModeName('Nút mạng')}>
-                <Text textStyle='bold-sm'>Nút mạng</Text>
-              </MenuItemOption>
             </MenuOptionGroup>
           </MenuList>
         </Menu>
@@ -712,87 +707,6 @@ export default function NewFacility() {
                         </FormControl>
                       </GridItem>
                     </Grid>
-                  ) : mode === 'node' ? (
-                    <>
-                      <Grid templateColumns='repeat(4, 1fr)' gap={4}>
-                        <GridItem colSpan={1}>
-                          <FormControl id='buildingNode' isRequired>
-                            <FormLabel fontSize='sm'>Tòa nhà</FormLabel>
-                            <Select
-                              placeholder='Chọn tòa nhà'
-                              onChange={(event) => {
-                                setCurrentBuildingId(
-                                  parseInt(event.target.value)
-                                )
-                              }}>
-                              {buildings.map(
-                                (item: BUILDING, index: number) => (
-                                  <option key={index} value={item.id}>
-                                    Tòa nhà {item.name}
-                                  </option>
-                                )
-                              )}
-                            </Select>
-                          </FormControl>
-                        </GridItem>
-                        <GridItem colSpan={1}>
-                          <FormControl id='floorNode' isRequired>
-                            <FormLabel fontSize='sm'>Tầng</FormLabel>
-                            <Select
-                              placeholder='Chọn tầng'
-                              onChange={(event) => {
-                                setCurrentFloorId(parseInt(event.target.value))
-                              }}>
-                              {!currentBuilding?.floors
-                                ? null
-                                : currentBuilding.floors.map(
-                                  (item: FLOOR, index: number) => (
-                                    <option key={index} value={item.id}>
-                                      Tầng {item.name}
-                                    </option>
-                                  )
-                                )}
-                            </Select>
-                          </FormControl>
-                        </GridItem>
-                        <GridItem colSpan={1}>
-                          <FormControl id='roomNode' isRequired>
-                            <FormLabel fontSize='sm'>Phòng</FormLabel>
-                            <Select
-                              placeholder='Chọn phòng'
-                              onChange={(event) => {
-                                setCurrentRoomId(parseInt(event.target.value))
-                              }}>
-                              {!currentFloor?.rooms
-                                ? null
-                                : currentFloor.rooms.map(
-                                  (item: ROOM, index: number) => (
-                                    <option key={index} value={item.id}>
-                                      Phòng {item.name}
-                                    </option>
-                                  )
-                                )}
-                            </Select>
-                          </FormControl>
-                        </GridItem>
-                      </Grid>
-                      <Grid templateColumns='repeat(2, 1fr)' gap={4} mt='5'>
-                        <GridItem colSpan={1}>
-                          <FormControl id='node' isRequired>
-                            <FormLabel>Nút mạng</FormLabel>
-                            <Textarea
-                              placeholder='Nút mạng'
-                              onChange={(event) =>
-                                setConfiguration({
-                                  ...configuration,
-                                  nodeName: event.target.value,
-                                })
-                              }
-                            />
-                          </FormControl>
-                        </GridItem>
-                      </Grid>
-                    </>
                   ) : null}
                 </AccordionPanel>
               </AccordionItem>

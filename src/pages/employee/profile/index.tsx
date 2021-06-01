@@ -59,6 +59,8 @@ export default function Profile() {
   }, [employee])
 
   const onHandleUpdate = async () => {
+    console.log(phone)
+    debugger
     if (avatar) {
       axios
         .put(`/employees/me`, {
@@ -68,6 +70,7 @@ export default function Profile() {
           avatar: await getBase64(avatar),
         })
         .then((res) => {
+          setAvatar(null)
           dispatch(
             pushNotification({
               title: res.data.message,
@@ -95,6 +98,7 @@ export default function Profile() {
           dateOfBirth: selectedDate !== null ? selectedDate?.toDate() : null,
         })
         .then((res) => {
+          setAvatar(null)
           dispatch(
             pushNotification({
               title: res.data.message,
