@@ -1,6 +1,7 @@
 module.exports = {
   env: {
     DOMAIN_NAME: process.env.DOMAIN_NAME,
+    PUSHER_KEY: process.env.PUSHER_KEY,
   },
   async redirects() {
     return [

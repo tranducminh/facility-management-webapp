@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import TaskDetail from './components/TaskDetail'
 import axios from '../../../utils/axios'
@@ -22,6 +23,7 @@ import { REQUEST } from '../../../types'
 
 export default function Task() {
   const [requests, setRequests] = useState<REQUEST[]>([])
+  const router = useRouter()
 
   const refresh = () => {
     axios
@@ -40,7 +42,7 @@ export default function Task() {
   }
   useEffect(() => {
     refresh()
-  }, [])
+  }, [router.query?.notification])
 
   const convertFacilityName = (name?: string) => {
     switch (name) {

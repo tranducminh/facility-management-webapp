@@ -9,7 +9,7 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react'
-
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import EmployeeDashboard from '../../../layouts/EmployeeDashboard'
 import FacilityItem from './components/FacilityItem'
@@ -19,6 +19,7 @@ import Loading from '../../../components/Loading'
 import Empty from '../../../components/Empty'
 
 export default function Facility() {
+  const router = useRouter()
   const [facilities, setFacilities] = useState<FACILITY[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -37,7 +38,7 @@ export default function Facility() {
   useEffect(() => {
     setIsLoading(true)
     refresh()
-  }, [])
+  }, [router.query.notification])
   return (
     <EmployeeDashboard isFacility title='Thiết bị'>
       <Flex mb={5} alignItems='center'>

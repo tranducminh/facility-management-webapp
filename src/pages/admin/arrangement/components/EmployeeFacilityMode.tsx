@@ -51,6 +51,13 @@ export default function EmployeeFacilityMode() {
       .get('/employees')
       .then((response) => {
         setEmployees(response.data.employees)
+        if (activeEmployee?.id) {
+          setActiveEmployee(
+            response.data.employees.filter(
+              (employee: EMPLOYEE) => employee.id === activeEmployee?.id
+            )[0]
+          )
+        }
       })
       .catch((error) => {
         console.log(error)

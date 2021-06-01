@@ -55,10 +55,6 @@ function AdminHeader() {
   const onHandleLogout = () => {
     dispatch(logout())
   }
-
-  const pusher = new Pusher('75ba4bf21a42e1773cf4', {
-    cluster: 'ap1',
-  })
   const refreshUnReadNotificationTotal = () => {
     axios
       .get('/notifications/unread')
@@ -89,6 +85,9 @@ function AdminHeader() {
   }, [auth.isAuth])
 
   useEffect(() => {
+    const pusher = new Pusher(process.env.PUSHER_KEY || 'admin', {
+      cluster: 'ap1',
+    })
     const channel = pusher.subscribe('admin')
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
       setNewNotifications([data.notification, ...newNotifications])
@@ -100,9 +99,8 @@ function AdminHeader() {
       )
       dispatch(resetNotification())
       refreshUnReadNotificationTotal()
-      channel.unbind('common')
     })
-  }, [newNotifications])
+  }, [])
 
   const onHandleNotification = (notificationId?: number) => {
     axios.put(`/notifications/${notificationId}/read`).catch((error) => {
@@ -114,19 +112,29 @@ function AdminHeader() {
 
     switch (notificationTemp.type) {
       case NotificationType.NEW_REQUEST:
-        router.push('/admin/requests?type=pending')
+        router.push(
+          `/admin/requests?type=pending&notification=${notificationId}`
+        )
         break
       case NotificationType.STARTED_TASK:
-        router.push('/admin/requests?type=inprocess')
+        router.push(
+          `/admin/requests?type=inprocess&notification=${notificationId}`
+        )
         break
       case NotificationType.COMPLETED_TASK:
-        router.push('/admin/requests?type=completed')
+        router.push(
+          `/admin/requests?type=completed&notification=${notificationId}`
+        )
         break
       case NotificationType.UNCOMPLETED_TASK:
-        router.push('/admin/requests?type=uncompleted')
+        router.push(
+          `/admin/requests?type=uncompleted&notification=${notificationId}`
+        )
         break
       case NotificationType.REJECTED_TASK:
-        router.push('/admin/requests?type=rejected')
+        router.push(
+          `/admin/requests?type=rejected&notification=${notificationId}`
+        )
         break
       default:
         break
@@ -140,11 +148,11 @@ function AdminHeader() {
       case NotificationType.STARTED_TASK:
         return <Icon as={BiTask} w={6} h={6} color='green' />
       case NotificationType.REJECTED_TASK:
-        return <Icon as={BiTask} w={6} h={6} color='red' />
+        return <Icon as={BiTask} w={6} h={6} color='red.500' />
       case NotificationType.COMPLETED_TASK:
         return <Icon as={BiTask} w={6} h={6} color='teal' />
       case NotificationType.UNCOMPLETED_TASK:
-        return <Icon as={BiTask} w={6} h={6} color='red' />
+        return <Icon as={BiTask} w={6} h={6} color='red.500' />
       default:
         return <Icon as={SiGoogleclassroom} w={6} h={6} color='yellow.500' />
     }

@@ -159,6 +159,7 @@ export enum NotificationType {
   REJECTED_TASK = 'rejected-task',
   COMPLETED_TASK = 'completed-task',
   UNCOMPLETED_TASK = 'uncompleted-task',
+  CANCELED_TASK = 'canceled-task',
 
   NEW_ROOM = 'new-room',
   PENDING_ROOM = 'pending-room',

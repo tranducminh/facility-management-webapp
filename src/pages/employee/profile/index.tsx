@@ -18,6 +18,7 @@ import { EditIcon } from '@chakra-ui/icons'
 import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 import EmployeeDashboard from '../../../layouts/EmployeeDashboard'
 import axios from '../../../utils/axios'
 import { EMPLOYEE } from '../../../types'
@@ -29,6 +30,7 @@ import {
 import { NotificationStatus } from '../../../redux/types/notification.type'
 
 export default function Profile() {
+  const router = useRouter()
   const dispatch = useDispatch()
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
@@ -49,7 +51,7 @@ export default function Profile() {
       .catch((error) => {
         console.log(error)
       })
-  }, [])
+  }, [router.query.notification])
 
   useEffect(() => {
     setEmail(employee.email || '')

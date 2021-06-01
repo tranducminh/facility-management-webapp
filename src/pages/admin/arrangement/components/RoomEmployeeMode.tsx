@@ -36,8 +36,13 @@ export default function RoomEmployeeMode() {
   const refreshRoom = () => {
     axios
       .get('/rooms')
-      .then((response) => {
-        setRooms(response.data.rooms)
+      .then((res) => {
+        setRooms(res.data.rooms)
+        if (activeRoom?.id) {
+          setActiveRoom(
+            res.data.rooms.filter((room: ROOM) => room.id === activeRoom?.id)[0]
+          )
+        }
       })
       .catch((error) => {
         console.log(error)

@@ -51,10 +51,6 @@ function RepairmanHeader() {
     dispatch(logout())
   }
 
-  const pusher = new Pusher('75ba4bf21a42e1773cf4', {
-    cluster: 'ap1',
-  })
-
   const refreshUnReadNotificationTotal = () => {
     axios
       .get('/notifications/unread')
@@ -85,6 +81,9 @@ function RepairmanHeader() {
   }, [auth.isAuth])
 
   useEffect(() => {
+    const pusher = new Pusher(process.env.PUSHER_KEY || 'repairman', {
+      cluster: 'ap1',
+    })
     const channel = pusher.subscribe(auth.user.channel)
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
       setNewNotifications([data.notification, ...newNotifications])
@@ -96,9 +95,8 @@ function RepairmanHeader() {
       )
       dispatch(resetNotification())
       refreshUnReadNotificationTotal()
-      channel.unbind('common')
     })
-  }, [newNotifications])
+  }, [])
 
   const onHandleNotification = (notificationId?: number) => {
     axios
@@ -115,10 +113,13 @@ function RepairmanHeader() {
 
     switch (notificationTemp.type) {
       case NotificationType.ASSIGNED_TASK:
-        router.push('/repairman/tasks')
+        router.push(`/repairman/tasks?notification=${notificationId}`)
+        break
+      case NotificationType.CANCELED_TASK:
+        router.push(`/repairman/tasks?notification=${notificationId}`)
         break
       case NotificationType.UPDATED_PROFILE:
-        router.push('/repairman/profile')
+        router.push(`/repairman/profile?notification=${notificationId}`)
         break
       default:
         break
@@ -129,6 +130,8 @@ function RepairmanHeader() {
     switch (type) {
       case NotificationType.ASSIGNED_TASK:
         return <Icon as={BiTask} w={6} h={6} color='teal' />
+      case NotificationType.CANCELED_TASK:
+        return <Icon as={BiTask} w={6} h={6} color='red.500' />
       case NotificationType.UPDATED_PROFILE:
         return <Icon as={CgProfile} w={6} h={6} color='blue.500' />
       default:

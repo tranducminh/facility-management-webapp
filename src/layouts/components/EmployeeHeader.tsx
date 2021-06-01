@@ -58,10 +58,6 @@ function EmployeeHeader() {
     dispatch(logout())
   }
 
-  const pusher = new Pusher('75ba4bf21a42e1773cf4', {
-    cluster: 'ap1',
-  })
-
   useEffect(() => {
     if (auth.isAuth === false) {
       setNotifications([])
@@ -92,6 +88,9 @@ function EmployeeHeader() {
   }
 
   useEffect(() => {
+    const pusher = new Pusher(process.env.PUSHER_KEY || 'employee', {
+      cluster: 'ap1',
+    })
     const channel = pusher.subscribe(auth.user.channel)
     channel.bind('common', (data: { notification: NOTIFICATION }) => {
       setNewNotifications([data.notification, ...newNotifications])
@@ -103,9 +102,8 @@ function EmployeeHeader() {
       )
       dispatch(resetNotification())
       refreshUnReadNotificationTotal()
-      channel.unbind('common')
     })
-  }, [newNotifications])
+  }, [])
 
   const onHandleNotification = (notificationId?: number) => {
     axios
@@ -121,35 +119,50 @@ function EmployeeHeader() {
       newNotifications.filter((item) => item.id === notificationId)[0]
 
     switch (notificationTemp.type) {
+      case NotificationType.UPDATED_PROFILE:
+        router.push(`/employee/profile?notification=${notificationId}`)
+        break
       case NotificationType.PENDING_ROOM:
-        router.push('/employee/profile')
+        router.push(`/employee/profile?notification=${notificationId}`)
         break
       case NotificationType.NEW_ROOM:
-        router.push('/employee/profile')
+        router.push(`/employee/profile?notification=${notificationId}`)
         break
       case NotificationType.NEW_FACILITY_OWNER:
-        router.push('/employee/facilities')
+        router.push(`/employee/facilities?notification=${notificationId}`)
         break
       case NotificationType.REMOVED_FACILITY_OWNER:
-        router.push('/employee/facilities')
+        router.push(`/employee/facilities?notification=${notificationId}`)
         break
       case NotificationType.UPDATED_FACILITY_INFO:
-        router.push(`/employee/facilities/${notificationTemp.facility?.id}`)
+        router.push(
+          `/employee/facilities/${notificationTemp.facility?.id}?notification=${notificationId}`
+        )
         break
       case NotificationType.APPROVED_REQUEST:
-        router.push(`/employee/requests?type=approved`)
+        router.push(
+          `/employee/requests?type=approved&notification=${notificationId}`
+        )
         break
       case NotificationType.REJECTED_REQUEST:
-        router.push(`/employee/requests?type=rejected`)
+        router.push(
+          `/employee/requests?type=rejected&notification=${notificationId}`
+        )
         break
       case NotificationType.INPROCESS_REQUEST:
-        router.push(`/employee/requests?type=inprocess`)
+        router.push(
+          `/employee/requests?type=inprocess&notification=${notificationId}`
+        )
         break
       case NotificationType.COMPLETED_REQUEST:
-        router.push(`/employee/requests?type=completed`)
+        router.push(
+          `/employee/requests?type=completed&notification=${notificationId}`
+        )
         break
       case NotificationType.UNCOMPLETED_REQUEST:
-        router.push(`/employee/requests?type=uncompleted`)
+        router.push(
+          `/employee/requests?type=uncompleted&notification=${notificationId}`
+        )
         break
       default:
         break
@@ -165,7 +178,7 @@ function EmployeeHeader() {
       case NotificationType.NEW_FACILITY_OWNER:
         return <Icon as={BsTools} w={6} h={6} color='teal' />
       case NotificationType.REMOVED_FACILITY_OWNER:
-        return <Icon as={BsTools} w={6} h={6} color='red' />
+        return <Icon as={BsTools} w={6} h={6} color='red.500' />
       case NotificationType.UPDATED_FACILITY_INFO:
         return <Icon as={BsTools} w={6} h={6} color='blue.500' />
       case NotificationType.UPDATED_PROFILE:
@@ -173,13 +186,13 @@ function EmployeeHeader() {
       case NotificationType.APPROVED_REQUEST:
         return <Icon as={GoGitPullRequest} w={6} h={6} color='teal' />
       case NotificationType.REJECTED_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='red' />
+        return <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
       case NotificationType.INPROCESS_REQUEST:
         return <Icon as={GoGitPullRequest} w={6} h={6} color='blue.500' />
       case NotificationType.COMPLETED_REQUEST:
         return <Icon as={GoGitPullRequest} w={6} h={6} color='green' />
       case NotificationType.UNCOMPLETED_REQUEST:
-        return <Icon as={GoGitPullRequest} w={6} h={6} color='red' />
+        return <Icon as={GoGitPullRequest} w={6} h={6} color='red.500' />
       default:
         return <Icon as={SiGoogleclassroom} w={6} h={6} color='yellow.500' />
     }

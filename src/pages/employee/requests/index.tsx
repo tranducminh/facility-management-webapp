@@ -80,7 +80,7 @@ export default function Request() {
         break
     }
     refresh()
-  }, [])
+  }, [router.query.type, router.query?.notification])
   return (
     <EmployeeDashboard isRequest title='Yêu cầu'>
       <Tabs

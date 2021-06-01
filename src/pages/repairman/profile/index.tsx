@@ -22,6 +22,7 @@ import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 import { useDispatch } from 'react-redux'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import axios from '../../../utils/axios'
 import { REPAIRMAN, SPECIALIZE } from '../../../types'
@@ -33,6 +34,7 @@ import {
 import { NotificationStatus } from '../../../redux/types/notification.type'
 
 export default function RepairmanDetail() {
+  const router = useRouter()
   const dispatch = useDispatch()
   const [focused, setFocused] = useState<boolean>(false)
   const [selectedDate, handleDateChange] = useState<moment.Moment | null>(
@@ -164,7 +166,7 @@ export default function RepairmanDetail() {
     axios.get('/repairman/me').then((response) => {
       setRepairman(response.data.repairman)
     })
-  }, [])
+  }, [router.query.notification])
 
   return (
     <RepairmanDashboard isProfile title={repairman?.name || 'Trang cá nhân'}>
