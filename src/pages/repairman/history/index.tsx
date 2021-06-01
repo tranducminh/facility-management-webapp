@@ -13,12 +13,13 @@ import {
   Tag,
   HStack,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import HistoryDetail from './components/HistoryDetail'
 import axios from '../../../utils/axios'
 import { HISTORY } from '../../../types'
+import Empty from '../../../components/Empty'
 
 export default function Task() {
   const [histories, setHistories] = useState<HISTORY[]>([])
@@ -51,6 +52,8 @@ export default function Task() {
         break
     }
   }
+
+  if (histories.length <= 0) return <Empty title='Không có nhiệm vụ ' />
 
   return (
     <RepairmanDashboard isHistory title='Lịch sử làm viêc'>

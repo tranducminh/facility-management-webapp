@@ -35,7 +35,7 @@ export default function RejectRequest({ requests }: { requests: REQUEST[] }) {
     setCurrentRequest(request)
   }
 
-  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu ' />
 
   return (
     <Box>

@@ -34,6 +34,9 @@ import {
   PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from '@chakra-ui/react'
 import {
   ChevronLeftIcon,
@@ -54,6 +57,7 @@ import {
   pushNotification,
   resetNotification,
 } from '../../../../redux/actions/notification.action'
+import Empty from '../../../../components/Empty'
 
 type FormData = {
   identity: string
@@ -218,7 +222,16 @@ export default function EmployeeComponent() {
 
   return (
     <div>
-      <Flex justifyContent='flex-end' alignItems='center' mb={5}>
+      <Flex justifyContent='space-between' alignItems='center' mb={5}>
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <Link href='/admin/employees'>
+              <BreadcrumbLink>
+                <Text textStyle='bold-md'>Cán bộ</Text>
+              </BreadcrumbLink>
+            </Link>
+          </BreadcrumbItem>
+        </Breadcrumb>
         <Button
           rightIcon={<ArrowRightIcon fontSize='xs' />}
           colorScheme='teal'
@@ -228,122 +241,131 @@ export default function EmployeeComponent() {
           <Text textStyle='bold-md'>Tạo cán bộ mới</Text>
         </Button>
       </Flex>
-      <Table variant='simple'>
-        <Thead>
-          <Tr>
-            <Th>Mã nhân viên</Th>
-            <Th>Tên</Th>
-            <Th>Đơn vị</Th>
-            <Th>Phòng</Th>
-            <Th isNumeric>Hành động</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {employees.map((employee: EMPLOYEE, index: number) => (
-            <Tr key={index}>
-              <Td>{employee.identity}</Td>
-              <Td>{employee.name}</Td>
-              <Td>{employee.unit}</Td>
-              <Td>
-                {employee.hasRoom === 'true' ? (
-                  <Text>
-                    {employee?.room?.floor?.building?.name} /
-                    {employee?.room?.name}
-                  </Text>
-                ) : (
-                  <Tag
-                    size='sm'
-                    key='status'
-                    variant='solid'
-                    colorScheme='yellow'>
-                    Chưa có phòng
-                  </Tag>
-                )}
-              </Td>
-              <Td isNumeric>
-                <Popover size='md'>
-                  <PopoverTrigger>
-                    <IconButton
-                      colorScheme='red'
-                      aria-label='Remove employee'
-                      variant='outline'
-                      size='sm'
-                      icon={<MdDelete />}
-                      mr='2'
-                    />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverHeader mt='2' fontWeight='bold' border='0'>
-                      <Text textAlign='left'>Xóa tài khoản</Text>
-                    </PopoverHeader>
-                    <PopoverArrow />
-                    <PopoverCloseButton mt='2' />
-                    <PopoverBody>
-                      <Text textAlign='left'>
-                        Bạn có chắc muốn xóa tài khoản của{' '}
-                        <b>{employee.name}</b>
+      {employees.length <= 0 ? (
+        <Empty
+          title='Không có cán bộ  '
+          description='Hãy tạo cán bộ đầu tiên'
+        />
+      ) : (
+        <>
+          <Table variant='simple'>
+            <Thead>
+              <Tr>
+                <Th>Mã nhân viên</Th>
+                <Th>Tên</Th>
+                <Th>Đơn vị</Th>
+                <Th>Phòng</Th>
+                <Th isNumeric>Hành động</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {employees.map((employee: EMPLOYEE, index: number) => (
+                <Tr key={index}>
+                  <Td>{employee.identity}</Td>
+                  <Td>{employee.name}</Td>
+                  <Td>{employee.unit}</Td>
+                  <Td>
+                    {employee.hasRoom === 'true' ? (
+                      <Text>
+                        {employee?.room?.floor?.building?.name} /
+                        {employee?.room?.name}
                       </Text>
-                      <Text textAlign='left' mt='2'>
-                        Các thiết bị của các bộ sẽ trở về trạng thái chờ
-                      </Text>
-                    </PopoverBody>
-                    <PopoverFooter
-                      border='0'
-                      d='flex'
-                      alignItems='center'
-                      justifyContent='flex-end'
-                      pb={4}>
-                      <Button
-                        size='xs'
-                        colorScheme='green'
-                        onClick={() => removeEmployee(employee.id)}>
-                        Đồng ý
-                      </Button>
-                    </PopoverFooter>
-                  </PopoverContent>
-                </Popover>
-                <Link href={`/admin/employees/${employee.identity}`}>
-                  <IconButton
-                    colorScheme='teal'
-                    aria-label='View Employee'
-                    variant='outline'
-                    size='sm'
-                    icon={<ViewIcon />}
-                  />
-                </Link>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th>Mã nhân viên</Th>
-            <Th>Tên</Th>
-            <Th>Đơn vị</Th>
-            <Th>Phòng</Th>
-            <Th isNumeric>Hành động</Th>
-          </Tr>
-        </Tfoot>
-      </Table>
-      {pageCount > 1 ? (
-        <Box maxW='50%' mt={5} float='right'>
-          <ReactPaginate
-            previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-            nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-            breakLabel='...'
-            breakClassName='break-me'
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={2}
-            onPageChange={({ selected }) => {
-              refreshEmployee(selected + 1)
-            }}
-            containerClassName='pagination'
-            // subContainerClassName='pages pagination'
-            activeClassName='active'
-          />
-        </Box>
-      ) : null}
+                    ) : (
+                      <Tag
+                        size='sm'
+                        key='status'
+                        variant='solid'
+                        colorScheme='yellow'>
+                        Chưa có phòng
+                      </Tag>
+                    )}
+                  </Td>
+                  <Td isNumeric>
+                    <Popover size='md'>
+                      <PopoverTrigger>
+                        <IconButton
+                          colorScheme='red'
+                          aria-label='Remove employee'
+                          variant='outline'
+                          size='sm'
+                          icon={<MdDelete />}
+                          mr='2'
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverHeader mt='2' fontWeight='bold' border='0'>
+                          <Text textAlign='left'>Xóa tài khoản</Text>
+                        </PopoverHeader>
+                        <PopoverArrow />
+                        <PopoverCloseButton mt='2' />
+                        <PopoverBody>
+                          <Text textAlign='left'>
+                            Bạn có chắc muốn xóa tài khoản của{' '}
+                            <b>{employee.name}</b>
+                          </Text>
+                          <Text textAlign='left' mt='2'>
+                            Các thiết bị của các bộ sẽ trở về trạng thái chờ
+                          </Text>
+                        </PopoverBody>
+                        <PopoverFooter
+                          border='0'
+                          d='flex'
+                          alignItems='center'
+                          justifyContent='flex-end'
+                          pb={4}>
+                          <Button
+                            size='xs'
+                            colorScheme='green'
+                            onClick={() => removeEmployee(employee.id)}>
+                            Đồng ý
+                          </Button>
+                        </PopoverFooter>
+                      </PopoverContent>
+                    </Popover>
+                    <Link href={`/admin/employees/${employee.identity}`}>
+                      <IconButton
+                        colorScheme='teal'
+                        aria-label='View Employee'
+                        variant='outline'
+                        size='sm'
+                        icon={<ViewIcon />}
+                      />
+                    </Link>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+            <Tfoot>
+              <Tr>
+                <Th>Mã nhân viên</Th>
+                <Th>Tên</Th>
+                <Th>Đơn vị</Th>
+                <Th>Phòng</Th>
+                <Th isNumeric>Hành động</Th>
+              </Tr>
+            </Tfoot>
+          </Table>
+          {pageCount > 1 ? (
+            <Box maxW='50%' mt={5} float='right'>
+              <ReactPaginate
+                previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
+                nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
+                breakLabel='...'
+                breakClassName='break-me'
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={2}
+                onPageChange={({ selected }) => {
+                  refreshEmployee(selected + 1)
+                }}
+                containerClassName='pagination'
+                // subContainerClassName='pages pagination'
+                activeClassName='active'
+              />
+            </Box>
+          ) : null}
+        </>
+      )}
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>

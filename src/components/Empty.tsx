@@ -1,6 +1,18 @@
-import { Alert, AlertIcon, AlertTitle } from '@chakra-ui/react'
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Text,
+} from '@chakra-ui/react'
 
-export default function Empty({ title }: { title: string }) {
+export default function Empty({
+  title,
+  description = '',
+}: {
+  title: string
+  description?: string
+}) {
   return (
     <Alert
       status='info'
@@ -14,6 +26,9 @@ export default function Empty({ title }: { title: string }) {
       <AlertTitle mt={4} mb={1} fontSize='lg'>
         {title}
       </AlertTitle>
+      <AlertDescription maxWidth='sm'>
+        <Text mt='0.1rem'>{description}</Text>
+      </AlertDescription>
     </Alert>
   )
 }

@@ -42,7 +42,7 @@ export default function UnCompletedRequest({
     setCurrentRequest(request)
   }
 
-  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu ' />
 
   return (
     <Box>

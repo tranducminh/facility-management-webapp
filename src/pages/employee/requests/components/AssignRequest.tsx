@@ -43,7 +43,7 @@ export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
     const request = requests.filter((item: REQUEST) => item.id === id)[0] || {}
     setCurrentRequest(request)
   }
-  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu ' />
 
   return (
     <Box>

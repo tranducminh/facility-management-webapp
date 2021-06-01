@@ -27,15 +27,10 @@ import {
   FormControl,
   FormLabel,
   Divider,
-  Icon,
   Textarea,
   FormErrorMessage,
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import { RiComputerLine } from 'react-icons/ri'
-import { BiPrinter } from 'react-icons/bi'
-import { FaFax } from 'react-icons/fa'
-import { GiWifiRouter } from 'react-icons/gi'
 import { Formik, Form, Field } from 'formik'
 import { useDispatch } from 'react-redux'
 import axios from '../../../../utils/axios'
@@ -46,6 +41,7 @@ import {
   resetNotification,
 } from '../../../../redux/actions/notification.action'
 import Empty from '../../../../components/Empty'
+import Specialize from '../../../../components/Specialize'
 
 type FormData = {
   rejectedReason?: string
@@ -169,7 +165,7 @@ export default function PendingRequestList({
     return error
   }
 
-  if (requests.length <= 0) return <Empty title='Không có yêu cầu nào' />
+  if (requests.length <= 0) return <Empty title='Không có yêu cầu ' />
 
   return (
     <Box>
@@ -345,46 +341,9 @@ export default function PendingRequestList({
                           <Text textStyle='bold-sm'>Chuyên môn</Text>
                         </GridItem>
                         <GridItem colStart={5} colEnd={12}>
-                          {currentRepairman.specializes?.map(
-                            (specialize, index_) => {
-                              switch (specialize.facilityType?.name) {
-                                case 'computer':
-                                  return (
-                                    <Icon
-                                      key={index_}
-                                      as={RiComputerLine}
-                                      fontSize='1.2em'
-                                    />
-                                  )
-                                case 'fax':
-                                  return (
-                                    <Icon
-                                      key={index_}
-                                      as={FaFax}
-                                      fontSize='1em'
-                                    />
-                                  )
-                                case 'printer':
-                                  return (
-                                    <Icon
-                                      key={index_}
-                                      as={BiPrinter}
-                                      fontSize='1.2em'
-                                    />
-                                  )
-                                case 'node':
-                                  return (
-                                    <Icon
-                                      key={index_}
-                                      as={GiWifiRouter}
-                                      fontSize='1.2em'
-                                    />
-                                  )
-                                default:
-                                  break
-                              }
-                            }
-                          )}
+                          <Specialize
+                            specializes={currentRepairman.specializes}
+                          />
                         </GridItem>
                       </>
                     ) : null}

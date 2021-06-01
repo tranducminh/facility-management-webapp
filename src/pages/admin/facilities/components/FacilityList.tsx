@@ -69,7 +69,7 @@ export default function FacilityList({
       })
   }
 
-  if (facilities.length <= 0) return <Empty title='Không có thiết bị nào' />
+  if (facilities.length <= 0) return <Empty title='Không có thiết bị ' />
 
   return (
     <Box>

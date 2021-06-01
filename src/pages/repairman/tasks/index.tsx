@@ -13,13 +13,14 @@ import {
   Tag,
   HStack,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import RepairmanDashboard from '../../../layouts/RepairmanDashboard'
 import TaskDetail from './components/TaskDetail'
 import axios from '../../../utils/axios'
 import { REQUEST } from '../../../types'
+import Empty from '../../../components/Empty'
 
 export default function Task() {
   const [requests, setRequests] = useState<REQUEST[]>([])
@@ -58,6 +59,8 @@ export default function Task() {
         break
     }
   }
+
+  if (requests.length <= 0) return <Empty title='Không có nhiệm vụ ' />
 
   return (
     <RepairmanDashboard isTask title='Nhiệm vụ'>

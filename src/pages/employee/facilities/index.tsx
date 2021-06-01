@@ -63,7 +63,7 @@ export default function Facility() {
           ))}
         </Grid>
       ) : (
-        <Empty title='Bạn chưa có thiết bị nào' />
+        <Empty title='Bạn chưa có thiết bị ' />
       )}
     </EmployeeDashboard>
   )

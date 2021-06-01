@@ -62,7 +62,7 @@ export default function FacilityList({
           </>
         ) : (
           <AlertTitle mt={4} mb={1} fontSize='lg'>
-            Không có thiết bị nào
+            Không có thiết bị
           </AlertTitle>
         )}
       </Alert>

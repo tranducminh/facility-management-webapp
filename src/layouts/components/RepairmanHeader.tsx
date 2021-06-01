@@ -199,7 +199,7 @@ function RepairmanHeader() {
             </Text>
             {newNotifications.length <= 0 && notifications.length <= 0 ? (
               <Text textStyle='md' py='1' px='4'>
-                Không có thông báo nào
+                Không có thông báo
               </Text>
             ) : null}
             {newNotifications.length > 0 ? (

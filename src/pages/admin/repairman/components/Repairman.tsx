@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable array-callback-return */
 import { useState, useEffect } from 'react'
 import {
@@ -24,7 +23,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Icon,
   Checkbox,
   FormErrorMessage,
   IconButton,
@@ -38,6 +36,9 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from '@chakra-ui/react'
 import {
   ArrowRightIcon,
@@ -47,19 +48,18 @@ import {
 } from '@chakra-ui/icons'
 import ReactPaginate from 'react-paginate'
 import { MdDelete } from 'react-icons/md'
-import { RiComputerLine } from 'react-icons/ri'
-import { BiPrinter } from 'react-icons/bi'
-import { FaFax } from 'react-icons/fa'
 import { Formik, Form, Field } from 'formik'
 import { useDispatch } from 'react-redux'
 import Link from 'next/link'
 import axios from '../../../../utils/axios'
-import { REPAIRMAN, SPECIALIZE } from '../../../../types'
+import { REPAIRMAN } from '../../../../types'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
 import {
   pushNotification,
   resetNotification,
 } from '../../../../redux/actions/notification.action'
+import Empty from '../../../../components/Empty'
+import Specialize from '../../../../components/Specialize'
 
 type FormData = {
   identity?: string
@@ -185,7 +185,16 @@ export default function RepairmanComponent() {
 
   return (
     <div>
-      <Flex justifyContent='flex-end' alignItems='center' mb={5}>
+      <Flex justifyContent='space-between' alignItems='center' mb={5}>
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <Link href='/admin/employees'>
+              <BreadcrumbLink>
+                <Text textStyle='bold-md'>Kỹ thuật viên</Text>
+              </BreadcrumbLink>
+            </Link>
+          </BreadcrumbItem>
+        </Breadcrumb>
         <Button
           rightIcon={<ArrowRightIcon fontSize='xs' />}
           colorScheme='teal'
@@ -195,150 +204,130 @@ export default function RepairmanComponent() {
           <Text textStyle='bold-md'>Tạo kỹ thuật viên mới</Text>
         </Button>
       </Flex>
-      <Table variant='simple'>
-        <Thead>
-          <Tr>
-            <Th>Mã nhân viên</Th>
-            <Th>Tên</Th>
-            <Th>Đơn vị</Th>
-            <Th>Chuyên môn</Th>
-            <Th>Trạng thái</Th>
-            <Th isNumeric>Hành động</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {!repairman
-            ? null
-            : repairman.map((item: REPAIRMAN, index: number) => (
-              <Tr key={index}>
-                <Td>{item.identity}</Td>
-                <Td>{item.name}</Td>
-                <Td>{item.unit}</Td>
-                <Td>
-                  {item.specializes?.map(
-                    (specialize: SPECIALIZE, index_: number) => {
-                      if (specialize.active) {
-                        switch (specialize.facilityType?.name) {
-                          case 'computer':
-                            return (
-                              <Icon
-                                key={index_}
-                                as={RiComputerLine}
-                                fontSize='1.2em'
-                              />
-                            )
-                          case 'fax':
-                            return (
-                              <Icon key={index_} as={FaFax} fontSize='1em' />
-                            )
-                          case 'printer':
-                            return (
-                              <Icon
-                                key={index_}
-                                as={BiPrinter}
-                                fontSize='1.2em'
-                              />
-                            )
-                          default:
-                            break
-                        }
-                      }
-                    }
-                  )}
-                </Td>
-                <Td>
-                  <HStack spacing={4}>
-                    <Tag
-                      size='sm'
-                      key='status'
-                      variant='solid'
-                      colorScheme='teal'>
-                      Hoạt động
-                      </Tag>
-                  </HStack>
-                </Td>
-                <Td isNumeric>
-                  <Popover size='md'>
-                    <PopoverTrigger>
-                      <IconButton
-                        colorScheme='red'
-                        aria-label='Remove employee'
-                        variant='outline'
-                        size='sm'
-                        icon={<MdDelete />}
-                        mr='2'
-                      />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverHeader mt='2' fontWeight='bold' border='0'>
-                        <Text textAlign='left'>Xóa tài khoản</Text>
-                      </PopoverHeader>
-                      <PopoverArrow />
-                      <PopoverCloseButton mt='2' />
-                      <PopoverBody>
-                        <Text textAlign='left'>
-                          Bạn có chắc muốn xóa tài khoản của{' '}
-                          <b>{item.name}</b>
-                        </Text>
-                      </PopoverBody>
-                      <PopoverFooter
-                        border='0'
-                        d='flex'
-                        alignItems='center'
-                        justifyContent='flex-end'
-                        pb={4}>
-                        <Button
-                          size='xs'
-                          colorScheme='green'
-                          onClick={() => onRemove(item.id)}>
-                          Đồng ý
-                          </Button>
-                      </PopoverFooter>
-                    </PopoverContent>
-                  </Popover>
-                  <Link href={`/admin/repairman/${item.identity}`}>
-                    <IconButton
-                      colorScheme='teal'
-                      aria-label='View Employee'
-                      variant='outline'
-                      size='sm'
-                      icon={<ViewIcon />}
-                    />
-                  </Link>
-                </Td>
+      {repairman.length <= 0 ? (
+        <Empty
+          title='Không có kỹ thuật viên  '
+          description='Hãy tạo kỹ thuật viên đầu tiên'
+        />
+      ) : (
+        <>
+          <Table variant='simple'>
+            <Thead>
+              <Tr>
+                <Th>Mã nhân viên</Th>
+                <Th>Tên</Th>
+                <Th>Đơn vị</Th>
+                <Th>Chuyên môn</Th>
+                <Th>Trạng thái</Th>
+                <Th isNumeric>Hành động</Th>
               </Tr>
-            ))}
-        </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th>Mã nhân viên</Th>
-            <Th>Tên</Th>
-            <Th>Đơn vị</Th>
-            <Th>Chuyên môn</Th>
-            <Th>Trạng thái</Th>
-            <Th isNumeric>Hành động</Th>
-          </Tr>
-        </Tfoot>
-      </Table>
-      {pageCount > 1 ? (
-        <Box maxW='50%' mt={5} float='right'>
-          <ReactPaginate
-            previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
-            nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
-            breakLabel='...'
-            breakClassName='break-me'
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={2}
-            onPageChange={({ selected }) => {
-              refreshData(selected + 1)
-            }}
-            containerClassName='pagination'
-            // subContainerClassName='pages pagination'
-            activeClassName='active'
-          />
-        </Box>
-      ) : null}
+            </Thead>
+            <Tbody>
+              {!repairman
+                ? null
+                : repairman.map((item: REPAIRMAN, index: number) => (
+                  <Tr key={index}>
+                    <Td>{item.identity}</Td>
+                    <Td>{item.name}</Td>
+                    <Td>{item.unit}</Td>
+                    <Td>
+                      <Specialize specializes={item.specializes} />
+                    </Td>
+                    <Td>
+                      <HStack spacing={4}>
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='teal'>
+                          Hoạt động
+                          </Tag>
+                      </HStack>
+                    </Td>
+                    <Td isNumeric>
+                      <Popover size='md'>
+                        <PopoverTrigger>
+                          <IconButton
+                            colorScheme='red'
+                            aria-label='Remove employee'
+                            variant='outline'
+                            size='sm'
+                            icon={<MdDelete />}
+                            mr='2'
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverHeader mt='2' fontWeight='bold' border='0'>
+                            <Text textAlign='left'>Xóa tài khoản</Text>
+                          </PopoverHeader>
+                          <PopoverArrow />
+                          <PopoverCloseButton mt='2' />
+                          <PopoverBody>
+                            <Text textAlign='left'>
+                              Bạn có chắc muốn xóa tài khoản của{' '}
+                              <b>{item.name}</b>
+                            </Text>
+                          </PopoverBody>
+                          <PopoverFooter
+                            border='0'
+                            d='flex'
+                            alignItems='center'
+                            justifyContent='flex-end'
+                            pb={4}>
+                            <Button
+                              size='xs'
+                              colorScheme='green'
+                              onClick={() => onRemove(item.id)}>
+                              Đồng ý
+                              </Button>
+                          </PopoverFooter>
+                        </PopoverContent>
+                      </Popover>
+                      <Link href={`/admin/repairman/${item.identity}`}>
+                        <IconButton
+                          colorScheme='teal'
+                          aria-label='View Employee'
+                          variant='outline'
+                          size='sm'
+                          icon={<ViewIcon />}
+                        />
+                      </Link>
+                    </Td>
+                  </Tr>
+                ))}
+            </Tbody>
+            <Tfoot>
+              <Tr>
+                <Th>Mã nhân viên</Th>
+                <Th>Tên</Th>
+                <Th>Đơn vị</Th>
+                <Th>Chuyên môn</Th>
+                <Th>Trạng thái</Th>
+                <Th isNumeric>Hành động</Th>
+              </Tr>
+            </Tfoot>
+          </Table>
+          {pageCount > 1 ? (
+            <Box maxW='50%' mt={5} float='right'>
+              <ReactPaginate
+                previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
+                nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
+                breakLabel='...'
+                breakClassName='break-me'
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={2}
+                onPageChange={({ selected }) => {
+                  refreshData(selected + 1)
+                }}
+                containerClassName='pagination'
+                // subContainerClassName='pages pagination'
+                activeClassName='active'
+              />
+            </Box>
+          ) : null}
+        </>
+      )}
       <Modal isOpen={isOpenUser} onClose={onCloseUser}>
         <ModalOverlay />
         <ModalContent>

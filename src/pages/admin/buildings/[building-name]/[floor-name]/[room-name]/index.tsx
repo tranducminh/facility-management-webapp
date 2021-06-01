@@ -346,7 +346,7 @@ export default function Room() {
                     height='200px'>
                     <AlertIcon boxSize='40px' mr={0} />
                     <AlertTitle mt={4} mb={1} fontSize='lg'>
-                      Phòng {room.name} chưa có cán bộ nào
+                      Phòng {room.name} chưa có cán bộ
                     </AlertTitle>
                     <AlertDescription maxWidth='sm'>
                       <Button
