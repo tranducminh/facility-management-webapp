@@ -28,7 +28,7 @@ export default function AdminLayout(props: any) {
     }
   }, [notification])
   return (
-    <Box>
+    <Box h='100vh' maxH='100vh'>
       <Head>
         <link rel='icon' href='/assets/images/logo-light.png' />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -40,8 +40,10 @@ export default function AdminLayout(props: any) {
         <title>{title}</title>
       </Head>
       <AdminHeader />
-      <Container maxW='100%' centerContent py={5}>
-        <Box w='85%'>{props.children}</Box>
+      <Container maxW='100%' centerContent py={5} h='85%'>
+        <Box w='85%' h='100%'>
+          {props.children}
+        </Box>
       </Container>
     </Box>
   )

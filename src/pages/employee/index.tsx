@@ -5,7 +5,7 @@ import EmployeeLayout from '../../layouts/EmployeeLayout'
 function Home() {
   return (
     <EmployeeLayout>
-      <Flex justify='space-between' align='center'>
+      <Flex justify='space-between' align='center' h='100%'>
         <Box maxW='50%'>
           <Box fontSize='xxx-large' fontWeight='bold'>
             Học viện chính trị

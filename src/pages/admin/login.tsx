@@ -60,7 +60,7 @@ function AdminLogin() {
 
   return (
     <AdminLayout title='Quản lý | Đăng nhập'>
-      <Flex align='flex-end'>
+      <Flex align='center' h='100%'>
         <Image src='/assets/images/login_img_1.svg' maxW='30%' />
         <Spacer />
         <Box maxW='30%'>

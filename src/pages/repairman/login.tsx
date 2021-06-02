@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux'
 import { Formik, Form, Field } from 'formik'
-import RepairmanLayout from '../../layouts/EmployeeLayout'
+import RepairmanLayout from '../../layouts/RepairmanLayout'
 import { loginRepairman } from '../../redux/actions/auth.action'
 
 type FormData = {
@@ -59,7 +59,7 @@ function Login() {
 
   return (
     <RepairmanLayout title='Kỹ thuật viên | Đăng nhập'>
-      <Flex align='flex-end'>
+      <Flex align='center' h='100%'>
         <Image src='/assets/images/login_img_1.svg' maxW='30%' />
         <Spacer />
         <Box maxW='30%'>

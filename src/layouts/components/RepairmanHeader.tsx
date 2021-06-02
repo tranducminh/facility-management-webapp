@@ -280,7 +280,7 @@ function RepairmanHeader() {
             variant='ghost'
             color={buttonColorMode}
             size='sm'>
-            <Link href='/employee/login'>
+            <Link href='/repairman/login'>
               <Text textStyle='bold-md'>Đăng nhập</Text>
             </Link>
           </Button>
