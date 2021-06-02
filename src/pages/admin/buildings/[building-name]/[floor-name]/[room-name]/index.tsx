@@ -433,9 +433,9 @@ export default function Room() {
                 p={2}
                 mb={4}
                 cursor='pointer'
-                color={item.id === currentEmployee.id ? hoverTextColor : ''}
+                color={item.id === currentEmployee?.id ? hoverTextColor : ''}
                 backgroundColor={
-                  item.id === currentEmployee.id ? selectBgColor : ''
+                  item.id === currentEmployee?.id ? selectBgColor : ''
                 }
                 borderRadius='0.5em'
                 _hover={{

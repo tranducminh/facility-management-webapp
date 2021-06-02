@@ -60,8 +60,6 @@ export default function Task() {
     }
   }
 
-  if (requests.length <= 0) return <Empty title='Không có nhiệm vụ ' />
-
   return (
     <RepairmanDashboard isTask title='Nhiệm vụ'>
       <Flex justifyContent='space-between' alignItems='center' mb={5}>
@@ -75,50 +73,56 @@ export default function Task() {
           </BreadcrumbItem>
         </Breadcrumb>
       </Flex>
-
-      <Accordion defaultIndex={[0]} allowMultiple>
-        {requests.map((request: REQUEST, index: number) => (
-          <AccordionItem key={index}>
-            <AccordionButton>
-              <Flex justifyContent='space-between' alignItems='center' w='100%'>
-                <Flex alignItems='center'>
-                  <Text textStyle='bold-md'>
-                    #{request.id} - {request.facility?.name}
-                  </Text>
-                  <HStack spacing={4} ml='4'>
-                    <Badge borderRadius='full' colorScheme='teal'>
-                      {convertFacilityName(
-                        request.facility?.facilityType?.name
+      {requests.length <= 0 ? (
+        <Empty title='Không có nhiệm vụ ' />
+      ) : (
+        <Accordion defaultIndex={[0]} allowMultiple>
+          {requests.map((request: REQUEST, index: number) => (
+            <AccordionItem key={index}>
+              <AccordionButton>
+                <Flex
+                  justifyContent='space-between'
+                  alignItems='center'
+                  w='100%'>
+                  <Flex alignItems='center'>
+                    <Text textStyle='bold-md'>
+                      #{request.id} - {request.facility?.name}
+                    </Text>
+                    <HStack spacing={4} ml='4'>
+                      <Badge borderRadius='full' colorScheme='teal'>
+                        {convertFacilityName(
+                          request.facility?.facilityType?.name
+                        )}
+                      </Badge>
+                      {request.status === 'assigned' ? (
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='yellow'>
+                          Đã bàn giao
+                        </Tag>
+                      ) : (
+                        <Tag
+                          size='sm'
+                          key='status'
+                          variant='solid'
+                          colorScheme='blue'>
+                          Đang sửa chữa
+                        </Tag>
                       )}
-                    </Badge>
-                    {request.status === 'assigned' ? (
-                      <Tag
-                        size='sm'
-                        key='status'
-                        variant='solid'
-                        colorScheme='yellow'>
-                        Đã bàn giao
-                      </Tag>
-                    ) : (
-                      <Tag
-                        size='sm'
-                        key='status'
-                        variant='solid'
-                        colorScheme='blue'>
-                        Đang sửa chữa
-                      </Tag>
-                    )}
-                  </HStack>
+                    </HStack>
+                  </Flex>
                 </Flex>
-              </Flex>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel py={5}>
-              <TaskDetail request={request} refresh={refresh} />
-            </AccordionPanel>
-          </AccordionItem>
-        ))}
-      </Accordion>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel py={5}>
+                <TaskDetail request={request} refresh={refresh} />
+              </AccordionPanel>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
     </RepairmanDashboard>
   )
 }

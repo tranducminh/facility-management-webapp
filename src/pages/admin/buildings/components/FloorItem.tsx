@@ -130,9 +130,9 @@ export default function FloorItem({
                 p={1.5}
                 mb={4}
                 cursor='pointer'
-                color={currentFloor.id === floor.id ? hoverTextColor : ''}
+                color={currentFloor?.id === floor?.id ? hoverTextColor : ''}
                 backgroundColor={
-                  currentFloor.id === floor.id ? selectBgColor : ''
+                  currentFloor?.id === floor?.id ? selectBgColor : ''
                 }
                 borderRadius='0.5em'
                 _hover={{
