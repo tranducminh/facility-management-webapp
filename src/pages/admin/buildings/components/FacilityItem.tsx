@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react'
 import { ViewIcon } from '@chakra-ui/icons'
 import { FACILITY } from '../../../../types'
+import { convertTime } from '../../../../utils'
 
 export default function FacilityItem({ facility }: { facility: FACILITY }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -74,7 +75,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
             letterSpacing='wide'
             fontSize='13px'
             colSpan={2}>
-            21/11/2022
+            {convertTime(facility.handoveredDate)}
           </GridItem>
           <GridItem
             fontWeight='semibold'
@@ -153,7 +154,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
                 <Text textStyle='bold-md'>Ngày cấp</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <Text>21/11/2022</Text>
+                <Text>{convertTime(facility.handoveredDate)}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={5}>
                 <Text textStyle='bold-md'>Trạng thái</Text>
