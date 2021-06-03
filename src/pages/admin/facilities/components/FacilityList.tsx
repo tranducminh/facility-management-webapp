@@ -22,10 +22,16 @@ import {
   PopoverCloseButton,
   Button,
 } from '@chakra-ui/react'
-import { ViewIcon, EditIcon } from '@chakra-ui/icons'
+import {
+  ViewIcon,
+  EditIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@chakra-ui/icons'
 import Link from 'next/link'
 import { MdDelete } from 'react-icons/md'
 import { useDispatch } from 'react-redux'
+import ReactPaginate from 'react-paginate'
 import { FACILITY } from '../../../../types'
 import axios from '../../../../utils/axios'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
@@ -38,9 +44,13 @@ import Empty from '../../../../components/Empty'
 export default function FacilityList({
   facilities,
   refresh,
+  pageCount,
+  onChangePage,
 }: {
   facilities: FACILITY[]
   refresh: Function
+  pageCount: number
+  onChangePage: Function
 }) {
   const dispatch = useDispatch()
   const removeFacility = (id?: number) => {
@@ -203,6 +213,25 @@ export default function FacilityList({
           </Tr>
         </Tfoot>
       </Table>
+      {pageCount > 1 ? (
+        <Box maxW='50%' mt={5} float='right'>
+          <ReactPaginate
+            previousLabel={<ChevronLeftIcon fontSize='1.7rem' />}
+            nextLabel={<ChevronRightIcon fontSize='1.7rem' />}
+            breakLabel='...'
+            breakClassName='break-me'
+            pageCount={pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={2}
+            onPageChange={({ selected }) => {
+              onChangePage(selected + 1)
+            }}
+            containerClassName='pagination'
+            // subContainerClassName='pages pagination'
+            activeClassName='active'
+          />
+        </Box>
+      ) : null}
     </Box>
   )
 }
