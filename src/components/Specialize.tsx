@@ -34,7 +34,7 @@ export default function Specialize({
                       key={index}
                       as={RiComputerLine}
                       fontSize='1.2em'
-                      m='1'
+                      mr='1'
                     />
                   </PopoverTrigger>
                   <PopoverContent>
@@ -51,7 +51,7 @@ export default function Specialize({
               return (
                 <Popover size='xs' placement='bottom-start'>
                   <PopoverTrigger>
-                    <Icon key={index} as={FaFax} fontSize='1em' />
+                    <Icon key={index} as={FaFax} fontSize='1em' mr='1' />
                   </PopoverTrigger>
                   <PopoverContent>
                     <PopoverArrow />
@@ -67,7 +67,7 @@ export default function Specialize({
               return (
                 <Popover size='xs' placement='bottom-start'>
                   <PopoverTrigger>
-                    <Icon key={index} as={BiPrinter} fontSize='1em' />
+                    <Icon key={index} as={BiPrinter} fontSize='1.2em' mr='1' />
                   </PopoverTrigger>
                   <PopoverContent>
                     <PopoverArrow />

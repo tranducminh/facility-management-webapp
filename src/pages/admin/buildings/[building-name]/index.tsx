@@ -51,7 +51,7 @@ export default function Building() {
         setBuilding(building_)
         if (building_.floors.length > 0) {
           router.push(
-            `/admin/buildings/${buildingName}/floor-${building_.floors[0].name}`
+            `/admin/buildings/${buildingName}/floor-${building_.floors[0]?.name}`
           )
         }
       })
@@ -75,7 +75,7 @@ export default function Building() {
         )
         dispatch(resetNotification())
         router.push(
-          `/admin/buildings/building-${building.name}/floor-${floor_.name}`
+          `/admin/buildings/building-${building?.name}/floor-${floor_?.name}`
         )
       })
       .catch((error) => {
@@ -110,7 +110,7 @@ export default function Building() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbItem>
-            <Link href={`/admin/buildings/building-${building.name}`}>
+            <Link href={`/admin/buildings/building-${building?.name}`}>
               <BreadcrumbLink>
                 <Text textStyle='bold-md'>Tòa nhà {building?.name}</Text>
               </BreadcrumbLink>
@@ -147,7 +147,7 @@ export default function Building() {
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
                         isRequired
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors?.name && form.touched?.name}>
                         <FormLabel>Tên tầng</FormLabel>
                         <Input
                           {...field}

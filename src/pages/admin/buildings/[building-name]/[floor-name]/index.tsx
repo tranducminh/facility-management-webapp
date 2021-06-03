@@ -67,12 +67,12 @@ export default function BuildingDetail() {
         const { floors } = response.data.building
         setFloor(
           floors.filter(
-            (item: FLOOR) => item.name === floorName.split('-')[1]
+            (item: FLOOR) => item?.name === floorName.split('-')[1]
           )[0]
         )
         setRooms(
           floors.filter(
-            (item: FLOOR) => item.name === floorName.split('-')[1]
+            (item: FLOOR) => item?.name === floorName.split('-')[1]
           )[0].rooms
         )
       })
@@ -174,9 +174,9 @@ export default function BuildingDetail() {
           </BreadcrumbItem>
           <BreadcrumbItem>
             <Link
-              href={`/admin/buildings/building-${building?.name}/floor-${floor.name}`}>
+              href={`/admin/buildings/building-${building?.name}/floor-${floor?.name}`}>
               <BreadcrumbLink>
-                <Text textStyle='bold-md'>Tầng {floor.name}</Text>
+                <Text textStyle='bold-md'>Tầng {floor?.name}</Text>
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
@@ -246,7 +246,7 @@ export default function BuildingDetail() {
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
                         isRequired
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors?.name && form.touched?.name}>
                         <FormLabel>Tên tầng</FormLabel>
                         <Input
                           {...field}
@@ -295,7 +295,7 @@ export default function BuildingDetail() {
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
                         isRequired
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors?.name && form.touched?.name}>
                         <FormLabel>Tên phòng</FormLabel>
                         <Input
                           {...field}

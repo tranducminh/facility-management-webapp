@@ -34,7 +34,7 @@ import { useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { useDispatch } from 'react-redux'
 import axios from '../../../../utils/axios'
-import { REPAIRMAN, REQUEST } from '../../../../types'
+import { REPAIRMAN, REQUEST, SPECIALIZE } from '../../../../types'
 import { NotificationStatus } from '../../../../redux/types/notification.type'
 import {
   pushNotification,
@@ -71,9 +71,13 @@ export default function PendingRequestList({
     const request = requests.filter((item: REQUEST) => item.id === id)[0] || {}
     setCurrentRequest(request)
     axios
-      .get(`/repairman?specialize=${request.facility?.facilityType?.name}`)
+      .get(`/specializes/${request.facility?.facilityType?.name}`)
       .then((response) => {
-        setSuitableRepairman(response.data.repairman)
+        setSuitableRepairman(
+          response.data.specializes.map(
+            (specialize: SPECIALIZE) => specialize.repairman
+          )
+        )
       })
       .catch((error) => {
         console.log(error)

@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable array-callback-return */
 import { useState, useEffect } from 'react'
 import {
@@ -60,6 +62,7 @@ import {
 } from '../../../../redux/actions/notification.action'
 import Empty from '../../../../components/Empty'
 import Specialize from '../../../../components/Specialize'
+import Loading from '../../../../components/Loading'
 
 type FormData = {
   identity?: string
@@ -82,6 +85,8 @@ export default function RepairmanComponent() {
   const [pageCount, setPageCount] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
 
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
   const refreshData = (page?: number) => {
     if (page) setCurrentPage(page)
     axios
@@ -89,6 +94,7 @@ export default function RepairmanComponent() {
       .then((res) => {
         setRepairman(res.data.repairman)
         setPageCount(res.data.totalPage)
+        setIsLoading(false)
       })
       .catch((error) => {
         console.log(error)
@@ -204,7 +210,9 @@ export default function RepairmanComponent() {
           <Text textStyle='bold-md'>Tạo kỹ thuật viên mới</Text>
         </Button>
       </Flex>
-      {repairman.length <= 0 ? (
+      {isLoading ? (
+        <Loading />
+      ) : repairman.length <= 0 ? (
         <Empty
           title='Không có kỹ thuật viên  '
           description='Hãy tạo kỹ thuật viên đầu tiên'
@@ -345,6 +353,7 @@ export default function RepairmanComponent() {
                   <Field name='identity' validate={validateIdentity}>
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
+                        mt='3'
                         isRequired
                         isInvalid={
                           form.errors.identity && form.touched.identity
@@ -364,6 +373,7 @@ export default function RepairmanComponent() {
                   <Field name='name' validate={validateName} mt='3'>
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
+                        mt='3'
                         isRequired
                         isInvalid={form.errors.name && form.touched.name}>
                         <FormLabel>Tên</FormLabel>
@@ -379,6 +389,7 @@ export default function RepairmanComponent() {
                   <Field name='unit' validate={validateUnit} mt='3'>
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
+                        mt='3'
                         isRequired
                         isInvalid={form.errors.unit && form.touched.unit}>
                         <FormLabel>Đơn vị</FormLabel>

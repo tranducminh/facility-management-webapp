@@ -114,7 +114,7 @@ export default function RepairmanDetail() {
             {isLoading ? (
               <Spinner size='sm' />
             ) : (
-              <Link href={`/ admin / repairman / ${repairman?.identity} `}>
+              <Link href={`/admin/repairman/${repairman?.identity}`}>
                 <BreadcrumbLink>
                   <Text textStyle='bold-md'>
                     #{repairman.identity} - {repairman.name}

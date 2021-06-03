@@ -58,6 +58,7 @@ export type SPECIALIZE = {
   active?: boolean
   description?: string
   facilityType?: FACILITY_TYPE
+  repairman?: REPAIRMAN
 }
 
 export type FACILITY_TYPE = {

@@ -7,6 +7,7 @@ import {
   Divider,
   Flex,
   Text,
+  Input,
   useColorMode,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
@@ -25,8 +26,10 @@ import { setCurrentRoom } from '../../../../redux/actions/arrangement.action'
 export default function RoomEmployeeMode() {
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
   const [rooms, setRooms] = useState<ROOM[]>([])
+  const [currentRooms, setCurrentRooms] = useState<ROOM[]>([])
   const [activeRoom, setActiveRoom] = useState<ROOM>()
   const [employees, setEmployees] = useState<EMPLOYEE[]>([])
+  const [currentEmployees, setCurrentEmployees] = useState<EMPLOYEE[]>([])
   const [currentEmployee, setCurrentEmployee] = useState<string>('')
   const dispatch = useDispatch()
   const useTypedSelector: TypedUseSelectorHook<ReducersType> = useSelector
@@ -38,6 +41,7 @@ export default function RoomEmployeeMode() {
       .get('/rooms')
       .then((res) => {
         setRooms(res.data.rooms)
+        setCurrentRooms(res.data.rooms)
         if (activeRoom?.id) {
           setActiveRoom(
             res.data.rooms.filter((room: ROOM) => room.id === activeRoom?.id)[0]
@@ -51,9 +55,10 @@ export default function RoomEmployeeMode() {
 
   const refreshEmployee = () => {
     axios
-      .get('/employees?hasRoom=false')
+      .get('/employees/all?hasRoom=false')
       .then((response) => {
         setEmployees(response.data.employees)
+        setCurrentEmployees(response.data.employees)
       })
       .catch((error) => {
         console.log(error)
@@ -71,6 +76,16 @@ export default function RoomEmployeeMode() {
       dispatch(setCurrentRoom({ roomId: undefined }))
     }
   }, [arrangement, rooms])
+
+  const onChangeCurrentEmployee = (identity: string) => {
+    setCurrentEmployees(
+      employees.filter((employee) => employee.identity?.includes(identity))
+    )
+  }
+
+  const onChangeCurrentRoom = (name: string) => {
+    setCurrentRooms(rooms.filter((room) => room.name?.includes(name)))
+  }
 
   const chooseRoom = (id?: number) => {
     setActiveRoom(rooms.filter((room: ROOM) => room.id === id)[0])
@@ -154,8 +169,15 @@ export default function RoomEmployeeMode() {
   return (
     <Grid templateColumns='repeat(9, 1fr)' gap={4}>
       <GridItem colSpan={2} h='90vh' overflow='auto'>
-        {rooms &&
-          rooms.map((room: ROOM, index: number) => (
+        <Input
+          placeholder='Nhập tên phòng'
+          mb='3'
+          onChange={(event) => {
+            onChangeCurrentRoom(event.target.value)
+          }}
+        />
+        {currentRooms &&
+          currentRooms.map((room: ROOM, index: number) => (
             <Box
               key={index}
               borderWidth='1px'
@@ -251,8 +273,15 @@ export default function RoomEmployeeMode() {
         onDragOver={(e) => allowDropEmployee(e)}
         h='90vh'
         overflow='auto'>
-        {employees &&
-          employees.map((employee: EMPLOYEE, index: number) => (
+        <Input
+          placeholder='Nhập mã cán bô'
+          mb='3'
+          onChange={(event) => {
+            onChangeCurrentEmployee(event.target.value)
+          }}
+        />
+        {currentEmployees &&
+          currentEmployees.map((employee: EMPLOYEE, index: number) => (
             <GridItem
               colSpan={1}
               draggable='true'

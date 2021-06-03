@@ -13,6 +13,8 @@ import {
   Text,
   Badge,
   Tag,
+  Input,
+  Select,
   useColorMode,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
@@ -32,7 +34,9 @@ export default function EmployeeFacilityMode() {
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
   const [activeEmployee, setActiveEmployee] = useState<EMPLOYEE>()
   const [employees, setEmployees] = useState<EMPLOYEE[]>([])
+  const [currentEmployees, setCurrentEmployees] = useState<EMPLOYEE[]>([])
   const [facilities, setFacilities] = useState<FACILITY[]>([])
+  const [currentFacilities, setCurrentFacilities] = useState<FACILITY[]>([])
   const [currentFacility, setCurrentFacility] = useState<string>('')
   const dispatch = useDispatch()
   const useTypedSelector: TypedUseSelectorHook<ReducersType> = useSelector
@@ -48,9 +52,10 @@ export default function EmployeeFacilityMode() {
 
   const refreshEmployee = () => {
     axios
-      .get('/employees')
+      .get('/employees/all')
       .then((response) => {
         setEmployees(response.data.employees)
+        setCurrentEmployees(response.data.employees)
         if (activeEmployee?.id) {
           setActiveEmployee(
             response.data.employees.filter(
@@ -68,6 +73,7 @@ export default function EmployeeFacilityMode() {
       .get('/facilities/employee/null')
       .then((response) => {
         setFacilities(response.data.facilities)
+        setCurrentFacilities(response.data.facilities)
       })
       .catch((error) => {
         console.log(error)
@@ -77,6 +83,21 @@ export default function EmployeeFacilityMode() {
     refreshEmployee()
     refreshFacility()
   }, [])
+
+  const onChangeCurrentEmployee = (identity: string) => {
+    setCurrentEmployees(
+      employees.filter((employee) => employee.identity?.includes(identity))
+    )
+  }
+
+  const onChangeCurrentFacility = (type: string) => {
+    setCurrentFacilities(
+      facilities.filter((facility) => {
+        if (type) return facility.facilityType?.name === type
+        return true
+      })
+    )
+  }
 
   const chooseEmployee = (id?: number) => {
     setActiveEmployee(
@@ -178,8 +199,15 @@ export default function EmployeeFacilityMode() {
   return (
     <Grid templateColumns='repeat(9, 1fr)' gap={4}>
       <GridItem colSpan={2} h='100vh' overflow='auto'>
-        {employees &&
-          employees.map((employee: EMPLOYEE, index: number) => (
+        <Input
+          placeholder='Nhập mã cán bô'
+          mb='3'
+          onChange={(event) => {
+            onChangeCurrentEmployee(event.target.value)
+          }}
+        />
+        {currentEmployees &&
+          currentEmployees.map((employee: EMPLOYEE, index: number) => (
             <Box
               key={index}
               borderWidth='1px'
@@ -322,8 +350,24 @@ export default function EmployeeFacilityMode() {
         onDrop={(e) => dropRevertFacility(e)}
         onDragOver={(e) => allowDropFacility(e)}
         id='pending-facilities'>
-        {facilities &&
-          facilities.map((facility: FACILITY, index: number) => (
+        <Select
+          placeholder='Chọn loại thiết bị'
+          onChange={(event) => {
+            onChangeCurrentFacility(event.target.value)
+          }}
+          mb='3'>
+          <option key='computer' value='computer'>
+            Máy tính
+          </option>
+          <option key='printer' value='printer'>
+            Máy in
+          </option>
+          <option key='fax' value='fax'>
+            Máy fax
+          </option>
+        </Select>
+        {currentFacilities &&
+          currentFacilities.map((facility: FACILITY, index: number) => (
             <GridItem
               colSpan={1}
               draggable='true'

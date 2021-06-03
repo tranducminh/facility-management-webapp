@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable radix */
 import {
   Table,
@@ -58,6 +60,7 @@ import {
   resetNotification,
 } from '../../../../redux/actions/notification.action'
 import Empty from '../../../../components/Empty'
+import Loading from '../../../../components/Loading'
 
 type FormData = {
   identity: string
@@ -84,6 +87,8 @@ export default function EmployeeComponent() {
   const [pageCount, setPageCount] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
 
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
   const refreshEmployee = (page?: number) => {
     if (page) setCurrentPage(page)
     axios
@@ -91,6 +96,7 @@ export default function EmployeeComponent() {
       .then((res) => {
         setEmployees(res.data.employees)
         setPageCount(res.data.totalPage)
+        setIsLoading(false)
       })
       .catch((error) => {
         console.log(error)
@@ -241,7 +247,9 @@ export default function EmployeeComponent() {
           <Text textStyle='bold-md'>Tạo cán bộ mới</Text>
         </Button>
       </Flex>
-      {employees.length <= 0 ? (
+      {isLoading ? (
+        <Loading />
+      ) : employees.length <= 0 ? (
         <Empty
           title='Không có cán bộ  '
           description='Hãy tạo cán bộ đầu tiên'
@@ -383,6 +391,7 @@ export default function EmployeeComponent() {
                   <Field name='identity' validate={validateIdentity}>
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
+                        mt='3'
                         isRequired
                         isInvalid={
                           form.errors.identity && form.touched.identity
@@ -402,6 +411,7 @@ export default function EmployeeComponent() {
                   <Field name='name' validate={validateName}>
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
+                        mt='3'
                         isRequired
                         isInvalid={form.errors.name && form.touched.name}>
                         <FormLabel>Tên</FormLabel>
@@ -417,6 +427,7 @@ export default function EmployeeComponent() {
                   <Field name='unit' validate={validateUnit}>
                     {({ field, form }: { field: any; form: any }) => (
                       <FormControl
+                        mt='3'
                         isRequired
                         isInvalid={form.errors.unit && form.touched.unit}>
                         <FormLabel>Đơn vị</FormLabel>

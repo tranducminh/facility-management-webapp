@@ -31,6 +31,7 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 import { BUILDING, FLOOR, ROOM, EMPLOYEE, REQUEST } from '../../../../types'
 import { useColor } from '../../../../theme/useColorMode'
 import axios from '../../../../utils/axios'
@@ -51,6 +52,7 @@ export default function FloorItem({
   currentFloor: FLOOR
   refresh: Function
 }) {
+  const router = useRouter()
   const { hoverTextColor, hoverBgColor, selectBgColor } = useColor()
   const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch()
@@ -74,6 +76,9 @@ export default function FloorItem({
           })
         )
         dispatch(resetNotification())
+        router.push(
+          `/admin/buildings/building-${building?.name}/floor-${floor.name}`
+        )
         refresh()
       })
       .catch((error) => {
@@ -219,7 +224,7 @@ export default function FloorItem({
               colorScheme='red'
               onClick={onOpenRemoveFloor}
               mr='3'>
-              Xóa tòa nhà
+              Xóa tầng
             </Button>
             <Link
               href={`/admin/buildings/building-${building?.name}/floor-${floor.name}`}>
