@@ -164,7 +164,11 @@ export default function EmployeeComponent() {
     axios
       .delete(`/employees/${id}`)
       .then((res) => {
-        refreshEmployee()
+        if (employees.length === 1 && currentPage > 1) {
+          refreshEmployee(currentPage - 1)
+        } else {
+          refreshEmployee()
+        }
         dispatch(
           pushNotification({
             title: res.data.message,

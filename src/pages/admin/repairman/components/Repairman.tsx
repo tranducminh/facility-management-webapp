@@ -148,7 +148,11 @@ export default function RepairmanComponent() {
           })
         )
         dispatch(resetNotification())
-        refreshData()
+        if (repairman.length === 1 && currentPage !== 1) {
+          refreshData(currentPage - 1)
+        } else {
+          refreshData()
+        }
       })
       .catch((error) => {
         dispatch(

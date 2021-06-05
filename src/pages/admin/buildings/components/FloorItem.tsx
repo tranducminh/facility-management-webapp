@@ -76,9 +76,7 @@ export default function FloorItem({
           })
         )
         dispatch(resetNotification())
-        router.push(
-          `/admin/buildings/building-${building?.name}/floor-${floor.name}`
-        )
+        router.push(`/admin/buildings/building-${building?.name}`)
         refresh()
       })
       .catch((error) => {
