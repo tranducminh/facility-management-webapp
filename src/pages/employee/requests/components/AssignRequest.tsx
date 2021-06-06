@@ -22,17 +22,13 @@ import {
   Grid,
   GridItem,
   Divider,
-  Icon,
   useDisclosure,
   Box,
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import { RiComputerLine } from 'react-icons/ri'
-import { BiPrinter } from 'react-icons/bi'
-import { FaFax } from 'react-icons/fa'
-import { GiWifiRouter } from 'react-icons/gi'
 import { REQUEST } from '../../../../types'
 import Empty from '../../../../components/Empty'
+import Specialize from '../../../../components/Specialize'
 
 export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -162,36 +158,9 @@ export default function ApproveRequest({ requests }: { requests: REQUEST[] }) {
                 <Text textStyle='bold-sm'>Chuyên môn</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                {currentRequest.repairman?.specializes?.map(
-                  (specialize, index_) => {
-                    switch (specialize.facilityType?.name) {
-                      case 'computer':
-                        return (
-                          <Icon
-                            key={index_}
-                            as={RiComputerLine}
-                            fontSize='1.2em'
-                          />
-                        )
-                      case 'fax':
-                        return <Icon key={index_} as={FaFax} fontSize='1em' />
-                      case 'printer':
-                        return (
-                          <Icon key={index_} as={BiPrinter} fontSize='1.2em' />
-                        )
-                      case 'node':
-                        return (
-                          <Icon
-                            key={index_}
-                            as={GiWifiRouter}
-                            fontSize='1.2em'
-                          />
-                        )
-                      default:
-                        break
-                    }
-                  }
-                )}
+                <Specialize
+                  specializes={currentRequest.repairman?.specializes}
+                />
               </GridItem>
             </Grid>
           </ModalBody>

@@ -122,16 +122,6 @@ export default function TaskDetail({
             source: configuration[option.toString()],
             target: replacement[option.toString()],
           })
-          .then((res) => {
-            dispatch(
-              pushNotification({
-                title: res.data.message,
-                description: res.data.description,
-                status: NotificationStatus.SUCCESS,
-              })
-            )
-            dispatch(resetNotification())
-          })
           .catch((error) => {
             dispatch(
               pushNotification({

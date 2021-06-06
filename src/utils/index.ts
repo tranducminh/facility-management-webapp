@@ -6,3 +6,11 @@ export const convertTime = (time?: Date) => {
   }
   return ''
 }
+
+export const convertToMoney = (amount?: number) => {
+  let formatter = new Intl.NumberFormat('vi-VI', {
+    style: 'currency',
+    currency: 'VND',
+  })
+  return formatter.format(amount || 0)
+}

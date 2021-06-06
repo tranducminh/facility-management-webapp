@@ -138,16 +138,6 @@ export default function UnCompletedRequest({
             <Button size='sm' colorScheme='gray' mr={3} onClick={onClose}>
               Đóng
             </Button>
-            {/* <Button size='sm' colorScheme='red' mr={3} onClick={onClose}>
-              Từ chối
-            </Button>
-            <Button
-              size='sm'
-              colorScheme='teal'
-              mr={3}
-              onClick={() => onAssignRequest(currentRequest.id)}>
-              Chấp nhận
-            </Button> */}
           </ModalFooter>
         </ModalContent>
       </Modal>

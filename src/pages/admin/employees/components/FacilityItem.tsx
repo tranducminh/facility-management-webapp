@@ -21,7 +21,7 @@ import {
 import { ViewIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import { FACILITY } from '../../../../types'
-import { convertTime } from '../../../../utils'
+import { convertTime, convertToMoney } from '../../../../utils'
 
 export default function FacilityItem({ facility }: { facility: FACILITY }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -137,7 +137,7 @@ export default function FacilityItem({ facility }: { facility: FACILITY }) {
                 <Text textStyle='bold-md'>Giá trị</Text>
               </GridItem>
               <GridItem colStart={5} colEnd={12}>
-                <Text>{facility.price} VND</Text>
+                <Text>{convertToMoney(facility.price)}</Text>
               </GridItem>
               <GridItem colStart={2} colEnd={5}>
                 <Text textStyle='bold-md'>Ngày cấp</Text>

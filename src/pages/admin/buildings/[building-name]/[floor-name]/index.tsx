@@ -38,6 +38,7 @@ import {
   pushNotification,
   resetNotification,
 } from '../../../../../redux/actions/notification.action'
+import Empty from '../../../../../components/Empty'
 
 export default function BuildingDetail() {
   const router = useRouter()
@@ -52,6 +53,7 @@ export default function BuildingDetail() {
   const [building, setBuilding] = useState<BUILDING>({})
   const [floor, setFloor] = useState<FLOOR>({})
   const [rooms, setRooms] = useState<ROOM[]>([])
+  const [isError, setIsError] = useState<boolean>(false)
 
   type FormData = {
     name: string
@@ -63,6 +65,7 @@ export default function BuildingDetail() {
     axios
       .get(`/buildings/${buildingName.split('-')[1]}`)
       .then((response) => {
+        setIsError(false)
         setBuilding(response.data.building)
         const { floors } = response.data.building
         setFloor(
@@ -77,6 +80,9 @@ export default function BuildingDetail() {
         )
       })
       .catch((error) => {
+        if (error.response?.status === 404) {
+          setIsError(true)
+        }
         console.log(error)
       })
   }
@@ -156,175 +162,179 @@ export default function BuildingDetail() {
 
   return (
     <AdminDashboard isBuilding title={`Tòa nhà ${building?.name}`}>
-      <Flex justifyContent='space-between' alignItems='center' mb={5}>
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <Link href='/admin/buildings'>
-              <BreadcrumbLink>
-                <Text textStyle='bold-md'>Tòa nhà</Text>
-              </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link href={`/admin/buildings/building-${building?.name}`}>
-              <BreadcrumbLink>
-                <Text textStyle='bold-md'>Tòa nhà {building?.name}</Text>
-              </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link
-              href={`/admin/buildings/building-${building?.name}/floor-${floor?.name}`}>
-              <BreadcrumbLink>
-                <Text textStyle='bold-md'>Tầng {floor?.name}</Text>
-              </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <Button
-          rightIcon={<ArrowRightIcon fontSize='xs' />}
-          colorScheme='teal'
-          variant='ghost'
-          size='sm'
-          onClick={onOpen}>
-          <Text textStyle='bold-sm' mt='0.1rem'>
-            Tạo tầng mới
+      {isError ? <Empty title='Không tìm thấy tầng mà bạn yêu cầu' /> :
+        <>
+          <Flex justifyContent='space-between' alignItems='center' mb={5}>
+            <Breadcrumb>
+              <BreadcrumbItem>
+                <Link href='/admin/buildings'>
+                  <BreadcrumbLink>
+                    <Text textStyle='bold-md'>Tòa nhà</Text>
+                  </BreadcrumbLink>
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link href={`/admin/buildings/building-${building?.name}`}>
+                  <BreadcrumbLink>
+                    <Text textStyle='bold-md'>Tòa nhà {building?.name}</Text>
+                  </BreadcrumbLink>
+                </Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link
+                  href={`/admin/buildings/building-${building?.name}/floor-${floor?.name}`}>
+                  <BreadcrumbLink>
+                    <Text textStyle='bold-md'>Tầng {floor?.name}</Text>
+                  </BreadcrumbLink>
+                </Link>
+              </BreadcrumbItem>
+            </Breadcrumb>
+            <Button
+              rightIcon={<ArrowRightIcon fontSize='xs' />}
+              colorScheme='teal'
+              variant='ghost'
+              size='sm'
+              onClick={onOpen}>
+              <Text textStyle='bold-sm' mt='0.1rem'>
+                Tạo tầng mới
           </Text>
-        </Button>
-      </Flex>
-      <Grid templateColumns='repeat(14, 1fr)' gap={4}>
-        <GridItem colSpan={12}>
-          <RoomList
-            rooms={rooms}
-            building={building}
-            floor={floor}
-            refresh={refreshData}
-          />
-          <Button
-            rightIcon={<ArrowRightIcon fontSize='xs' />}
-            colorScheme='teal'
-            variant='ghost'
-            size='sm'
-            onClick={onOpenNewRoom}
-            mt='5'>
-            <Text textStyle='bold-sm' mt='0.1rem'>
-              Tạo phòng mới
+            </Button>
+          </Flex>
+          <Grid templateColumns='repeat(14, 1fr)' gap={4}>
+            <GridItem colSpan={12}>
+              <RoomList
+                rooms={rooms}
+                building={building}
+                floor={floor}
+                refresh={refreshData}
+              />
+              <Button
+                rightIcon={<ArrowRightIcon fontSize='xs' />}
+                colorScheme='teal'
+                variant='ghost'
+                size='sm'
+                onClick={onOpenNewRoom}
+                mt='5'>
+                <Text textStyle='bold-sm' mt='0.1rem'>
+                  Tạo phòng mới
             </Text>
-          </Button>
-        </GridItem>
-        <GridItem
-          colSpan={2}
-          pl='1em'
-          borderLeftWidth='1px'
-          borderLeftColor='gray.100'
-          overflow='auto'
-          maxH='80vh'
-          className='scrollbar'>
-          {!building.floors
-            ? null
-            : building.floors.map((item: FLOOR, index: number) => (
-              <FloorItem floor={item} key={index} currentFloor={floor} building={building} refresh={refreshData} />
-            ))}
-        </GridItem>
-      </Grid>
+              </Button>
+            </GridItem>
+            <GridItem
+              colSpan={2}
+              pl='1em'
+              borderLeftWidth='1px'
+              borderLeftColor='gray.100'
+              overflow='auto'
+              maxH='80vh'
+              className='scrollbar'>
+              {!building.floors
+                ? null
+                : building.floors.map((item: FLOOR, index: number) => (
+                  <FloorItem floor={item} key={index} currentFloor={floor} building={building} refresh={refreshData} />
+                ))}
+            </GridItem>
+          </Grid>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <Formik
-            initialValues={{ name: '' }}
-            onSubmit={async (values: FormData, actions: any) => {
-              await createNewFloor(values)
-              actions.setSubmitting(false)
-            }}>
-            {(props) => (
-              <Form>
-                <ModalHeader>Tạo tầng mới</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody pb={6}>
-                  <Field name='name' validate={validateFloorName}>
-                    {({ field, form }: { field: any; form: any }) => (
-                      <FormControl
-                        isRequired
-                        isInvalid={form.errors?.name && form.touched?.name}>
-                        <FormLabel>Tên tầng</FormLabel>
-                        <Input
-                          {...field}
-                          id='name'
-                          colorScheme='teal'
-                          placeholder='Tên tầng'
-                        />
-                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-                </ModalBody>
-                <ModalFooter>
-                  <Button size='sm' onClick={onClose} mr={3}>
-                    Hủy
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <Formik
+                initialValues={{ name: '' }}
+                onSubmit={async (values: FormData, actions: any) => {
+                  await createNewFloor(values)
+                  actions.setSubmitting(false)
+                }}>
+                {(props) => (
+                  <Form>
+                    <ModalHeader>Tạo tầng mới</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                      <Field name='name' validate={validateFloorName}>
+                        {({ field, form }: { field: any; form: any }) => (
+                          <FormControl
+                            isRequired
+                            isInvalid={form.errors?.name && form.touched?.name}>
+                            <FormLabel>Tên tầng</FormLabel>
+                            <Input
+                              {...field}
+                              id='name'
+                              colorScheme='teal'
+                              placeholder='Tên tầng'
+                            />
+                            <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button size='sm' onClick={onClose} mr={3}>
+                        Hủy
                   </Button>
-                  <Button
-                    size='sm'
-                    colorScheme='teal'
-                    type='submit'
-                    isLoading={props.isSubmitting}>
-                    Tạo mới
+                      <Button
+                        size='sm'
+                        colorScheme='teal'
+                        type='submit'
+                        isLoading={props.isSubmitting}>
+                        Tạo mới
                   </Button>
-                </ModalFooter>
-              </Form>
-            )}
-          </Formik>
-        </ModalContent>
-      </Modal>
+                    </ModalFooter>
+                  </Form>
+                )}
+              </Formik>
+            </ModalContent>
+          </Modal>
 
-      <Modal isOpen={isOpenNewRoom} onClose={onCloseNewRoom}>
-        <ModalOverlay />
-        <ModalContent>
-          <Formik
-            initialValues={{ name: '' }}
-            onSubmit={async (values: FormData, actions: any) => {
-              await createNewRoom(values)
-              actions.setSubmitting(false)
-            }}>
-            {(props) => (
-              <Form>
-                <ModalHeader>Tạo phòng mới</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody pb={6}>
-                  <Field name='name' validate={validateRoomName}>
-                    {({ field, form }: { field: any; form: any }) => (
-                      <FormControl
-                        isRequired
-                        isInvalid={form.errors?.name && form.touched?.name}>
-                        <FormLabel>Tên phòng</FormLabel>
-                        <Input
-                          {...field}
-                          id='name'
-                          colorScheme='teal'
-                          placeholder='Tên phòng'
-                        />
-                        <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
-                </ModalBody>
-                <ModalFooter>
-                  <Button size='sm' onClick={onCloseNewRoom} mr={3}>
-                    Hủy
+          <Modal isOpen={isOpenNewRoom} onClose={onCloseNewRoom}>
+            <ModalOverlay />
+            <ModalContent>
+              <Formik
+                initialValues={{ name: '' }}
+                onSubmit={async (values: FormData, actions: any) => {
+                  await createNewRoom(values)
+                  actions.setSubmitting(false)
+                }}>
+                {(props) => (
+                  <Form>
+                    <ModalHeader>Tạo phòng mới</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                      <Field name='name' validate={validateRoomName}>
+                        {({ field, form }: { field: any; form: any }) => (
+                          <FormControl
+                            isRequired
+                            isInvalid={form.errors?.name && form.touched?.name}>
+                            <FormLabel>Tên phòng</FormLabel>
+                            <Input
+                              {...field}
+                              id='name'
+                              colorScheme='teal'
+                              placeholder='Tên phòng'
+                            />
+                            <FormErrorMessage>{form.errors?.name}</FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button size='sm' onClick={onCloseNewRoom} mr={3}>
+                        Hủy
                   </Button>
-                  <Button
-                    size='sm'
-                    colorScheme='teal'
-                    type='submit'
-                    isLoading={props.isSubmitting}>
-                    Tạo mới
+                      <Button
+                        size='sm'
+                        colorScheme='teal'
+                        type='submit'
+                        isLoading={props.isSubmitting}>
+                        Tạo mới
                   </Button>
-                </ModalFooter>
-              </Form>
-            )}
-          </Formik>
-        </ModalContent>
-      </Modal>
+                    </ModalFooter>
+                  </Form>
+                )}
+              </Formik>
+            </ModalContent>
+          </Modal>
+        </>
+      }
     </AdminDashboard >
   )
 }

@@ -42,7 +42,7 @@ export default function UserDetail() {
         setIsLoading(false)
       })
       .catch((error) => {
-        if (error.response.status === 404) {
+        if (error.response?.status === 404) {
           setIsError(true)
         }
       })

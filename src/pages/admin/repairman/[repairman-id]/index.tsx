@@ -46,7 +46,7 @@ export default function RepairmanDetail() {
       })
       .catch((error) => {
         console.log(router.query['repairman-id'])
-        if (error.response.status === 404) {
+        if (error.response?.status === 404) {
           setIsError(true)
         }
       })
