@@ -141,7 +141,7 @@ function EmployeeHeader() {
         break
       case NotificationType.APPROVED_REQUEST:
         router.push(
-          `/employee/requests?type=approved&notification=${notificationId}`
+          `/employee/requests?type=assigned&notification=${notificationId}`
         )
         break
       case NotificationType.REJECTED_REQUEST:
