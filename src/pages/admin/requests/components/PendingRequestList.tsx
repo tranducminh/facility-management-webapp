@@ -23,13 +23,18 @@ import {
   Grid,
   GridItem,
   useDisclosure,
-  Select,
+  // Select,
   FormControl,
   FormLabel,
   Divider,
   Textarea,
   FormErrorMessage,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react'
+import { ChevronDownIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { useDispatch } from 'react-redux'
@@ -304,7 +309,31 @@ export default function PendingRequestList({
                             <FormLabel fontWeight='bold' htmlFor='repairmanId'>
                               Kỹ thuật viên
                             </FormLabel>
-                            <Select
+                            <Menu>
+                              <MenuButton
+                                as={Button}
+                                rightIcon={<ChevronDownIcon />}>
+                                {currentRepairman?.name || 'Chọn kỹ thuật viên'}
+                              </MenuButton>
+                              <MenuList>
+                                {suitableRepairman.map(
+                                  (repairman: REPAIRMAN, index: number) => (
+                                    <MenuItem
+                                      minH='48px'
+                                      key={index}
+                                      onClick={() => {
+                                        onChangeRepairman(repairman?.id || 1)
+                                      }}>
+                                      <Text mr='3'>{repairman.name}</Text>
+                                      <Specialize
+                                        specializes={repairman.specializes}
+                                      />
+                                    </MenuItem>
+                                  )
+                                )}
+                              </MenuList>
+                            </Menu>
+                            {/* <Select
                               placeholder='Chọn kỹ thuật viên'
                               textStyle='normal'
                               id='repairmanId'
@@ -316,10 +345,13 @@ export default function PendingRequestList({
                                 (repairman: REPAIRMAN, index: number) => (
                                   <option key={index} value={repairman.id}>
                                     {repairman.name}
+                                    <Specialize
+                                      specializes={repairman.specializes}
+                                    />
                                   </option>
                                 )
                               )}
-                            </Select>
+                            </Select> */}
                             <FormErrorMessage>
                               {form.errors?.repairmanId}
                             </FormErrorMessage>
